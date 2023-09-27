@@ -3,7 +3,7 @@ import setup_live_reload from "./live-reload";
 import Radiotopian from "./radiotopian";
 
 new p5((sketch) => {
-  let game = new Radiotopian(sketch)
+  let game = new Radiotopian(sketch);
 
   sketch.setup = () => {
     game.setup();

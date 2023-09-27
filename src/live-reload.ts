@@ -2,6 +2,7 @@
 // See https://esbuild.github.io/api/#live-reload
 
 export default function setup_live_reload() {
-  new EventSource("/esbuild").addEventListener("change", () => location.reload());
-};
-
+  new EventSource("/esbuild").addEventListener("change", () =>
+    location.reload(),
+  );
+}
