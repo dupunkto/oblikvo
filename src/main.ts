@@ -1,7 +1,12 @@
 import p5 from "p5";
 import setupLiveReload from "./live-reload";
+import { HUD } from "./interface";
+import Player from "./player";
 
 new p5((p) => {
+  const hud = new HUD(p);
+  const player = new Player(p);
+
   p.setup = function () {
     setupLiveReload();
     setupCanvas();
@@ -15,5 +20,8 @@ new p5((p) => {
   p.draw = function () {
     p.clear();
     p.orbitControl();
+
+    hud.draw();
+    player.draw();
   };
 }, document.body);
