@@ -3,12 +3,7 @@
   "description": "Open-world resource-gathering survival game written using p5js.",
   "author": "dupunkto",
   "homepage": "https://dupunkto.org/radiotopia",
-  "license": "Unlicense",
-  "scripts": {
-    "start": ".ci/server.sh",
-    "build": ".ci/build.sh",
-    "format": "prettier --write ."
-  },
+  "license": "Unlicensed",
   "repository": {
     "type": "git",
     "url": "git+https://git.geheimesite.nl/dupunkto/radiotopian.git"

@@ -1,0 +1,19 @@
+#!/bin/bash -eu
+
+build() {
+  rm -rf dist/*
+
+  esbuild src/main.ts --bundle --minify --sourcemap --outfile=dist/dist/main.js
+  cp index.html dist/index.html
+}
+
+serve() {
+  rm -rf dist/*
+
+  esbuild src/main.ts --bundle --outfile=dist/main.js --watch --serve=4000 --servedir=.
+  waiter --dev
+}
+
+format() {
+  prettier --write .
+}

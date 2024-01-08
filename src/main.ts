@@ -1,15 +1,19 @@
 import p5 from "p5";
-import setup_live_reload from "./live-reload";
-import Radiotopian from "./radiotopian";
+import setupLiveReload from "./live-reload";
 
-new p5((sketch) => {
-  let game = new Radiotopian(sketch);
-
-  sketch.setup = () => {
-    game.setup();
-    setup_live_reload();
+new p5((p) => {
+  p.setup = function () {
+    setupLiveReload();
+    setupCanvas();
   };
-  sketch.draw = () => {
-    game.draw();
+
+  function setupCanvas() {
+    p.createCanvas(p.windowWidth, p.windowHeight, p.WEBGL);
+    p.windowResized = () => p.resizeCanvas(p.windowWidth, p.windowHeight);
+  }
+
+  p.draw = function () {
+    p.clear();
+    p.orbitControl();
   };
 }, document.body);
