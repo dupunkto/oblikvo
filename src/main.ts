@@ -27,4 +27,8 @@ new p5((p) => {
     hud.draw();
     player.draw();
   };
+
+  p.keyPressed = function () {
+    if (p.key == "h") hud.visible = !hud.visible;
+  };
 }, document.body);

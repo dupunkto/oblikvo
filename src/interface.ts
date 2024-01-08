@@ -50,7 +50,7 @@ export class HUD {
 
     // I don't know why this is needed and I don't know why
     // these values. I got here by trial-and-error.
-    this.p5.translate(-this.p5.width / 2, -this.p5.height / 2 + 10, 0);
+    this.p5.translate(-this.p5.width / 2, -this.p5.height / 2, 0);
   }
 
   drawText(text: string) {
