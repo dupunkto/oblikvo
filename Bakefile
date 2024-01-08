@@ -3,8 +3,8 @@
 build() {
   rm -rf dist/*
 
-  esbuild src/main.ts --bundle --minify --sourcemap --outfile=dist/dist/main.js
-  cp index.html dist/index.html
+  esbuild src/main.ts --bundle --minify --sourcemap --copy-files --outfile=dist/dist/main.js
+  cp public/* dist/
 }
 
 serve() {

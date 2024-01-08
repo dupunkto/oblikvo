@@ -57,10 +57,9 @@ class Player {
 
   usePointerLock() {
     this.pointerLocked = false;
-    this.canvas = this.p5._renderer.elt;
 
-    document.addEventListener("click", this.togglePointerLock, false);
-    document.addEventListener("pointerlockchange", this.unlockPointer, false);
+    document.addEventListener("click", () => this.togglePointerLock());
+    document.addEventListener("pointerlockchange", () => this.unlockPointer());
   }
 
   togglePointerLock() {
@@ -68,13 +67,13 @@ class Player {
       this.p5.exitPointerLock();
       this.pointerLocked = false;
     } else {
-      this.p5.requestPointerLock();
       this.pointerLocked = true;
+      this.p5.requestPointerLock();
     }
   }
 
   unlockPointer() {
-    if (document.pointerLockElement != this.canvas) {
+    if (document.pointerLockElement != this.p5.canvas) {
       this.pointerLocked = false;
     }
   }
