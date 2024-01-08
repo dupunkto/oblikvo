@@ -5,6 +5,8 @@ export function setupFonts(p5) {
 
   p5.textFont(font);
   p5.textSize(20);
+  p5.textAlign(p5.LEFT, p5.TOP);
+  p5.fill(225);
   p5.strokeWeight(2);
 }
 
@@ -31,9 +33,6 @@ export class HUD {
     if (this.visible) {
       this.fixPositioning();
 
-      this.p5.textAlign(p5.LEFT, p5.TOP);
-      this.p5.fill(225);
-
       this.drawText("mouse: left/right : pan");
       this.drawText("       up/down : tilt");
       this.drawText("       click : ptrlock");
@@ -49,8 +48,8 @@ export class HUD {
     this.p5.camera();
     this.p5.perspective();
 
-    // I don't know why this is needed and I
-    // don't know why these values. I got here by trial-and-error.
+    // I don't know why this is needed and I don't know why
+    // these values. I got here by trial-and-error.
     this.p5.translate(-this.p5.width / 2, -this.p5.height / 2 + 10, 0);
   }
 

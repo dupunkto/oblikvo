@@ -173,7 +173,7 @@ class Player {
       center.z,
       this.directionZ.x,
       this.directionZ.y,
-      this.directionZ.z
+      this.directionZ.z,
     );
   }
 
@@ -191,13 +191,13 @@ class Player {
     this.directionX = new p5.Vector(
       Math.cos(this.pan),
       Math.tan(this.tilt),
-      Math.sin(this.pan)
+      Math.sin(this.pan),
     ).normalize();
 
     this.directionY = new p5.Vector(
       Math.cos(this.pan - Math.PI / 2.0),
       0,
-      Math.sin(this.pan - Math.PI / 2.0)
+      Math.sin(this.pan - Math.PI / 2.0),
     );
   }
 
@@ -206,7 +206,7 @@ class Player {
       this.fov_y,
       this.p5.width / this.p5.height,
       0.01,
-      10000.0
+      10000.0,
     );
     this.width = this.p5.width;
     this.height = this.p5.height;

@@ -3,6 +3,6 @@
 
 export default function setupLiveReload() {
   new EventSource("/esbuild").addEventListener("change", () =>
-    location.reload()
+    location.reload(),
   );
 }
