@@ -1,17 +1,19 @@
 #!/bin/bash -eu
 
 build() {
-  rm -rf dist/*
-
+  clean
   esbuild src/main.ts --bundle --minify --sourcemap --copy-files --outfile=dist/dist/main.js
   cp public/* dist/
 }
 
-serve() {
-  rm -rf dist/*
+clean() {
+  [ -e "dist" ] && rm -rf dist
+  [ -e "public/main.js" ] && rm -rf public/main.js
+}
 
-  esbuild src/main.ts --bundle --outfile=dist/main.js --watch --serve=4000 --servedir=.
-  waiter --dev
+serve() {
+  trap clean 1 2 3 6
+  esbuild src/main.ts --bundle --outfile=public/main.js --watch --serve=4000 --servedir=public
 }
 
 format() {
