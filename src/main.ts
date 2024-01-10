@@ -1,43 +1,42 @@
 import p5 from "p5";
 import setupLiveReload from "./live-reload";
-import { setupFonts, HUD } from "./interface";
 import Player from "./player";
-import { createChunk } from "./terrain";
+import World from "./world";
+import { HUD } from "./interface";
+import { SEED } from "./settings";
 
 new p5((p) => {
-  let hud, player, shader, geom;
+  let player = new Player(p);
+  let world = new World(p);
+  let hud = new HUD(p);
 
   p.preload = function () {
-    shader = p.loadShader("simple.vert", "simple.frag");
+    world.loadShaders();
   };
 
   p.setup = function () {
-    hud = new HUD(p);
-    player = new Player(p);
-
-    setupLiveReload();
-    setupCanvas(p);
-    setupFonts(p);
-
+    p.noiseSeed(SEED); // Global
     p.frameRate(60);
-    p.shader(shader);
     p.angleMode(p.RADIANS);
 
-    geom = createChunk();
+    setupLiveReload();
+    setupCanvas();
+
+    world.generate();
+    player.spawn();
   };
 
-  function setupCanvas(p) {
+  function setupCanvas() {
     p.createCanvas(p.windowWidth, p.windowHeight, p.WEBGL);
     p.windowResized = () => p.resizeCanvas(p.windowWidth, p.windowHeight);
   }
 
   p.draw = function () {
     p.background(0, 0, 51);
-    shader.setUniform("millis", p.millis());
-    p.model(geom);
 
+    player.update();
+    world.draw(player.position);
     hud.draw();
-    player.draw();
   };
 
   p.keyPressed = function () {

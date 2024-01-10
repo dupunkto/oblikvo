@@ -7,6 +7,7 @@
 // I reimplemented the entire library from scratch.
 
 import p5 from "p5";
+import { TERRAIN_SPREAD } from "./settings";
 
 const W = 87;
 const A = 65;
@@ -47,12 +48,10 @@ class Player {
 
   constructor(sketch) {
     this.p5 = sketch;
-    this.usePointerLock();
 
     this.sensitivity = 0.02;
     this.friction = 0.8;
     this.speed = 0.1;
-    this.reset();
   }
 
   usePointerLock() {
@@ -78,7 +77,7 @@ class Player {
     }
   }
 
-  reset() {
+  spawn() {
     this.position = new p5.Vector(0, 0, 0);
     this.velocity = new p5.Vector(0, 0, 0);
     this.gravity = new p5.Vector(0, 0.03, 0);
@@ -151,7 +150,7 @@ class Player {
     this.setPerspective();
   }
 
-  draw() {
+  update() {
     if (this.p5.width != this.width || this.p5.height != this.height) {
       this.setPerspective();
     }
@@ -173,13 +172,23 @@ class Player {
       center.z,
       this.directionZ.x,
       this.directionZ.y,
-      this.directionZ.z,
+      this.directionZ.z
     );
   }
 
   applyGravity() {
-    this.velocity.add(this.gravity);
-    this.position.add(this.velocity);
+    const ground_y = this.p5.noise(
+      TERRAIN_SPREAD * this.position.x,
+      TERRAIN_SPREAD * this.position.z
+    );
+
+    if (this.position.y <= ground_y) {
+      this.onGround = true;
+      this.position.y = ground_y;
+    } else {
+      this.onGround = false;
+      this.velocity.add(this.gravity);
+    }
   }
 
   applyMovement() {
@@ -191,13 +200,13 @@ class Player {
     this.directionX = new p5.Vector(
       Math.cos(this.pan),
       Math.tan(this.tilt),
-      Math.sin(this.pan),
+      Math.sin(this.pan)
     ).normalize();
 
     this.directionY = new p5.Vector(
       Math.cos(this.pan - Math.PI / 2.0),
       0,
-      Math.sin(this.pan - Math.PI / 2.0),
+      Math.sin(this.pan - Math.PI / 2.0)
     );
   }
 
@@ -206,7 +215,7 @@ class Player {
       this.fov_y,
       this.p5.width / this.p5.height,
       0.01,
-      10000.0,
+      10000.0
     );
     this.width = this.p5.width;
     this.height = this.p5.height;
