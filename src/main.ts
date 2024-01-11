@@ -24,6 +24,7 @@ new p5((p) => {
 
     world.generate();
     player.spawn();
+    player.usePointerLock();
   };
 
   function setupCanvas() {
@@ -35,7 +36,7 @@ new p5((p) => {
     p.background(0, 0, 51);
 
     player.update();
-    world.draw(player.position);
+    world.draw(player.camera.eyeY);
     hud.draw();
   };
 

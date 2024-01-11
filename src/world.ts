@@ -1,9 +1,12 @@
 import p5 from "p5";
-import { TERRAIN_SPREAD, SEA_LEVEL } from "./settings";
 
-export const CHUNK_DIM = 10;
-export const CHUNK_CELL_DIM = 100;
-export const CHUNK_HEIGHT = 2000;
+import {
+  CHUNK_CELL_DIM,
+  CHUNK_DIM,
+  CHUNK_HEIGHT,
+  TERRAIN_SPREAD,
+  SEA_LEVEL,
+} from "./settings";
 
 class World {
   p5: p5;
@@ -91,10 +94,10 @@ class World {
     });
   }
 
-  draw(player_pos) {
+  draw(player_y) {
     this.terrainShader.setUniform("sea_level", SEA_LEVEL);
     this.overlayShader.setUniform("sea_level", SEA_LEVEL);
-    this.overlayShader.setUniform("player_y", player_pos.y);
+    this.overlayShader.setUniform("player_y", player_y);
 
     this.p5.shader(this.terrainShader);
     this.p5.model(this.terrain);

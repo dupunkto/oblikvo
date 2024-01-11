@@ -7,7 +7,8 @@
 // I reimplemented the entire library from scratch.
 
 import p5 from "p5";
-import { TERRAIN_SPREAD } from "./settings";
+
+import { G, CHUNK_CELL_DIM, CHUNK_HEIGHT, TERRAIN_SPREAD } from "./settings";
 
 const W = 87;
 const A = 65;
@@ -21,37 +22,27 @@ const MINUS = 173;
 
 class Player {
   p5: p5;
-
+  camera: p5.Camera;
   pointerLocked: boolean;
-  canvas: p5._renderer.elt;
-
-  position: p5.Vector;
-  velocity: p5.Vector;
-  gravity: p5.Vector;
   onGround: boolean;
-  width: number;
+
   height: number;
-
   sensitivity: number;
-  friction: number;
   speed: number;
-
-  pan: number;
+  reach: number;
+  friction: number;
+  gravity: number;
   tilt: number;
-  rot: number;
-  fov_y: number;
-
-  // Calculated from the values above
-  directionX: p5.Vector;
-  directionY: p5.Vector;
-  directionZ: p5.Vector;
+  accel: number;
+  velocity: p5.Vector;
 
   constructor(sketch) {
     this.p5 = sketch;
-
-    this.sensitivity = 0.02;
-    this.friction = 0.8;
-    this.speed = 0.1;
+    this.sensitivity = 0.04;
+    this.height = 170;
+    this.speed = 10;
+    this.friction = 1;
+    this.reach = 1.2;
   }
 
   usePointerLock() {
@@ -78,147 +69,83 @@ class Player {
   }
 
   spawn() {
-    this.position = new p5.Vector(0, 0, 0);
+    this.camera = this.p5.createCamera();
+    this.onGround = false;
+    this.tilt = 0;
     this.velocity = new p5.Vector(0, 0, 0);
-    this.gravity = new p5.Vector(0, 0.03, 0);
-    this.width = 0;
-    this.height = 0;
-
-    this.pan = 0.0;
-    this.tilt = 0.0;
-    this.rot = 0.0;
-    this.fov_y = 1.0;
-
-    this.directionX = new p5.Vector(0, 0, 1);
-    this.directionY = new p5.Vector(1, 0, 0);
-    this.directionZ = new p5.Vector(0, 1, 0);
   }
 
   controller() {
-    // Mouse controls
-    this.yaw((this.p5.movedX * this.sensitivity) / 10);
-    this.pitch((this.p5.movedY * this.sensitivity) / 10);
+    if (this.pointerLocked) {
+      this.yaw((this.p5.movedX * this.sensitivity) / 10);
+      this.pitch((this.p5.movedY * this.sensitivity) / 10);
+    }
 
-    // Movement controls
-    if (this.keyDown(W)) this.moveX(this.speed);
-    if (this.keyDown(A)) this.moveY(this.speed);
-    if (this.keyDown(S)) this.moveX(-this.speed);
-    if (this.keyDown(D)) this.moveY(-this.speed);
-    if (this.keyDown(E)) this.moveZ(this.speed);
-    if (this.keyDown(Q)) this.moveZ(-this.speed);
-
-    // Jump
+    if (this.keyDown(W)) this.velocity.z += 1;
+    if (this.keyDown(A)) this.velocity.x += 1;
+    if (this.keyDown(S)) this.velocity.z -= 1;
+    if (this.keyDown(D)) this.velocity.x -= 1;
     if (this.keyDown(SPACE) && this.onGround) this.jump();
-
-    // Field of view controls
-    if (this.keyDown(PLUS)) this.fov(-this.sensitivity / 10);
-    if (this.keyDown(MINUS)) this.fov(this.sensitivity / 10);
   }
 
   keyDown(keyCode) {
     return this.p5.keyIsDown(keyCode);
   }
-
-  moveX(speed) {
-    this.velocity.add(p5.Vector.mult(this.directionX, speed));
-  }
-
-  moveY(speed) {
-    this.velocity.add(p5.Vector.mult(this.directionY, speed));
-  }
-
-  moveZ(speed) {
-    this.velocity.add(p5.Vector.mult(this.directionZ, -speed));
-  }
-
-  jump() {
-    // TODO(robin): implement jumping
-  }
-
   yaw(angle) {
-    this.pan += angle;
+    this.camera.pan(-angle);
   }
-
   pitch(angle) {
-    this.tilt += angle;
+    const prev = this.tilt;
+    this.tilt -= angle;
+
     this.tilt = this.clamp(this.tilt, -Math.PI / 2.01, Math.PI / 2.01);
     if (this.tilt == Math.PI / 2.0) this.tilt += 0.001;
+    this.camera.tilt(prev - this.tilt);
   }
-
-  fov(angle) {
-    this.fov_y += angle;
-    this.setPerspective();
+  jump() {
+    this.velocity.y -= 2 * this.reach * this.speed;
   }
 
   update() {
-    if (this.p5.width != this.width || this.p5.height != this.height) {
-      this.setPerspective();
-    }
-
     this.controller();
-    this.applyMovement();
-    this.applyGravity();
-    this.applyRotation();
+    this.normalizeVelocity();
+    this.velocity.y += G;
 
-    let position = p5.Vector.sub(this.position, this.directionY);
-    let center = p5.Vector.add(position, this.directionX);
+    const groundY = this.calculateGroundLevel();
+    const playerY = Math.min(this.camera.eyeY + this.velocity.y, groundY);
 
-    this.p5.camera(
-      position.x,
-      position.y,
-      position.z,
-      center.x,
-      center.y,
-      center.z,
-      this.directionZ.x,
-      this.directionZ.y,
-      this.directionZ.z
-    );
-  }
-
-  applyGravity() {
-    const ground_y = this.p5.noise(
-      TERRAIN_SPREAD * this.position.x,
-      TERRAIN_SPREAD * this.position.z
-    );
-
-    if (this.position.y <= ground_y) {
+    if (playerY === groundY) {
       this.onGround = true;
-      this.position.y = ground_y;
+      this.velocity.y = 0;
     } else {
       this.onGround = false;
-      this.velocity.add(this.gravity);
     }
+
+    this.camera.move(-this.velocity.x, 0, -this.velocity.z);
+    this.camera.setPosition(this.camera.eyeX, playerY, this.camera.eyeZ);
+
+    this.velocity.x = 0;
+    this.velocity.z = 0;
   }
 
-  applyMovement() {
-    this.velocity.mult(this.friction);
-    this.position.add(this.velocity);
+  normalizeVelocity() {
+    const speedFactor = this.onGround ? 1 : this.reach;
+    let vertical = this.velocity.y;
+
+    this.velocity.y = 0;
+    this.velocity.normalize().mult(speedFactor * this.speed);
+    this.velocity.y = vertical;
   }
 
-  applyRotation() {
-    this.directionX = new p5.Vector(
-      Math.cos(this.pan),
-      Math.tan(this.tilt),
-      Math.sin(this.pan)
-    ).normalize();
-
-    this.directionY = new p5.Vector(
-      Math.cos(this.pan - Math.PI / 2.0),
-      0,
-      Math.sin(this.pan - Math.PI / 2.0)
+  calculateGroundLevel() {
+    const chunk_player_x = this.camera.eyeX / CHUNK_CELL_DIM;
+    const chunk_player_z = this.camera.eyeZ / CHUNK_CELL_DIM;
+    const n = this.p5.noise(
+      TERRAIN_SPREAD * chunk_player_x,
+      TERRAIN_SPREAD * chunk_player_z
     );
-  }
 
-  setPerspective() {
-    this.p5.perspective(
-      this.fov_y,
-      this.p5.width / this.p5.height,
-      0.01,
-      10000.0
-    );
-    this.width = this.p5.width;
-    this.height = this.p5.height;
+    return CHUNK_HEIGHT * n - this.height;
   }
 
   clamp(aNumber, aMin, aMax) {
