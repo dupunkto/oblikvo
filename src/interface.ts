@@ -1,43 +1,82 @@
 import p5 from "p5";
 
-export function setupFonts(p5) {
-  let font = p5.loadFont("inconsolata.otf");
-
-  p5.textFont(font);
-  p5.textSize(20);
-  p5.fill(225);
-  p5.strokeWeight(2);
-}
-
-export class HUD {
+class Element {
   p5: p5;
 
-  framerate: number;
+  constructor(sketch) {
+    this.p5 = sketch;
+  }
+
+  startDrawing() {
+    this.p5.push();
+
+    this.prepareCamera();
+    this.prepareText();
+  }
+
+  stopDrawing() {
+    this.p5.pop();
+  }
+
+  prepareCamera() {
+    this.p5.camera(
+      0,
+      0,
+      this.p5.height / 2.0 / Math.tan((Math.PI * 30.0) / 180.0),
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
+    );
+    this.p5.ortho(
+      -this.p5.width / 2,
+      this.p5.width / 2,
+      -this.p5.height / 2,
+      this.p5.height / 2,
+      0,
+      1000
+    );
+    this.p5.translate(-this.p5.width / 2, -this.p5.height / 2);
+  }
+
+  prepareText() {
+    this.p5.textSize(20);
+    this.p5.fill(225);
+    this.p5.strokeWeight(2);
+  }
+}
+
+export class HUD extends Element {
   visible: boolean;
   x: number;
   y: number;
   col: number;
 
   constructor(sketch) {
-    this.p5 = sketch;
-    this.framerate = 400;
+    super(sketch);
+
     this.visible = true;
     this.x = 10;
     this.y = 10;
   }
 
   draw() {
-    // this.col = 0;
-    // if (this.visible) {
-    //   this.drawText("mouse: left/right : pan");
-    //   this.drawText("       up/down : tilt");
-    //   this.drawText("       click : ptrlock");
-    //   this.drawText(" keys: a/d : left/right");
-    //   this.drawText("       w/s : fwd/bkwd");
-    //   this.drawText("       e/q : up/down");
-    //   this.drawText("       space : jump");
-    //   this.drawText("       h : help");
-    // }
+    this.col = 0;
+
+    if (this.visible) {
+      this.startDrawing();
+      this.drawText("mouse: left/right : pan");
+      this.drawText("       up/down : tilt");
+      this.drawText("       click : ptrlock");
+      this.drawText(" keys: a/d : left/right");
+      this.drawText("       w/s : fwd/bkwd");
+      this.drawText("       e/q : up/down");
+      this.drawText("       space : jump");
+      this.drawText("       h : help");
+      this.stopDrawing();
+    }
   }
 
   drawText(text: string) {

@@ -1,43 +1,52 @@
 import p5 from "p5";
 import setupLiveReload from "./live-reload";
+import { Level, Map } from "./level";
 import Player from "./player";
-import World from "./world";
 import { HUD } from "./interface";
-import { SEED } from "./settings";
+
+let map: Map = [
+  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1],
+  [1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 1],
+  [1, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1],
+  [1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1],
+  [1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1],
+  [1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1],
+  [1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+];
 
 new p5((p) => {
+  let font = p.loadFont("inconsolata.otf");
+
+  let level = new Level(p, map);
   let player = new Player(p);
-  let world = new World(p);
   let hud = new HUD(p);
 
-  p.preload = function () {
-    world.loadShaders();
-  };
-
   p.setup = function () {
-    p.noiseSeed(SEED); // Global
+    p.createCanvas(p.windowWidth, p.windowHeight, p.WEBGL);
     p.frameRate(60);
     p.angleMode(p.RADIANS);
+    p.textFont(font);
 
     setupLiveReload();
-    setupCanvas();
-
-    world.generate();
+    level.load();
     player.spawn();
-    player.usePointerLock();
   };
 
-  function setupCanvas() {
-    p.createCanvas(p.windowWidth, p.windowHeight, p.WEBGL);
-    p.windowResized = () => p.resizeCanvas(p.windowWidth, p.windowHeight);
-  }
+  p.windowResized = function () {
+    p.resizeCanvas(p.windowWidth, p.windowHeight);
+    player.setPerspective();
+  };
 
   p.draw = function () {
     p.background(0, 0, 51);
-    p.noStroke();
 
     player.update();
-    world.draw(player.camera.eyeY);
+    level.draw();
     hud.draw();
   };
 

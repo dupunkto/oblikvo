@@ -8,37 +8,72 @@
 
 import p5 from "p5";
 
-import { G, CHUNK_CELL_DIM, CHUNK_HEIGHT, TERRAIN_SPREAD } from "./settings";
-
 const W = 87;
 const A = 65;
 const S = 83;
 const D = 68;
-const SPACE = 32;
+const LEFT = 37;
+const RIGHT = 39;
 
-class Player {
-  p5: p5;
-  camera: p5.Camera;
-  pointerLocked: boolean;
-  onGround: boolean;
-
-  height: number;
-  sensitivity: number;
-  speed: number;
-  reach: number;
-  friction: number;
-  gravity: number;
-  tilt: number;
-  accel: number;
+class Entity {
+  position: p5.Vector;
   velocity: p5.Vector;
+  acceleration: p5.Vector;
+
+  constructor(x, y, z) {
+    this.position = new p5.Vector(x, y, z);
+    this.velocity = new p5.Vector(0, 0, 0);
+    this.acceleration = new p5.Vector(0, 0, 0);
+  }
+
+  update() {
+    this.applyFriction();
+    this.applyGravity();
+
+    this.velocity.add(this.acceleration);
+    this.position.add(this.velocity);
+
+    // Simulate collisions with the ground for now.
+    if (this.position.y < 0) this.position.y = 0;
+  }
+
+  applyGravity() {
+    const gravity = new p5.Vector(0, -9.81, 0);
+    this.acceleration.add(gravity);
+  }
+
+  applyFriction() {
+    const friction = 0.2;
+    this.velocity.mult(friction);
+  }
+}
+
+class Player extends Entity {
+  p5: p5;
+  pointerLocked: boolean;
+
+  speed: number;
+  sensitivity: number;
+
+  fovy: number;
+  pan: number;
+  tilt: number;
 
   constructor(sketch) {
+    super(0, 0, 0);
+
     this.p5 = sketch;
-    this.sensitivity = 0.04;
-    this.height = 250;
-    this.speed = 10;
-    this.friction = 1;
-    this.reach = 1.7;
+    this.speed = 1.3;
+    this.sensitivity = 0.02;
+
+    this.fovy = 1.0;
+    this.pan = 0.0;
+    this.tilt = 0.0;
+  }
+
+  spawn() {
+    this.setPerspective();
+    this.usePointerLock();
   }
 
   usePointerLock() {
@@ -64,86 +99,84 @@ class Player {
     }
   }
 
-  spawn() {
-    this.camera = this.p5.createCamera();
-    this.onGround = false;
-    this.tilt = 0;
-    this.velocity = new p5.Vector(0, 0, 0);
-  }
-
   controller() {
     if (this.pointerLocked) {
       this.yaw((this.p5.movedX * this.sensitivity) / 10);
-      this.pitch((this.p5.movedY * this.sensitivity) / 10);
     }
 
-    if (this.keyDown(W)) this.velocity.z += 1;
-    if (this.keyDown(A)) this.velocity.x += 1;
-    if (this.keyDown(S)) this.velocity.z -= 1;
-    if (this.keyDown(D)) this.velocity.x -= 1;
-    if (this.keyDown(SPACE) && this.onGround) this.jump();
+    if (this.keyDown(W)) this.moveX(this.speed);
+    if (this.keyDown(A)) this.moveY(-this.speed);
+    if (this.keyDown(S)) this.moveX(-this.speed);
+    if (this.keyDown(D)) this.moveY(this.speed);
+    if (this.keyDown(LEFT)) this.yaw(-0.035);
+    if (this.keyDown(RIGHT)) this.yaw(0.035);
   }
 
   keyDown(keyCode) {
     return this.p5.keyIsDown(keyCode);
   }
+
   yaw(angle) {
-    this.camera.pan(-angle);
+    this.pan += angle;
   }
   pitch(angle) {
-    // const prev = this.tilt;
-    // this.tilt -= angle;
-
-    // this.tilt = this.clamp(this.tilt, -Math.PI / 2.01, Math.PI / 2.01);
-    // if (this.tilt == Math.PI / 2.0) this.tilt += 0.001;
-    // this.camera.tilt(prev - this.tilt);
-
-    this.camera.tilt(angle);
+    this.tilt += angle;
+    this.tilt = this.clamp(this.tilt, -Math.PI / 2.01, Math.PI / 2.01);
+    if (this.tilt == Math.PI / 2.0) this.tilt += 0.001;
   }
-  jump() {
-    this.velocity.y -= 3 * this.reach * this.speed;
+
+  moveX(speed) {
+    this.move(this.getFacingDirection(), speed);
+  }
+  moveY(speed) {
+    this.move(this.getNormalDirection(), -speed);
+  }
+  move(direction, speed) {
+    const movement = direction.mult(speed);
+    this.velocity.add(movement);
+  }
+
+  getFacingDirection(): p5.Vector {
+    return new p5.Vector(
+      Math.cos(this.pan),
+      Math.tan(this.tilt),
+      Math.sin(this.pan)
+    ).normalize();
+  }
+  getNormalDirection(): p5.Vector {
+    const a = Math.PI / 2;
+    return new p5.Vector(Math.cos(this.pan - a), 0, Math.sin(this.pan - a));
+  }
+
+  setPerspective() {
+    this.p5.perspective(
+      this.fovy,
+      this.p5.width / this.p5.height,
+      0.01,
+      10000.0
+    );
   }
 
   update() {
     this.controller();
-    this.normalizeVelocity();
-    this.velocity.y += G;
+    super.update(); // Apply physics for all entities.
 
-    const groundY = this.calculateGroundLevel();
-    const playerY = Math.min(this.camera.eyeY + this.velocity.y, groundY);
+    // console.log(this.velocity);
 
-    if (playerY === groundY) {
-      this.onGround = true;
-      this.velocity.y = 0;
-    } else {
-      this.onGround = false;
-    }
+    const direction = this.getFacingDirection();
+    const center = p5.Vector.add(this.position, direction);
 
-    this.camera.move(-this.velocity.x, 0, -this.velocity.z);
-    this.camera.setPosition(this.camera.eyeX, playerY, this.camera.eyeZ);
-
-    this.velocity.x = 0;
-    this.velocity.z = 0;
-  }
-
-  normalizeVelocity() {
-    const speedFactor = this.onGround ? 1 : this.reach;
-    let vertical = this.velocity.y;
-
-    this.velocity.y = 0;
-    this.velocity.normalize().mult(speedFactor * this.speed);
-    this.velocity.y = vertical;
-  }
-
-  calculateGroundLevel() {
-    const chunk_player_x = this.camera.eyeX / CHUNK_CELL_DIM;
-    const chunk_player_z = this.camera.eyeZ / CHUNK_CELL_DIM;
-    const n = this.p5.noise(
-      TERRAIN_SPREAD * chunk_player_x,
-      TERRAIN_SPREAD * chunk_player_z
+    this.p5.camera(
+      this.position.x,
+      this.position.y,
+      this.position.z,
+      center.x,
+      center.y,
+      center.z,
+      0,
+      1,
+      0
     );
-
-    return CHUNK_HEIGHT * n - this.height;
   }
 
   clamp(aNumber, aMin, aMax) {
