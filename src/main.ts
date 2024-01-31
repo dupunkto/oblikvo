@@ -34,6 +34,7 @@ new p5((p) => {
 
   p.draw = function () {
     p.background(0, 0, 51);
+    p.noStroke();
 
     player.update();
     world.draw(player.camera.eyeY);

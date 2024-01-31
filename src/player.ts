@@ -14,11 +14,7 @@ const W = 87;
 const A = 65;
 const S = 83;
 const D = 68;
-const E = 69;
-const Q = 81;
 const SPACE = 32;
-const PLUS = 61;
-const MINUS = 173;
 
 class Player {
   p5: p5;
@@ -39,10 +35,10 @@ class Player {
   constructor(sketch) {
     this.p5 = sketch;
     this.sensitivity = 0.04;
-    this.height = 170;
+    this.height = 250;
     this.speed = 10;
     this.friction = 1;
-    this.reach = 1.2;
+    this.reach = 1.7;
   }
 
   usePointerLock() {
@@ -95,15 +91,17 @@ class Player {
     this.camera.pan(-angle);
   }
   pitch(angle) {
-    const prev = this.tilt;
-    this.tilt -= angle;
+    // const prev = this.tilt;
+    // this.tilt -= angle;
 
-    this.tilt = this.clamp(this.tilt, -Math.PI / 2.01, Math.PI / 2.01);
-    if (this.tilt == Math.PI / 2.0) this.tilt += 0.001;
-    this.camera.tilt(prev - this.tilt);
+    // this.tilt = this.clamp(this.tilt, -Math.PI / 2.01, Math.PI / 2.01);
+    // if (this.tilt == Math.PI / 2.0) this.tilt += 0.001;
+    // this.camera.tilt(prev - this.tilt);
+
+    this.camera.tilt(angle);
   }
   jump() {
-    this.velocity.y -= 2 * this.reach * this.speed;
+    this.velocity.y -= 3 * this.reach * this.speed;
   }
 
   update() {
