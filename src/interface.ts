@@ -59,7 +59,7 @@ export class HUD extends Element {
 
     this.visible = true;
     this.x = 10;
-    this.y = 10;
+    this.y = 20;
   }
 
   draw() {

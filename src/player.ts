@@ -19,11 +19,18 @@ class Entity {
   position: p5.Vector;
   velocity: p5.Vector;
   acceleration: p5.Vector;
+  dimensions: p5.Vector;
+  onGround: boolean;
 
   constructor(x, y, z) {
+    this.dimensions = new p5.Vector(1, 3, 1);
     this.position = new p5.Vector(x, y, z);
     this.velocity = new p5.Vector(0, 0, 0);
     this.acceleration = new p5.Vector(0, 0, 0);
+  }
+
+  spawn() {
+    // Can be implemented by children.
   }
 
   update() {
@@ -38,8 +45,8 @@ class Entity {
   }
 
   applyGravity() {
-    const gravity = new p5.Vector(0, -9.81, 0);
-    this.acceleration.add(gravity);
+    const acceleration = new p5.Vector(0, -9.81, 0);
+    this.velocity.add(acceleration);
   }
 
   applyFriction() {
@@ -159,9 +166,7 @@ class Player extends Entity {
 
   update() {
     this.controller();
-    super.update(); // Apply physics for all entities.
-
-    // console.log(this.velocity);
+    super.update();
 
     const direction = this.getFacingDirection();
     const center = p5.Vector.add(this.position, direction);
