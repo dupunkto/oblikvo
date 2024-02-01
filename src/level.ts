@@ -1,8 +1,10 @@
 import p5 from "p5";
-import Entity from "./player";
+import { Entity } from "./player";
 
 export type Tile = number;
 export type Map = Tile[][];
+
+const BLOCKSIZE = 10;
 
 class Block {
   position: p5.Vector;
@@ -30,12 +32,13 @@ class Level {
   load() {
     this.entities = [];
     this.blocks = [];
-    this.loadBlocks(5);
+    this.loadBlocks();
   }
 
-  loadBlocks(size) {
+  loadBlocks() {
     for (let i = 0; i < this.map.length; i++) {
       for (let j = 0; j < this.map[i].length; j++) {
+        const size = BLOCKSIZE;
         const color = this.p5.color(this.p5.random(150, 200));
         const y = this.isGroundTile(this.map[i][j]) ? -size : 0;
 
@@ -50,9 +53,7 @@ class Level {
   }
 
   spawn(entity: Entity) {
-    entity.spawn();
-    entity.position = new p5.Vector(5, 0, 5);
-
+    entity.spawn(BLOCKSIZE, 0, BLOCKSIZE);
     this.entities.push(entity);
   }
 

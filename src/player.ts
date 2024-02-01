@@ -15,22 +15,22 @@ const D = 68;
 const LEFT = 37;
 const RIGHT = 39;
 
-class Entity {
+export class Entity {
   position: p5.Vector;
   velocity: p5.Vector;
   acceleration: p5.Vector;
   dimensions: p5.Vector;
   onGround: boolean;
 
-  constructor(x, y, z) {
-    this.dimensions = new p5.Vector(1, 3, 1);
-    this.position = new p5.Vector(x, y, z);
+  constructor() {
+    this.dimensions = new p5.Vector(3, 3, 3);
+    this.position = new p5.Vector(0, 0, 0);
     this.velocity = new p5.Vector(0, 0, 0);
     this.acceleration = new p5.Vector(0, 0, 0);
   }
 
-  spawn() {
-    // Can be implemented by children.
+  spawn(x, y, z) {
+    this.position = new p5.Vector(x, y, z);
   }
 
   update() {
@@ -50,64 +50,33 @@ class Entity {
   }
 
   applyFriction() {
-    const friction = 0.2;
+    const friction = 0.1;
     this.velocity.mult(friction);
   }
 }
 
-class Player extends Entity {
+export class Player extends Entity {
   p5: p5;
-  pointerLocked: boolean;
-
   speed: number;
   sensitivity: number;
-
-  fovy: number;
   pan: number;
   tilt: number;
+  isMoving: boolean;
+  useMouseControls: boolean;
 
   constructor(sketch) {
-    super(0, 0, 0);
-
+    super();
     this.p5 = sketch;
-    this.speed = 1.3;
+    this.speed = 8;
     this.sensitivity = 0.02;
-
-    this.fovy = 1.0;
     this.pan = 0.0;
     this.tilt = 0.0;
-  }
-
-  spawn() {
-    this.setPerspective();
-    this.usePointerLock();
-  }
-
-  usePointerLock() {
-    this.pointerLocked = false;
-
-    document.addEventListener("click", () => this.togglePointerLock());
-    document.addEventListener("pointerlockchange", () => this.unlockPointer());
-  }
-
-  togglePointerLock() {
-    if (this.pointerLocked) {
-      this.p5.exitPointerLock();
-      this.pointerLocked = false;
-    } else {
-      this.pointerLocked = true;
-      this.p5.requestPointerLock();
-    }
-  }
-
-  unlockPointer() {
-    if (document.pointerLockElement != this.p5.canvas) {
-      this.pointerLocked = false;
-    }
+    this.isMoving = false;
+    this.useMouseControls = false;
   }
 
   controller() {
-    if (this.pointerLocked) {
+    if (this.useMouseControls) {
       this.yaw((this.p5.movedX * this.sensitivity) / 10);
     }
 
@@ -115,8 +84,8 @@ class Player extends Entity {
     if (this.keyDown(A)) this.moveY(-this.speed);
     if (this.keyDown(S)) this.moveX(-this.speed);
     if (this.keyDown(D)) this.moveY(this.speed);
-    if (this.keyDown(LEFT)) this.yaw(-0.035);
-    if (this.keyDown(RIGHT)) this.yaw(0.035);
+    if (this.keyDown(LEFT)) this.yaw(-0.04);
+    if (this.keyDown(RIGHT)) this.yaw(0.04);
   }
 
   keyDown(keyCode) {
@@ -141,6 +110,7 @@ class Player extends Entity {
   move(direction, speed) {
     const movement = direction.mult(speed);
     this.velocity.add(movement);
+    this.isMoving = true;
   }
 
   getFacingDirection(): p5.Vector {
@@ -155,33 +125,22 @@ class Player extends Entity {
     return new p5.Vector(Math.cos(this.pan - a), 0, Math.sin(this.pan - a));
   }
 
-  setPerspective() {
-    this.p5.perspective(
-      this.fovy,
-      this.p5.width / this.p5.height,
-      0.01,
-      10000.0
-    );
+  update() {
+    this.isMoving = false;
+
+    // Apply player controls
+    this.controller();
+    if (this.isMoving) this.normalizeVelocity();
+
+    // Apply general physics
+    super.update();
   }
 
-  update() {
-    this.controller();
-    super.update();
-
-    const direction = this.getFacingDirection();
-    const center = p5.Vector.add(this.position, direction);
-
-    this.p5.camera(
-      this.position.x,
-      this.position.y,
-      this.position.z,
-      center.x,
-      center.y,
-      center.z,
-      0,
-      1,
-      0
-    );
+  normalizeVelocity() {
+    let verticalVelocity = this.velocity.y;
+    this.velocity.y = 0;
+    this.velocity.normalize().mult(this.speed);
+    this.velocity.y = verticalVelocity;
   }
 
   clamp(aNumber, aMin, aMax) {
@@ -189,4 +148,77 @@ class Player extends Entity {
   }
 }
 
-export default Player;
+export class Camera {
+  p5: p5;
+  fov: number;
+  intensity: number;
+  offset: number;
+  isShaking: boolean;
+
+  constructor(sketch) {
+    this.p5 = sketch;
+    this.fov = 1;
+    this.intensity = 1.2;
+    this.offset = 0.0;
+  }
+
+  setPerspective() {
+    this.p5.perspective(
+      this.fov,
+      this.p5.width / this.p5.height,
+      0.01,
+      10000.0
+    );
+  }
+
+  shake(duration: number) {
+    this.isShaking = true;
+    setTimeout(() => (this.isShaking = false), duration);
+  }
+
+  follow(player: Player) {
+    const direction = player.getFacingDirection();
+    const position = player.position;
+    const center = p5.Vector.add(position, direction);
+
+    // if (player.isMoving) {
+    //   this.fov = 1.1;
+    //   this.setPerspective();
+    // } else {
+    //   this.fov = 1.0; // Default.
+    //   this.setPerspective();
+    // }
+
+    if (this.isShaking) {
+      let shakeIntensity = 5 * this.intensity;
+
+      this.p5.translate(
+        this.p5.random(-shakeIntensity, shakeIntensity),
+        this.p5.random(-shakeIntensity, shakeIntensity)
+      );
+    }
+
+    let bobbingAmount = Math.pow(Math.sin(this.offset), 2) * this.intensity;
+    if (player.isMoving) this.offset += 0.1; // || this.inTheMiddleOfABob()
+
+    let offset = bobbingAmount + 1.5;
+
+    this.p5.camera(
+      position.x,
+      position.y - offset,
+      position.z,
+      center.x,
+      center.y - offset,
+      center.z,
+      0,
+      1,
+      0
+    );
+  }
+
+  // inTheMiddleOfABob() {
+  //   let offset = Math.sin(this.offset);
+  //   let threshold = 0.5;
+  //   return offset > threshold || offset < -threshold;
+  // }
+}
