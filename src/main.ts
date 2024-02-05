@@ -28,8 +28,8 @@ new p5((p) => {
     p.createCanvas(p.windowWidth, p.windowHeight, p.WEBGL);
     p.frameRate(60);
     p.angleMode(p.RADIANS);
-    p.noStroke();
     p.textFont(font);
+    p.noStroke();
 
     setupLiveReload();
     level.load();
@@ -60,6 +60,8 @@ new p5((p) => {
     p.background(0, 0, 51);
 
     player.update();
+    p.pointLight(255, 255, 255, player.position);
+
     level.collisions();
     camera.follow(player);
     level.draw();
