@@ -1,17 +1,21 @@
 {
-  "name": "radiotopian",
-  "description": "Open-world resource-gathering survival game written using p5js.",
+  "name": "oblikvo",
+  "description": "A browser-based 3D first-person shooter with old school graphics and multiplayer support.",
   "author": "{du}punkto",
+  "type": "module",
   "license": "Unlicense",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dupunkto/radiotopian.git"
+    "url": "git+https://git.dupunkto.org/oblikvo.git"
   },
   "bugs": {
-    "url": "https://github.com/dupunkto/radiotopian/issues"
+    "url": "https://github.com/dupunkto/oblikvo/issues"
   },
   "dependencies": {
-    "p5": "^1.7.0"
+    "express": "^4.18.2",
+    "p5": "^1.7.0",
+    "socket.io": "^4.7.4",
+    "socket.io-client": "^4.7.4"
   },
   "devDependencies": {
     "esbuild": "0.19.2",

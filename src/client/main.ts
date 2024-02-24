@@ -1,4 +1,6 @@
 import p5 from "p5";
+import io from "socket.io-client";
+
 import setupLiveReload from "./live-reload";
 import { Level, Map } from "./level";
 import { Player, Camera } from "./player";
@@ -17,6 +19,8 @@ let map: Map = [
 ];
 
 new p5((p) => {
+  const socket = io();
+
   let camera = new Camera(p);
   let level = new Level(p, map);
   let player = new Player(p);

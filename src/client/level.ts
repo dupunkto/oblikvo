@@ -4,7 +4,7 @@ import { Entity } from "./player";
 export type Tile = number;
 export type Map = Tile[][];
 
-const BLOCKSIZE = 10;
+const BLOCKSIZE = 12;
 
 class Block {
   position: p5.Vector;

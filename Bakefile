@@ -1,19 +1,30 @@
 #!/bin/bash -eu
 
+DIST="dist"
+ES_FLAGS="--bundle --outfile=public/main.js"
+
 build() {
   clean
-  esbuild src/main.ts --bundle --minify --sourcemap --copy-files --outfile=dist/dist/main.js
-  cp public/* dist/
+  esbuild src/client/main.ts $ES_FLAGS
+
+  mkdir "$DIST"
+  cp public/* "$$DIST"/
 }
 
 clean() {
-  [ -e "dist" ] && rm -rf dist
-  [ -e "public/main.js" ] && rm -rf public/main.js
+  p:clean_if_exists dist
+  p:clean_if_exists public/main.js
+}
+
+p:clean_if_exists() {
+  [ -e "$1" ] && rm -rf "$1"
 }
 
 serve() {
-  trap clean 1 2 3 6
-  esbuild src/main.ts --bundle --outfile=public/main.js --watch --serve=4000 --servedir=public
+  trap clean 1 2 3 6 9
+
+  node src/server/main.js &
+  esbuild src/client/main.ts $ES_FLAGS --watch
 }
 
 format() {

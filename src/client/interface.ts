@@ -28,7 +28,7 @@ class Element {
       0,
       0,
       1,
-      0
+      0,
     );
     this.p5.ortho(
       -this.p5.width / 2,
@@ -36,7 +36,7 @@ class Element {
       -this.p5.height / 2,
       this.p5.height / 2,
       0,
-      1000
+      1000,
     );
     this.p5.translate(-this.p5.width / 2, -this.p5.height / 2);
   }
