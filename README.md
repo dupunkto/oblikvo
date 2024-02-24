@@ -56,6 +56,7 @@ One of the important design goals of the game is hackability. You should be
 able to create levels yourself easily. We're thinking about encoding levels in
 a multi-dimensional array:
 
+```level
 1111111111111111
 10000000x1111111
 100000000x111111
@@ -63,7 +64,9 @@ a multi-dimensional array:
 10000000000x1111
 100000000000x111
 1111111111111111
+```
 
+```level
 1111111111111111
 1111111000000X11
 1111111000000X11
@@ -71,10 +74,11 @@ a multi-dimensional array:
 1111111000000X11
 1111111000000X11
 1111111111111111
+```
 
-Above is an example level layout. A 0 indicates an empty space, a 1 a filled
-space and an x a launchpad. An X is a launchpad that launched you two blocks
-high. One block is a little higher than the height of the player.
+Above is an example level layout with two floors. A 0 indicates an empty space,
+a 1 a filled space and an x a launchpad. An X is a launchpad that launched you
+two blocks high. One block is a little higher than the height of the player.
 
 The game should aesthetically be similar to a classic retro game, like
 Wolfenstein 3D. We're thinking of doing that by adding a shader to the end of
