@@ -21,6 +21,7 @@ export class Entity {
   acceleration: p5.Vector;
   dimensions: p5.Vector;
   onGround: boolean;
+  againstWall: boolean;
 
   constructor() {
     this.dimensions = new p5.Vector(3, 3, 3);
@@ -34,6 +35,10 @@ export class Entity {
   }
 
   update() {
+    // These will be set when collisions are checked.
+    this.onGround = false;
+    this.againstWall = false;
+
     this.applyFriction();
     this.applyGravity();
 
@@ -117,7 +122,7 @@ export class Player extends Entity {
     return new p5.Vector(
       Math.cos(this.pan),
       Math.tan(this.tilt),
-      Math.sin(this.pan),
+      Math.sin(this.pan)
     ).normalize();
   }
   getNormalDirection(): p5.Vector {
@@ -167,7 +172,7 @@ export class Camera {
       this.fov,
       this.p5.width / this.p5.height,
       0.01,
-      10000.0,
+      10000.0
     );
   }
 
@@ -194,12 +199,13 @@ export class Camera {
 
       this.p5.translate(
         this.p5.random(-shakeIntensity, shakeIntensity),
-        this.p5.random(-shakeIntensity, shakeIntensity),
+        this.p5.random(-shakeIntensity, shakeIntensity)
       );
     }
 
     let bobbingAmount = Math.pow(Math.sin(this.offset), 2) * this.intensity;
-    if (player.isMoving) this.offset += 0.1; // || this.inTheMiddleOfABob()
+    console.log(player.againstWall);
+    if (player.isMoving && !player.againstWall) this.offset += 0.1;
 
     let offset = bobbingAmount + 1.5;
 
@@ -212,13 +218,7 @@ export class Camera {
       center.z,
       0,
       1,
-      0,
+      0
     );
   }
-
-  // inTheMiddleOfABob() {
-  //   let offset = Math.sin(this.offset);
-  //   let threshold = 0.5;
-  //   return offset > threshold || offset < -threshold;
-  // }
 }

@@ -114,8 +114,10 @@ class Level {
       if (xOverlap < yOverlap && xOverlap < zOverlap) {
         if (boxLeftOverlap < boxRightOverlap) {
           entity.position.x = boxLeft - entity.dimensions.x / 2;
+          entity.againstWall = true;
         } else {
           entity.position.x = boxRight + entity.dimensions.x / 2;
+          entity.againstWall = true;
         }
       } else if (yOverlap < xOverlap && yOverlap < zOverlap) {
         if (boxTopOverlap < boxBottomOverlap) {
@@ -128,8 +130,10 @@ class Level {
       } else if (zOverlap < xOverlap && zOverlap < yOverlap) {
         if (boxFrontOverlap < boxBackOverlap) {
           entity.position.z = boxFront - entity.dimensions.x / 2;
+          entity.againstWall = true;
         } else {
           entity.position.z = boxBack + entity.dimensions.x / 2;
+          entity.againstWall = true;
         }
       }
     }
