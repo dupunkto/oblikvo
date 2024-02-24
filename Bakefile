@@ -6,14 +6,41 @@ SRC="src/client/main.ts"
 PUBLIC="public"
 DIST="dist"
 
-ESBUILD="esbuild $SRC"
-ES_FLAGS="--bundle --outfile=$PUBLIC/main.js"
+ESBUILD="esbuild $SRC --bundle"
+
+setup() {
+  bun install
+}
+
+format() {
+  prettier --write .
+}
 
 build() {
-  clean
-  $ESBUILD $ES_FLAGS 
+  if [ -e "$DIST" ]; then
+    echo >&2 "Error: Already built. Run \`clean\` first"
+    echo >&2
+    exit 1
+  fi
+
   mkdir "$DIST"
   cp "$PUBLIC"/* "$DIST"/
+
+  $ESBUILD --outdir="$DIST"
+}
+
+serve() {
+  export DIST
+  bun run src/server/main.ts
+}
+
+dev() {
+  # We serve from `public` in dev mode, because
+  # because otherwise the server has to be restarted
+  # for static assets to be rebuilt.
+  
+  DIST="$PUBLIC" serve &
+  $ESBUILD --watch --outdir="$PUBLIC"
 }
 
 clean() {
@@ -25,14 +52,4 @@ p:clean_if_exists() {
   if [ -e "$1" ]; then
     rm -rf "$1"
   fi
-}
-
-serve() {
-  clean
-  node src/server/main.js &
-  $ESBUILD $ES_FLAGS --watch
-}
-
-format() {
-  prettier --write .
 }

@@ -9,7 +9,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-const staticAssets = "public";
+const staticAssets = process.env.DIST;
 app.use(express.static(staticAssets));
 
 io.on("connection", (socket) => {

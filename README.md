@@ -8,19 +8,24 @@ teacher sure lóves shitty languages.
 
 ## Development
 
-This project uses [Bake](https://git.dupunkto.org/meta/dotfiles/tree/bin/bake). To build the project, simply run it:
+This project uses the amazing [Bun runtime](https://bun.sh) coupled with a `Bakefile`, a easy Bash-based replacement for `Makefile`. To build, run [`bake`](https://git.dupunkto.org/meta/dotfiles/tree/bin/bake):
 
 ```shell
 bake
 ```
 
-The `dist` folder will contain the bundled, minified JS + sourcemap to put on your server :)
-(We have a sourcemap because I like it if people can read the code)
+The bundled, minified JS + sourcemap for the client will be build into the `dist` folder, along with any static assets.
 
-Additionally, our `Bakefile` also includes a snippet for starting a live server with code reloading:
+To start the socket.io backend server, run:
 
 ```shell
 bake serve
+```
+
+Additionally, our `Bakefile` also includes a snippet for starting a live server with code reloading. This automatically builds the frontend and watches for code changes while also running a backend server. This is the preferred mode to use in development.
+
+```shell
+bake dev
 ```
 
 ## Design ideas
