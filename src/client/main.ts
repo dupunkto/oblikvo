@@ -1,7 +1,6 @@
 import p5 from "p5";
 import io from "socket.io-client";
 
-import setupLiveReload from "./live-reload";
 import { Level, Map } from "./level";
 import { Player, Camera } from "./player";
 import { HUD } from "./interface";
@@ -35,7 +34,6 @@ new p5((p) => {
     p.textFont(font);
     p.noStroke();
 
-    setupLiveReload();
     level.load();
     level.spawn(player);
     camera.setPerspective();

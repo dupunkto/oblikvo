@@ -1,6 +1,10 @@
+// The node `http` module is implemented by Bun to use
+// Bun.serve() under-the-hood (so it's fast :D). I could
+// rewrite the entire server to use their fancy Websockets API,
+// but I'm lazy; we're sticking to socket.io for now.
+
 import express from "express";
 import http from "http";
-import path from "path";
 import { Server } from "socket.io";
 
 const PORT = 4000;
