@@ -30,10 +30,21 @@ bake dev
 
 ## Design ideas
 
-The goal is to get the most kills ("slashes") within a set timespan of about three
-minutes. With one caveat however: every time you respawn, your stats get bumped
-a little bit; this way the power imbalance between new players and experienced
-players will be a little more fair, and hopefully it will make the game more fun.
+This game was built as a project for computer science. Our aim was to push 
+ourselves to see if we could defy all expectations and build a 3D multiplayer 
+game :)
+
+We tried to build a game that we would like ourselves. That means pixelated 
+retro graphics, fast pacing and multiplayer fun. It also means that the game 
+should be simple and easy to understand for new players. The premise is simple: 
+here's a laser gun, have fun!
+
+We might add multiple game modes later, but for now the only game mode will be
+"slash". In this gamemode the goal is to  get the most kills ("slashes") within 
+a set timespan of about three minutes. With one caveat however: every time you 
+respawn, your stats get bumped a little bit; this way the power imbalance between 
+new players and experienced players will be a little more fair, and hopefully 
+it will make the game more fun.
 
 Matches are intentionally short and chaotic by design. Short matches make
 people go "let's play another one". It creates a rapid feedback loop, and
@@ -41,6 +52,37 @@ most people like rapid feedback loops. This makes the game fun, which is one
 of the lenses of game design that we needed to implement in our game. We also
 incorporate the lens of surprise, by making the rounds unpredictable and
 chaotic.
+
+<details>
+  <summary>(Other) ways in which we incorporate the element of surprise</summary>
+
+  <ul>
+    <li>
+      By making a 3D game without any game engine, using a framework that was
+      designed for making interactive/generative art and visualisations.
+    </li>
+    <li>
+      By making the game multiplayer, we might surprise our teacher. Same for
+      our exotic build pipeline I guess.
+    </li>
+    <li>
+      By making the matches short and chaotic.
+    </li>
+    <li>
+      The main game mechanic of our primary game mode ("slash") is surprising.
+    </li>
+    <li>
+      The name is weird and goofy?
+    </li>
+  </ul>
+</details>
+
+Another game mode we might consider is "teams", in which players could make teams
+themselves beforehand.
+
+We wanted the game to be easy to pickup, but also easy to put away again. 
+We want to build something that is fun, and brings people together, not 
+something that nurtures addiction.
 
 The game should be played with at least 5 players. They can join in two ways:
 
@@ -55,7 +97,8 @@ The game should be played with at least 5 players. They can join in two ways:
 
 Oblikvo should support multiple input methods. Most notably, mouse/keyboard,
 bluetooth controllers (such as Xbox, Playstation and Joycons) and on-screen
-touchscreen controls.
+touchscreen controls (because we expect our playerbase to primarily play via
+their smartphones). This makes the game accessible to a wide audience :)
 
 One of the important design goals of the game is hackability. You should be
 able to create levels yourself easily. We're thinking about encoding levels in
@@ -91,6 +134,14 @@ our drawing pipeline that pixelates the video buffer. We also want items and
 entities to be 2D planes that are always oriented towards the player, similar
 to enemies in retro games and dropped items in Minecraft.
 
+There should be as much feedback on player actions as possible. Think FOV 
+changes while walking, head bobbing, visual knockback when firing a gun,
+red vignette when health is low, camera effects when being hit. This makes the
+player feel more in control over the game. It also helps immerse the player in the
+game (I think). And it looks cool too.
+
 Another cool idea is that there would be no UI. It would be part of the
 environment. Think healthbars on your gun, enemy health overlayed in a
-gradient over their sprite, ammo stats scrolling over the walls.
+gradient over their sprite, ammo stats scrolling over the walls. 
+(This is surprising too?)
+
