@@ -5,23 +5,24 @@
 
 import express from "express";
 import http from "http";
-import { Server } from "socket.io";
+import { Server as SocketIO } from "socket.io";
+
+import { State, Connection } from "./server";
 
 const PORT = 4000;
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new SocketIO(server);
 
 const staticAssets = process.env.DIST;
 app.use(express.static(staticAssets));
 
-io.on("connection", (socket) => {
-  console.log("A user connected");
+// Maps client ID to a mutable `State`.
+const games = {};
 
-  socket.on("disconnect", () => {
-    console.log("User disconnected");
-  });
+io.on("connection", (socket) => {
+  new Connection(socket);
 });
 
 server.listen(PORT, () => {

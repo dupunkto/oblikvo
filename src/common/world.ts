@@ -1,5 +1,5 @@
 import p5 from "p5";
-import { Entity } from "./player";
+import { Entity } from "./entity";
 
 export type Tile = number;
 export type Map = Tile[][];
@@ -16,30 +16,29 @@ class Block {
     this.dimensions = new p5.Vector(size, size, size);
     this.color = color;
   }
+
+  draw(sketch: p5) {
+    sketch.push();
+    sketch.translate(this.position.x, -this.position.y, this.position.z);
+    sketch.fill(this.color);
+    sketch.box(this.dimensions.x, this.dimensions.y, this.dimensions.z);
+    sketch.pop();
+  }
 }
 
 class Level {
-  p5: p5;
   map: Map;
-  entities: Entity[];
   blocks: Block[];
 
-  constructor(sketch: p5, map: Map) {
-    this.p5 = sketch;
+  constructor(map: Map) {
     this.map = map;
   }
 
   load() {
-    this.entities = [];
-    this.blocks = [];
-    this.loadBlocks();
-  }
-
-  loadBlocks() {
     for (let i = 0; i < this.map.length; i++) {
       for (let j = 0; j < this.map[i].length; j++) {
         const size = BLOCKSIZE;
-        const color = this.p5.color(this.p5.random(150, 200));
+        const color = p5.color(this.randomNumber(150, 200));
         const y = this.isGroundTile(this.map[i][j]) ? -size : 0;
 
         const block = new Block(i * size, y, j * size, size, color);
@@ -48,42 +47,59 @@ class Level {
     }
   }
 
-  isGroundTile(col: Tile): boolean {
-    return col === 0;
+  isGroundTile(tile: Tile): boolean {
+    return tile === 0;
+  }
+
+  randomNumber(min, max): number {
+    return Math.random() * (max - min) + min;
+  }
+
+  draw(sketch: p5) {
+    this.blocks.forEach((block) => block.draw(sketch));
+  }
+}
+
+export class World {
+  level: Level;
+  entities: Entity[];
+
+  constructor() {
+    this.entities = [];
+  }
+
+  load() {
+    let map: Map = [
+      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+      [1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+      [1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1],
+      [1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+      [1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1],
+      [1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1],
+      [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1],
+      [1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1],
+      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    ];
+
+    this.level = new Level(map);
   }
 
   spawn(entity: Entity) {
-    entity.spawn(BLOCKSIZE, 0, BLOCKSIZE);
+    entity.spawn();
     this.entities.push(entity);
   }
 
-  draw() {
-    this.blocks.forEach((block) => this.placeBlock(block));
-  }
-
-  placeBlock(block) {
-    this.p5.push();
-    this.p5.translate(block.position.x, -block.position.y, block.position.z);
-    this.p5.fill(block.color);
-    this.p5.box(block.dimensions.x, block.dimensions.y, block.dimensions.z);
-    this.p5.pop();
-  }
-
-  collisions() {
-    this.entities.forEach((entity) => {
-      this.blocks.forEach((block) => {
-        this.collide(entity, block);
-      });
-    });
+  draw(sketch: p5) {
+    this.level.draw(sketch);
   }
 
   collide(entity: Entity, block: Block) {
-    let playerLeft = entity.position.x - entity.dimensions.x / 2;
-    let playerRight = entity.position.x + entity.dimensions.x / 2;
-    let playerTop = entity.position.y - entity.dimensions.y / 2;
-    let playerBottom = entity.position.y + entity.dimensions.y / 2;
-    let playerFront = entity.position.z - entity.dimensions.z / 2;
-    let playerBack = entity.position.z + entity.dimensions.z / 2;
+    let entityLeft = entity.position.x - entity.dimensions.x / 2;
+    let entityRight = entity.position.x + entity.dimensions.x / 2;
+    let entityTop = entity.position.y - entity.dimensions.y / 2;
+    let entityBottom = entity.position.y + entity.dimensions.y / 2;
+    let entityFront = entity.position.z - entity.dimensions.z / 2;
+    let entityBack = entity.position.z + entity.dimensions.z / 2;
 
     let boxLeft = block.position.x - block.dimensions.x / 2;
     let boxRight = block.position.x + block.dimensions.x / 2;
@@ -92,20 +108,20 @@ class Level {
     let boxFront = block.position.z - block.dimensions.z / 2;
     let boxBack = block.position.z + block.dimensions.z / 2;
 
-    let boxLeftOverlap = playerRight - boxLeft;
-    let boxRightOverlap = boxRight - playerLeft;
-    let boxTopOverlap = playerBottom - boxTop;
-    let boxBottomOverlap = boxBottom - playerTop;
-    let boxFrontOverlap = playerBack - boxFront;
-    let boxBackOverlap = boxBack - playerFront;
+    let boxLeftOverlap = entityRight - boxLeft;
+    let boxRightOverlap = boxRight - entityLeft;
+    let boxTopOverlap = entityBottom - boxTop;
+    let boxBottomOverlap = boxBottom - entityTop;
+    let boxFrontOverlap = entityBack - boxFront;
+    let boxBackOverlap = boxBack - entityFront;
 
     if (
-      ((playerLeft > boxLeft && playerLeft < boxRight) ||
-        (playerRight > boxLeft && playerRight < boxRight)) &&
-      ((playerTop > boxTop && playerTop < boxBottom) ||
-        (playerBottom > boxTop && playerBottom < boxBottom)) &&
-      ((playerFront > boxFront && playerFront < boxBack) ||
-        (playerBack > boxFront && playerBack < boxBack))
+      ((entityLeft > boxLeft && entityLeft < boxRight) ||
+        (entityRight > boxLeft && entityRight < boxRight)) &&
+      ((entityTop > boxTop && entityTop < boxBottom) ||
+        (entityBottom > boxTop && entityBottom < boxBottom)) &&
+      ((entityFront > boxFront && entityFront < boxBack) ||
+        (entityBack > boxFront && entityBack < boxBack))
     ) {
       let xOverlap = Math.max(Math.min(boxLeftOverlap, boxRightOverlap), 0);
       let yOverlap = Math.max(Math.min(boxTopOverlap, boxBottomOverlap), 0);
@@ -139,5 +155,3 @@ class Level {
     }
   }
 }
-
-export { Level };
