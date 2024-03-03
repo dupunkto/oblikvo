@@ -21,7 +21,7 @@ export async function newGame() {
   joinGame(inviteCode);
 }
 
-export function joinGame(inviteCode: string | null = null) {
+export function joinGame(inviteCode: string = "") {
   while (!inviteCode) inviteCode = prompt("Invite code?") || "";
   window.location.hash = inviteCode;
 

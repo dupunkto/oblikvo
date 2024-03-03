@@ -6,8 +6,6 @@ SRC="src/client/main.ts"
 PUBLIC="public"
 DIST="dist"
 
-ESBUILD="esbuild $SRC --bundle"
-
 setup() {
   bun install
 }
@@ -26,12 +24,12 @@ build() {
   mkdir "$DIST"
   cp "$PUBLIC"/* "$DIST"/
 
-  $ESBUILD --outdir="$DIST"
+  bun build "$SRC" --outdir="$DIST"
 }
 
 serve() {
   export DIST
-  bun run src/server/main.ts
+  bun --hot src/server/main.ts
 }
 
 dev() {
@@ -40,7 +38,7 @@ dev() {
   # for static assets to be rebuilt.
   
   DIST="$PUBLIC" serve &
-  $ESBUILD --watch --outdir="$PUBLIC"
+  bun build "$SRC" --watch --outdir="$PUBLIC"
 }
 
 clean() {

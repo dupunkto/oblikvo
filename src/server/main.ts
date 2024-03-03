@@ -11,8 +11,8 @@ const lookup: Lookup = {};
 const io = initializeServer();
 
 io.on("connection", (client) => {
-  let room;
-  let world;
+  let room: string;
+  let world: World;
 
   client.once("newGame", newGame);
   client.once("joinGame", joinGame);
@@ -41,15 +41,16 @@ io.on("connection", (client) => {
       world = lookup[inviteCode];
       world.spawn(client.id, player);
 
-      client.emit("joinedGame", client.id);
+      client.emit("joinedGame", world);
       io.to(room).emit("entitySpawned", client.id, player);
     }
   }
 
-  // Only the properties of a p5.Vector are serialized, hence the {x, y, z}.
-  function handleMovement(direction: { x: number; y: number; z: number }) {
-    const player = world.entities[client.id];
-    player.move(new p5.Vector(direction));
+  // Only the properties of a Vector are serialized, hence the {x, y, z}.
+  function handleMovement({ x, y, z }: p5.Vector) {
+    // @ts-ignore the client.id always returns a `Player`.
+    const player: Player = world.entities[client.id];
+    player.move(new p5.Vector(x, y, z));
 
     io.to(room).emit("entityMoved", client.id, player);
   }

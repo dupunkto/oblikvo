@@ -17,7 +17,12 @@ export class Oblikvo {
   world: World;
 
   constructor(client: Client) {
-    this.p5 = new p5();
+    this.p5 = new p5((p) => {
+      p.setup = () => this.setup();
+      p.windowResized = () => this.windowResized();
+      p.draw = () => this.draw();
+    }, document.body);
+
     this.client = client;
 
     this.camera = new Camera(this.p5);
@@ -46,9 +51,7 @@ export class Oblikvo {
   }
 
   unlockPointer() {
-    if (document.pointerLockElement != this.p5.canvas) {
-      this.camera.useMouseControls = false;
-    }
+    this.camera.useMouseControls = false;
   }
 
   public windowResized() {

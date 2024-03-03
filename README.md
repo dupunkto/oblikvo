@@ -11,6 +11,7 @@ teacher sure lóves shitty languages.
 This project uses the amazing [Bun runtime](https://bun.sh) coupled with a `Bakefile`, a easy Bash-based replacement for `Makefile`. To build, run [`bake`](https://git.dupunkto.org/meta/dotfiles/tree/bin/bake):
 
 ```shell
+bake setup # Installs dependencies
 bake
 ```
 

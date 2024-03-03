@@ -23,7 +23,7 @@ export class Camera {
   isShaking: boolean;
   useMouseControls: boolean;
 
-  constructor(sketch) {
+  constructor(sketch: p5) {
     this.p5 = sketch;
     this.pan = 0.0;
     this.tilt = 0.0;
@@ -31,6 +31,8 @@ export class Camera {
     this.sensitivity = 0.02;
     this.intensity = 1.2;
     this.offset = 0.0;
+    this.isShaking = false;
+    this.useMouseControls = false;
   }
 
   public setPerspective() {
@@ -42,11 +44,11 @@ export class Camera {
     );
   }
 
-  yaw(angle) {
+  yaw(angle: number) {
     this.pan += angle;
   }
 
-  pitch(angle) {
+  pitch(angle: number) {
     this.tilt += angle;
     this.tilt = this.clamp(this.tilt, -Math.PI / 2.01, Math.PI / 2.01);
     if (this.tilt == Math.PI / 2.0) this.tilt += 0.001;
@@ -66,7 +68,7 @@ export class Camera {
     if (this.keyDown(RIGHT)) this.yaw(2 * this.sensitivity);
   }
 
-  keyDown(keyCode) {
+  keyDown(keyCode: number) {
     return this.p5.keyIsDown(keyCode);
   }
 

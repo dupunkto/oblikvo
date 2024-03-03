@@ -12,6 +12,8 @@
     "url": "https://github.com/dupunkto/oblikvo/issues"
   },
   "dependencies": {
+    "@types/p5": "^1.7.6",
+    "@types/web": "^0.0.140",
     "express": "^4.18.2",
     "p5": "^1.7.0",
     "socket.io": "^4.7.4",

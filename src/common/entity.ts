@@ -1,13 +1,13 @@
-import p5 from "p5";
+import { Vector } from "p5";
 
 const G = 9.81;
 const FRICTION = 0.1;
 const SPEED = 8;
 
 export class Entity {
-  position: p5.Vector;
-  velocity: p5.Vector;
-  dimensions: p5.Vector;
+  position: Vector;
+  velocity: Vector;
+  dimensions: Vector;
   speed: number;
 
   onGround: boolean;
@@ -15,13 +15,17 @@ export class Entity {
   isMoving: boolean;
 
   constructor() {
-    this.position = new p5.Vector(0, 0, 0);
-    this.velocity = new p5.Vector(0, 0, 0);
-    this.dimensions = new p5.Vector(3, 3, 3);
+    this.position = new Vector(0, 0, 0);
+    this.velocity = new Vector(0, 0, 0);
+    this.dimensions = new Vector(3, 3, 3);
     this.speed = SPEED;
+
+    this.onGround = false;
+    this.againstWall = false;
+    this.isMoving = false;
   }
 
-  public spawn(position: p5.Vector) {
+  public spawn(position: Vector) {
     this.position = position;
     // TODO(robin): add other logic here later :)
   }
@@ -43,7 +47,7 @@ export class Entity {
   }
 
   applyGravity() {
-    const acceleration = new p5.Vector(0, -G, 0);
+    const acceleration = new Vector(0, -G, 0);
     this.velocity.add(acceleration);
   }
 
@@ -57,7 +61,7 @@ export class Entity {
 // controlling its movement.
 
 export class Player extends Entity {
-  public move(direction: p5.Vector) {
+  public move(direction: Vector) {
     this.velocity.add(direction);
     this.isMoving = true;
   }

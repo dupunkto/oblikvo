@@ -1,17 +1,17 @@
 import p5 from "p5";
-import { Entity } from "./entity";
+import { Entity, Player } from "./entity";
 
-export type Tile = number;
 export type Map = Tile[][];
+export type Tile = number;
 
 const BLOCKSIZE = 12;
 
-class Block {
+export class Block {
   position: p5.Vector;
   dimensions: p5.Vector;
   color: p5.Color;
 
-  constructor(x, y, z, size, color) {
+  constructor(x: number, y: number, z: number, size: number, color: p5.Color) {
     this.position = new p5.Vector(x, y, z);
     this.dimensions = new p5.Vector(size, size, size);
     this.color = color;
@@ -26,19 +26,38 @@ class Block {
   }
 }
 
-class Level {
-  map: Map;
-  blocks: Block[];
+export class World {
+  public map: Map;
+  public entities: {
+    [id: string]: Entity | Player;
+  };
 
-  constructor(map: Map) {
-    this.map = map;
+  private blocks: Block[];
+
+  constructor() {
+    this.map = [
+      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+      [1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+      [1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1],
+      [1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+      [1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1],
+      [1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1],
+      [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1],
+      [1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1],
+      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    ];
+
+    this.blocks = [];
+    this.entities = {};
+
+    this.loadMap();
   }
 
-  load() {
+  public loadMap() {
     for (let i = 0; i < this.map.length; i++) {
       for (let j = 0; j < this.map[i].length; j++) {
         const size = BLOCKSIZE;
-        const color = p5.color(this.randomNumber(150, 200));
+        const color = randomColor();
         const y = this.isGroundTile(this.map[i][j]) ? -size : 0;
 
         const block = new Block(i * size, y, j * size, size, color);
@@ -51,41 +70,6 @@ class Level {
     return tile === 0;
   }
 
-  randomNumber(min: number, max: number): number {
-    return Math.random() * (max - min) + min;
-  }
-
-  draw(sketch: p5) {
-    this.blocks.forEach((block) => block.draw(sketch));
-  }
-}
-
-export class World {
-  level: Level;
-  entities: {
-    [id: string]: Entity;
-  };
-
-  constructor() {
-    this.entities = {};
-  }
-
-  load() {
-    let map: Map = [
-      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-      [1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-      [1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1],
-      [1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
-      [1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1],
-      [1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1],
-      [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1],
-      [1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1],
-      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    ];
-
-    this.level = new Level(map);
-  }
-
   spawn(id: string, entity: Entity) {
     let initialCoordinates = new p5.Vector(0, 0, 0);
     entity.spawn(initialCoordinates);
@@ -93,8 +77,13 @@ export class World {
     this.entities[id] = entity;
   }
 
-  draw(sketch: p5) {
-    this.level.draw(sketch);
+  update() {
+    for (let id in this.entities) {
+      const entity = this.entities[id];
+      entity.update();
+
+      this.blocks.forEach((block) => this.collide(entity, block));
+    }
   }
 
   collide(entity: Entity, block: Block) {
@@ -158,4 +147,23 @@ export class World {
       }
     }
   }
+}
+
+function randomColor(): p5.Color {
+  const c: number = randomNumber(100, 200);
+  return newColor(c, c, c);
+}
+
+function randomNumber(min: number, max: number): number {
+  return Math.random() * (max - min) + min;
+}
+
+function newColor(r: number, g: number, b: number) {
+  const color = new p5.Color();
+
+  color.setRed(r);
+  color.setGreen(g);
+  color.setBlue(b);
+
+  return color;
 }
