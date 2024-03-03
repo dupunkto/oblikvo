@@ -14,7 +14,7 @@ This project uses the amazing [Bun runtime](https://bun.sh) coupled with a `Bake
 bake
 ```
 
-The bundled, minified JS + sourcemap for the client will be build into the `dist` folder, along with any static assets.
+The bundled, minified JS + sourcemap for the client will be built into the `dist` folder, along with any static assets.
 
 To start the socket.io backend server, run:
 
@@ -30,20 +30,20 @@ bake dev
 
 ## Design ideas
 
-This game was built as a project for computer science. Our aim was to push 
-ourselves to see if we could defy all expectations and build a 3D multiplayer 
+This game was built as a project for computer science. Our aim was to push
+ourselves to see if we could defy all expectations and build a 3D multiplayer
 game :)
 
-We tried to build a game that we would like ourselves. That means pixelated 
-retro graphics, fast pacing and multiplayer fun. It also means that the game 
-should be simple and easy to understand for new players. The premise is simple: 
+We tried to build a game that we would like ourselves. That means pixelated
+retro graphics, fast pacing and multiplayer fun. It also means that the game
+should be simple and easy to understand for new players. The premise is simple:
 here's a laser gun, have fun!
 
 We might add multiple game modes later, but for now the only game mode will be
-"slash". In this gamemode the goal is to  get the most kills ("slashes") within 
-a set timespan of about three minutes. With one caveat however: every time you 
-respawn, your stats get bumped a little bit; this way the power imbalance between 
-new players and experienced players will be a little more fair, and hopefully 
+"slash". In this game mode, the goal is to get the most kills ("slashes") within
+a set timespan of about three minutes. With one caveat however: every time you
+respawn, your stats get bumped a little bit; this way the power imbalance between
+new players and experienced players will be a little more fair, and hopefully
 it will make the game more fun.
 
 Matches are intentionally short and chaotic by design. Short matches make
@@ -80,13 +80,13 @@ chaotic.
 Another game mode we might consider is "teams", in which players could make teams
 themselves beforehand.
 
-We wanted the game to be easy to pickup, but also easy to put away again. 
-We want to build something that is fun, and brings people together, not 
+We wanted the game to be easy to pickup, but also easy to put away again.
+We want to build something that is fun, and brings people together, not
 something that nurtures addiction.
 
 The game should be played with at least 5 players. They can join in two ways:
 
-- By playing the game in their webbrowser. It automatically connects to the
+- By playing the game in their web browser. It automatically connects to the
   backend of the server it's running on. Only an invite code is needed.
 
 - By playing the game via desktop client (built with Tauri). Think "Open to
@@ -102,7 +102,7 @@ their smartphones). This makes the game accessible to a wide audience :)
 
 One of the important design goals of the game is hackability. You should be
 able to create levels yourself easily. We're thinking about encoding levels in
-a multi-dimensional array:
+a multidimensional array:
 
 ```level
 1111111111111111
@@ -125,7 +125,7 @@ a multi-dimensional array:
 ```
 
 Above is an example level layout with two floors. A 0 indicates an empty space,
-a 1 a filled space and an x a launchpad. An X is a launchpad that launched you
+a 1 a filled space, and an x a launchpad. An X is a launchpad that launched you
 two blocks high. One block is a little higher than the height of the player.
 
 The game should aesthetically be similar to a classic retro game, like
@@ -134,14 +134,13 @@ our drawing pipeline that pixelates the video buffer. We also want items and
 entities to be 2D planes that are always oriented towards the player, similar
 to enemies in retro games and dropped items in Minecraft.
 
-There should be as much feedback on player actions as possible. Think FOV 
+There should be as much feedback on player actions as possible. Think FOV
 changes while walking, head bobbing, visual knockback when firing a gun,
 red vignette when health is low, camera effects when being hit. This makes the
 player feel more in control over the game. It also helps immerse the player in the
 game (I think). And it looks cool too.
 
 Another cool idea is that there would be no UI. It would be part of the
-environment. Think healthbars on your gun, enemy health overlayed in a
-gradient over their sprite, ammo stats scrolling over the walls. 
+environment. Think health bars on your gun, enemy health overlaid in a
+gradient over their sprite, ammo stats scrolling over the walls.
 (This is surprising too?)
-
