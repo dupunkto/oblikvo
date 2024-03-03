@@ -71,7 +71,7 @@ export class Camera {
   }
 
   public follow(entity: Entity) {
-    const direction = this.getFacingDirection();
+    const direction = this.facingDirection;
     const position = entity.position;
     const center = p5.Vector.add(position, direction);
 
@@ -102,7 +102,7 @@ export class Camera {
     );
   }
 
-  public getFacingDirection(): p5.Vector {
+  public get facingDirection(): p5.Vector {
     return new p5.Vector(
       Math.cos(this.pan),
       Math.tan(this.tilt),
@@ -110,7 +110,7 @@ export class Camera {
     ).normalize();
   }
 
-  public getNormalDirection(): p5.Vector {
+  public get normalDirection(): p5.Vector {
     const a = Math.PI / 2;
     return new p5.Vector(Math.cos(this.pan - a), 0, Math.sin(this.pan - a));
   }

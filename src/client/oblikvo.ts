@@ -16,16 +16,13 @@ export class Oblikvo {
   player: Entity;
   world: World;
 
-  constructor(sketch: p5, inviteCode: string) {
-    this.p5 = sketch;
-    this.player = new Entity();
-    this.client = new Client();
-    this.camera = new Camera(sketch);
+  constructor(client: Client) {
+    this.p5 = new p5();
+    this.client = client;
 
-    this.client.join(inviteCode);
-    this.client.load((world) => {
-      this.world = world;
-    });
+    this.camera = new Camera(this.p5);
+    this.world = this.client.world;
+    this.player = this.client.player;
   }
 
   public setup() {
@@ -73,18 +70,14 @@ export class Oblikvo {
     this.camera.controller();
 
     const movement = new p5.Vector();
-    const facing = this.camera.getFacingDirection();
-    const normal = this.camera.getNormalDirection();
+    const facing = this.camera.facingDirection;
+    const normal = this.camera.normalDirection;
 
-    if (this.keyDown(W)) movement.add(facing);
-    if (this.keyDown(A)) movement.add(p5.Vector.mult(normal, -1));
-    if (this.keyDown(S)) movement.add(p5.Vector.mult(facing, -1));
-    if (this.keyDown(D)) movement.add(normal);
+    if (this.p5.keyIsDown(W)) movement.add(facing);
+    if (this.p5.keyIsDown(A)) movement.add(p5.Vector.mult(normal, -1));
+    if (this.p5.keyIsDown(S)) movement.add(p5.Vector.mult(facing, -1));
+    if (this.p5.keyIsDown(D)) movement.add(normal);
 
     if (movement.mag() > 0) this.client.broadcast("move", movement);
-  }
-
-  keyDown(keyCode) {
-    return this.p5.keyIsDown(keyCode);
   }
 }
