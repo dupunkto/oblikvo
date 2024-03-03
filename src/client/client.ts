@@ -5,10 +5,10 @@ import { Entity } from "../common/entity";
 import { World } from "../common/world";
 
 export class Client {
-  socket: Socket;
+  server: Socket;
 
   join(inviteCode: string) {
-    this.socket = io();
+    this.server = io();
   }
 
   load(callback: (world: World) => void) {}

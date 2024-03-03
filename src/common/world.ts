@@ -51,7 +51,7 @@ class Level {
     return tile === 0;
   }
 
-  randomNumber(min, max): number {
+  randomNumber(min: number, max: number): number {
     return Math.random() * (max - min) + min;
   }
 
@@ -62,10 +62,12 @@ class Level {
 
 export class World {
   level: Level;
-  entities: Entity[];
+  entities: {
+    [id: string]: Entity;
+  };
 
   constructor() {
-    this.entities = [];
+    this.entities = {};
   }
 
   load() {
@@ -84,9 +86,11 @@ export class World {
     this.level = new Level(map);
   }
 
-  spawn(entity: Entity) {
-    entity.spawn();
-    this.entities.push(entity);
+  spawn(id: string, entity: Entity) {
+    let initialCoordinates = new p5.Vector(0, 0, 0);
+    entity.spawn(initialCoordinates);
+
+    this.entities[id] = entity;
   }
 
   draw(sketch: p5) {

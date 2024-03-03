@@ -27,7 +27,7 @@ export class Entity {
   }
 
   public update() {
-    // These will be set later, when checking 
+    // These will be set later, when checking
     // collisions etc.
     this.isMoving = false;
     this.onGround = false;
@@ -53,10 +53,10 @@ export class Entity {
   }
 }
 
-// A `Player` is an `Entity` with an API for 
+// A `Player` is an `Entity` with an API for
 // controlling its movement.
 
-class Player extends Entity {
+export class Player extends Entity {
   public move(direction: p5.Vector) {
     this.velocity.add(direction);
     this.isMoving = true;
