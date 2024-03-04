@@ -1,88 +1,36 @@
 import p5 from "p5";
-import { Entity, Player } from "./entity";
 
-export type Map = Tile[][];
-export type Tile = number;
+import { Lookup } from "../common/types";
+import { Map } from "../common/types";
+import { Block } from "../common/block";
+import { Level } from "../common/level";
+import { Entity } from "./entity";
 
-const BLOCKSIZE = 12;
+import { CommonWorld } from "../common/interface/world";
 
-export class Block {
-  position: p5.Vector;
-  dimensions: p5.Vector;
-  color: p5.Color;
+export class World implements CommonWorld {
+  entities: Lookup<Entity> = {};
+  map: Map;
+  level: Level;
 
-  constructor(x: number, y: number, z: number, size: number, color: p5.Color) {
-    this.position = new p5.Vector(x, y, z);
-    this.dimensions = new p5.Vector(size, size, size);
-    this.color = color;
+  constructor(map: Map) {
+    this.map = map;
+    this.level = new Level(map);
   }
 
-  draw(sketch: p5) {
-    sketch.push();
-    sketch.translate(this.position.x, -this.position.y, this.position.z);
-    sketch.fill(this.color);
-    sketch.box(this.dimensions.x, this.dimensions.y, this.dimensions.z);
-    sketch.pop();
-  }
-}
-
-export class World {
-  public map: Map;
-  public entities: {
-    [id: string]: Entity | Player;
-  };
-
-  private blocks: Block[];
-
-  constructor() {
-    this.map = [
-      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-      [1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-      [1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1],
-      [1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
-      [1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1],
-      [1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1],
-      [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1],
-      [1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1],
-      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    ];
-
-    this.blocks = [];
-    this.entities = {};
-
-    this.loadMap();
-  }
-
-  public loadMap() {
-    for (let i = 0; i < this.map.length; i++) {
-      for (let j = 0; j < this.map[i].length; j++) {
-        const size = BLOCKSIZE;
-        const color = randomColor();
-        const y = this.isGroundTile(this.map[i][j]) ? -size : 0;
-
-        const block = new Block(i * size, y, j * size, size, color);
-        this.blocks.push(block);
-      }
-    }
-  }
-
-  isGroundTile(tile: Tile): boolean {
-    return tile === 0;
-  }
-
-  spawn(id: string, entity: Entity) {
+  public spawn(id: string, entity: Entity) {
     let initialCoordinates = new p5.Vector(0, 0, 0);
     entity.spawn(initialCoordinates);
 
     this.entities[id] = entity;
   }
 
-  update() {
+  public update() {
     for (let id in this.entities) {
       const entity = this.entities[id];
       entity.update();
 
-      this.blocks.forEach((block) => this.collide(entity, block));
+      this.level.blocks.forEach((block) => this.collide(entity, block));
     }
   }
 
@@ -147,23 +95,4 @@ export class World {
       }
     }
   }
-}
-
-function randomColor(): p5.Color {
-  const c: number = randomNumber(100, 200);
-  return newColor(c, c, c);
-}
-
-function randomNumber(min: number, max: number): number {
-  return Math.random() * (max - min) + min;
-}
-
-function newColor(r: number, g: number, b: number) {
-  const color = new p5.Color();
-
-  color.setRed(r);
-  color.setGreen(g);
-  color.setBlue(b);
-
-  return color;
 }

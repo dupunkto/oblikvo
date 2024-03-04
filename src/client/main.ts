@@ -21,10 +21,10 @@ export async function newGame() {
   joinGame(inviteCode);
 }
 
-export function joinGame(inviteCode: string = "") {
+export async function joinGame(inviteCode: string = "") {
   while (!inviteCode) inviteCode = prompt("Invite code?") || "";
   window.location.hash = inviteCode;
 
-  client.join(inviteCode);
+  await client.join(inviteCode);
   new Oblikvo(client);
 }

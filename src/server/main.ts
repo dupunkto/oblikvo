@@ -1,12 +1,12 @@
 import p5 from "p5";
+import { Lookup, Map } from "../common/types";
 import { initializeServer } from "./server";
 
-import { Player } from "../common/entity";
-import { World } from "../common/world";
+import { Player } from "./entity";
+import { World } from "./world";
 
 // Maps client ID or invite code to a mutable `World`.
-type Lookup = { [inviteCode: string]: World };
-const lookup: Lookup = {};
+const lookup: Lookup<World> = {};
 
 const io = initializeServer();
 
@@ -21,12 +21,14 @@ io.on("connection", (client) => {
 
   function newGame() {
     const inviteCode = randomID();
-    createGame(inviteCode);
+    const map = randomMap();
+
+    createGame(map, inviteCode);
     joinGame(inviteCode);
   }
 
-  function createGame(inviteCode: string) {
-    world = new World();
+  function createGame(map: Map, inviteCode: string) {
+    world = new World(map);
     lookup[inviteCode] = world;
 
     client.emit("createdGame", inviteCode);
@@ -46,7 +48,7 @@ io.on("connection", (client) => {
     }
   }
 
-  // Only the properties of a Vector are serialized, hence the {x, y, z}.
+  // Only the properties of a p5.Vector are serialized, hence the {x, y, z}.
   function handleMovement({ x, y, z }: p5.Vector) {
     // @ts-ignore the client.id always returns a `Player`.
     const player: Player = world.entities[client.id];
@@ -62,4 +64,21 @@ io.on("connection", (client) => {
 
 function randomID() {
   return (Math.random() + 1).toString(36).substring(7);
+}
+
+function randomMap(): Map {
+  // TODO(robin): this will be loaded from elsewhere,
+  // like a file or smth :)
+
+  return [
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1],
+    [1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+  ];
 }

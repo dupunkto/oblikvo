@@ -7,7 +7,8 @@
 // I reimplemented the entire library from scratch.
 
 import p5 from "p5";
-import { Entity } from "../common/entity";
+
+import { CommonEntity } from "../common/interface/entity";
 
 const LEFT = 37;
 const RIGHT = 39;
@@ -72,7 +73,7 @@ export class Camera {
     return this.p5.keyIsDown(keyCode);
   }
 
-  public follow(entity: Entity) {
+  public follow(entity: CommonEntity) {
     const direction = this.facingDirection;
     const position = entity.position;
     const center = p5.Vector.add(position, direction);

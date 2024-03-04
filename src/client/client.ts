@@ -1,20 +1,20 @@
 import { io, Socket } from "socket.io-client";
 
-import { Entity } from "../common/entity";
-import { World, Level } from "../common/world";
+import { CommonEntity } from "../common/interface/entity";
+import { CommonWorld } from "../common/interface/world";
+
+import { World } from "./world";
 
 export class Client {
   server: Socket;
   world: World;
-  player: Entity;
 
-  // `undefined` is the connection is broken.
+  // `undefined` if the connection is broken.
   id: string | undefined;
 
   constructor() {
     this.server = io();
     this.world = new World();
-    this.player = new Entity();
 
     this.server.on("connected", () => {
       this.id = this.server.id;
@@ -22,34 +22,31 @@ export class Client {
     });
   }
 
-  join(inviteCode: string) {
+  async join(inviteCode: string): Promise<void> {
     this.server.emit("joinGame", inviteCode);
-    this.server.on("joinedGame", (world) => {
-      this.cast(world);
-    });
-  }
 
-  // This variable contains the structure of the `World`
-  // class and it's children, but doesn't have all the attached
-  // methods etc. This function copies the data from this
-  // "shell" to the internal world state the game uses.
-  cast(world: any) {
-    this.world.entities = world.entities.forEach((data: object) =>
-      Object.assign(new Entity(), data)
-    );
+    return new Promise((resolve) => {
+      // Return after the world has been loaded.
+      this.server.on("joinedGame", (world: CommonWorld) => {
+        this.world.load(world);
+        resolve();
+      });
+    });
   }
 
   async new(): Promise<string> {
     this.server.emit("newGame");
 
     return new Promise((resolve) => {
-      // Returns the inviteCode.
+      // Return the inviteCode.
       this.server.on("createdGame", resolve);
     });
   }
 
-  // @ts-ignore TODO(robin)
-  load(callback: (world: World) => void) {}
+  public get player(): CommonEntity {
+    if (!this.id) throw "Client not connected.";
+    return this.world.entities[this.id];
+  }
 
   broadcast(event: string, ...params: any) {
     this.server.emit(event, params);

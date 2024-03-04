@@ -1,8 +1,10 @@
 import p5 from "p5";
-import { Entity } from "../common/entity";
-import { World } from "../common/world";
+
+import { CommonEntity } from "../common/interface/entity";
+
 import { Client } from "./client";
 import { Camera } from "./camera";
+import { World } from "./world";
 
 const W = 87;
 const A = 65;
@@ -13,8 +15,6 @@ export class Oblikvo {
   p5: p5;
   client: Client;
   camera: Camera;
-  player: Entity;
-  world: World;
 
   constructor(client: Client) {
     this.p5 = new p5((p) => {
@@ -24,10 +24,15 @@ export class Oblikvo {
     }, document.body);
 
     this.client = client;
-
     this.camera = new Camera(this.p5);
-    this.world = this.client.world;
-    this.player = this.client.player;
+  }
+
+  public get world(): World {
+    return this.client.world;
+  }
+
+  public get player(): CommonEntity {
+    return this.client.player;
   }
 
   public setup() {
