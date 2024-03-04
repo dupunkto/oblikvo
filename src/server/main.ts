@@ -5,6 +5,8 @@ import { initializeServer } from "./server";
 import { Player } from "./entity";
 import { World } from "./world";
 
+const FPS = 60;
+
 // Maps client ID or invite code to a mutable `World`.
 const lookup: Lookup<World> = {};
 
@@ -32,6 +34,16 @@ io.on("connection", (client) => {
     lookup[inviteCode] = world;
 
     client.emit("createdGame", inviteCode);
+
+    // Start the game loop.
+    gameLoop();
+  }
+
+  function gameLoop() {
+    world.update();
+    io.to(room).emit("update", world);
+
+    setTimeout(gameLoop, 1000 / FPS);
   }
 
   function joinGame(inviteCode: string) {
