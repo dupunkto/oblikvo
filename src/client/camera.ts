@@ -8,7 +8,7 @@
 
 import p5 from "p5";
 
-import { CommonEntity } from "../common/interface/entity";
+import { CommonEntity } from "../common/interfaces";
 
 const LEFT = 37;
 const RIGHT = 39;

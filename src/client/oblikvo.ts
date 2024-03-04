@@ -1,6 +1,6 @@
 import p5 from "p5";
 
-import { CommonEntity } from "../common/interface/entity";
+import { CommonEntity } from "../common/interfaces";
 
 import { Client } from "./client";
 import { Camera } from "./camera";

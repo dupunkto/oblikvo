@@ -1,7 +1,7 @@
 import { io, Socket } from "socket.io-client";
 
-import { CommonEntity } from "../common/interface/entity";
-import { CommonWorld } from "../common/interface/world";
+import { CommonEntity } from "../common/interfaces";
+import { CommonWorld } from "../common/interfaces";
 
 import { World } from "./world";
 

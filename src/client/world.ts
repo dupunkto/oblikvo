@@ -1,7 +1,7 @@
 import p5 from "p5";
 
-import { CommonEntity } from "../common/interface/entity";
-import { CommonWorld } from "../common/interface/world";
+import { CommonEntity } from "../common/interfaces";
+import { CommonWorld } from "../common/interfaces";
 
 import { Lookup } from "../common/types";
 import { Map } from "../common/types";
