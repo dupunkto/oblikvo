@@ -56,13 +56,11 @@ class Oblikvo {
       this.level = new Level(map);
       this.camera = new Camera(renderer);
 
-      // renderer.setup = () => this.setup();
-      // renderer.draw = () => this.draw();
-      // renderer.windowResized = () => this.windowResized();
-
       this.bindMethod("setup");
       this.bindMethod("draw");
       this.bindMethod("windowResized");
+
+      this.registerHandler("update");
 
       this.hideMenu();
     }, document.body);
@@ -78,6 +76,7 @@ class Oblikvo {
 
   public setup() {
     console.log(this.entities);
+    console.log(this.level);
 
     this.p5.createCanvas(
       this.p5.windowWidth,
@@ -110,6 +109,10 @@ class Oblikvo {
   public windowResized() {
     this.p5.resizeCanvas(this.p5.windowWidth, this.p5.windowHeight);
     this.camera.setPerspective();
+  }
+
+  public update(state: State) {
+    this.entities = state.entities;
   }
 
   public draw() {
@@ -176,10 +179,10 @@ class Oblikvo {
     });
   }
 
-  public registerHandler(event: string, callback: Function) {
+  public registerHandler(event: string) {
     this.server.on(event, (params) => {
       dbg(`Receiving ${event}`);
-      callback(params);
+      this[event](params);
     });
   }
 }
