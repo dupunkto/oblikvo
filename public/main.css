@@ -19,13 +19,13 @@ body {
   text-transform: lowercase;
 }
 
-html {
+html:has(main) {
   background: #fcdf9b;
   border: 10px solid #fd4f08;
   padding: 10px;
 }
 
-body {
+body:has(main) {
   border: 7px solid #020202;
 }
 
