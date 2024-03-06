@@ -7,7 +7,7 @@ import express from "express";
 import http from "http";
 import { Server as SocketIO } from "socket.io";
 
-const STATIC = process.env["DIST"] || "public";
+const STATIC = process.env["DIST"] || "dist";
 const PORT = 4000;
 
 export function initializeServer() {
@@ -17,7 +17,7 @@ export function initializeServer() {
   app.use(express.static(STATIC));
 
   server.listen(PORT, () => {
-    console.log(`Listening on http://localhost:${PORT}`);
+    console.log(`Serving './${STATIC}' on http://localhost:${PORT}`);
   });
 
   return new SocketIO(server);

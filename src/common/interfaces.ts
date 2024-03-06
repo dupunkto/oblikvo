@@ -1,8 +1,8 @@
-import p5 from "p5";
+import p5 from "p5-node";
 
 import type { Map, Lookup } from "./types";
 
-export interface CommonEntity {
+export interface Entity {
   position: p5.Vector;
   velocity: p5.Vector;
   dimensions: p5.Vector;
@@ -12,7 +12,7 @@ export interface CommonEntity {
   isMoving: boolean;
 }
 
-export interface CommonWorld {
-  entities: Lookup<CommonEntity>;
+export interface State {
   map: Map;
+  entities: Lookup<Entity>;
 }

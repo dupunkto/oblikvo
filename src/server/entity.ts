@@ -1,6 +1,6 @@
-import p5 from "p5";
+import p5 from "p5-node";
 
-import { CommonEntity } from "../common/interfaces";
+import { Entity as CommonEntity } from "../common/interfaces";
 
 const G = 9.81;
 const FRICTION = 0.1;

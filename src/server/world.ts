@@ -1,4 +1,4 @@
-import p5 from "p5";
+import p5 from "p5-node";
 
 import { Lookup } from "../common/types";
 import { Map } from "../common/types";

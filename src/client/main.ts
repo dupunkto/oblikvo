@@ -1,11 +1,10 @@
-import { Client } from "./client";
-import { Oblikvo } from "./oblikvo";
+import Oblikvo from "./oblikvo";
 
-const client = new Client();
+const client = new Oblikvo();
 
 // Invite URLs look like this:
 // example.com#abcdefu
-let inviteCode = window.location.hash;
+let inviteCode = window.location.hash.replace("#", "");
 
 // If the URL already contains an invite code, join
 // the game right away. Otherwise, we render a simple
@@ -16,15 +15,20 @@ if (inviteCode) {
   joinGame(inviteCode);
 }
 
-export async function newGame() {
+async function newGame() {
+  console.log("Creating new game");
+
   let inviteCode = await client.new();
   joinGame(inviteCode);
 }
 
-export async function joinGame(inviteCode: string = "") {
+async function joinGame(inviteCode: string = "") {
   while (!inviteCode) inviteCode = prompt("Invite code?") || "";
   window.location.hash = inviteCode;
 
   await client.join(inviteCode);
-  new Oblikvo(client);
 }
+
+// Make public API available globally.
+window.newGame = newGame;
+window.joinGame = joinGame;

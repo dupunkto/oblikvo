@@ -1,4 +1,4 @@
-import p5 from "p5";
+import p5 from "p5-node";
 import { Lookup, Map } from "../common/types";
 import { initializeServer } from "./server";
 
@@ -13,6 +13,8 @@ const lookup: Lookup<World> = {};
 const io = initializeServer();
 
 io.on("connection", (client) => {
+  console.log("A new client connected.");
+
   let room: string;
   let world: World;
 
@@ -36,14 +38,16 @@ io.on("connection", (client) => {
     client.emit("createdGame", inviteCode);
 
     // Start the game loop.
-    gameLoop();
+    gameLoop(inviteCode);
   }
 
-  function gameLoop() {
-    world.update();
-    io.to(room).emit("update", world);
+  function gameLoop(inviteCode: string) {
+    const world = lookup[inviteCode];
 
-    setTimeout(gameLoop, 1000 / FPS);
+    world.update();
+    io.to(inviteCode).emit("update", world);
+
+    setTimeout(() => gameLoop(inviteCode), 1000 / FPS);
   }
 
   function joinGame(inviteCode: string) {

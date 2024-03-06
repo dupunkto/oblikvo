@@ -1,19 +1,11 @@
-// This is a reimplementation of p5.RoverCam(v1.1) by freshfork,
-// which is a derivative of QueasyCam (v1.5) by Josh Castle.
-//
-// Original QueasyCam was licensed GPL, however RoverCam is somehow licensed MIT.
-// I opened an issue (https://github.com/freshfork/p5.RoverCam/issues/6),
-// but I can't be sure. To prevent the entire game from becoming GPL,
-// I reimplemented the entire library from scratch.
-
 import p5 from "p5";
 
-import { CommonEntity } from "../common/interfaces";
+import { Entity } from "../common/interfaces";
 
 const LEFT = 37;
 const RIGHT = 39;
 
-export class Camera {
+class Camera {
   p5: p5;
   pan: number;
   tilt: number;
@@ -73,7 +65,7 @@ export class Camera {
     return this.p5.keyIsDown(keyCode);
   }
 
-  public follow(entity: CommonEntity) {
+  public follow(entity: Entity) {
     const direction = this.facingDirection;
     const position = entity.position;
     const center = p5.Vector.add(position, direction);
@@ -122,3 +114,5 @@ export class Camera {
     return num > max ? max : num < min ? min : num;
   }
 }
+
+export default Camera;
