@@ -17,5 +17,5 @@ function randomColor(): string {
 }
 
 function randomNumber(min: number, max: number): number {
-  return Math.random() * (max - min) + min;
+  return Math.round(Math.random() * (max - min) + min);
 }
