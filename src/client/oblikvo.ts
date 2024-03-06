@@ -14,11 +14,12 @@ const A = 65;
 const S = 83;
 const D = 68;
 
+function dbg(message) {
+  console.log(message);
+}
+
 class Oblikvo {
   server: Socket;
-
-  // `undefined` if the connection is broken.
-  id: string | undefined;
 
   // `undefined` before a game is joined.
   p5: p5 | undefined;
@@ -29,66 +30,55 @@ class Oblikvo {
   constructor() {
     this.server = io();
     this.entities = {};
-
-    this.server.on("connected", () => {
-      this.id = this.server.id;
-      console.log("Connected to server.");
-    });
   }
 
   async new(): Promise<string> {
-    this.server.emit("newGame");
+    this.broadcast("newGame");
 
-    return new Promise((resolve) => {
-      // Return the inviteCode.
-      this.server.on("createdGame", resolve);
-    });
+    // Return the inviteCode.
+    return this.receive("createdGame");
   }
 
   async join(inviteCode: string): Promise<void> {
-    console.log(`Joining ${inviteCode}`);
-    this.server.emit("joinGame", inviteCode);
+    this.broadcast("joinGame", inviteCode);
 
-    return new Promise((resolve) => {
-      // Return after the world has been loaded.
-      this.server.once("joinedGame", async (state: State) => {
-        console.log(`Joined ${inviteCode}`);
+    const state = await this.receive("joinedGame");
+    await this.startGame(state);
 
-        await this.startGame(state);
-        resolve();
-      });
-    });
+    return;
   }
 
   async startGame({ map, entities }: State) {
-    console.log("yay");
-    const renderer = await this.createRenderer();
+    new p5((renderer) => {
+      this.p5 = renderer;
 
-    this.p5 = renderer;
-    this.entities = entities;
-    this.level = new Level(map);
-    this.camera = new Camera(renderer);
+      this.entities = entities;
+      this.level = new Level(map);
+      this.camera = new Camera(renderer);
+
+      // renderer.setup = () => this.setup();
+      // renderer.draw = () => this.draw();
+      // renderer.windowResized = () => this.windowResized();
+
+      this.bindMethod("setup");
+      this.bindMethod("draw");
+      this.bindMethod("windowResized");
+
+      this.hideMenu();
+    }, document.body);
   }
 
-  async createRenderer(): Promise<p5> {
-    return new Promise((resolve) => {
-      new p5((p) => {
-        console.log(p);
-        resolve(p);
-
-        p.setup = this.setup;
-        p.draw = this.draw;
-        p.windowResized = this.windowResized;
-      }, document.body);
-    });
+  bindMethod(method: any) {
+    this.p5[method] = () => this[method]();
   }
 
-  public get player(): Entity {
-    if (!this.id) throw "Not connected.";
-    return this.entities[this.id];
+  hideMenu() {
+    document.querySelector("main")?.remove();
   }
 
   public setup() {
+    console.log(this.entities);
+
     this.p5.createCanvas(
       this.p5.windowWidth,
       this.p5.windowHeight,
@@ -129,8 +119,8 @@ class Oblikvo {
     this.controller();
     this.camera.follow(this.player);
 
-    for (let block of this.level.blocks) this.drawBlock(sketch, block);
-    for (let id in this.entities) this.drawEntity(sketch, this.entities[id]);
+    for (let block of this.level.blocks) this.drawBlock(block);
+    for (let id in this.entities) this.drawEntity(this.entities[id]);
   }
 
   controller() {
@@ -141,9 +131,9 @@ class Oblikvo {
     const normal = this.camera.normalDirection;
 
     if (this.p5.keyIsDown(W)) movement.add(facing);
-    if (this.p5.keyIsDown(A)) movement.add(p5.Vector.mult(normal, -1));
-    if (this.p5.keyIsDown(S)) movement.add(p5.Vector.mult(facing, -1));
     if (this.p5.keyIsDown(D)) movement.add(normal);
+    if (this.p5.keyIsDown(A)) movement.add(normal.mult(-1));
+    if (this.p5.keyIsDown(S)) movement.add(facing.mult(-1));
 
     if (movement.mag() > 0) this.broadcast("move", movement);
   }
@@ -167,8 +157,30 @@ class Oblikvo {
     this.p5.box(dimensions.x, dimensions.y, dimensions.z);
   }
 
+  public get player(): Entity {
+    if (!this.server.id) throw "Not connected.";
+    return this.entities[this.server.id];
+  }
+
   public broadcast(event: string, ...params: any) {
+    dbg(`Broadcasting ${event}`);
     this.server.emit(event, params);
+  }
+
+  public async receive(event: string): Promise<any> {
+    return new Promise((resolve) => {
+      this.server.once(event, (params) => {
+        dbg(`Receiving ${event}`);
+        resolve(params);
+      });
+    });
+  }
+
+  public registerHandler(event: string, callback: Function) {
+    this.server.on(event, (params) => {
+      dbg(`Receiving ${event}`);
+      callback(params);
+    });
   }
 }
 

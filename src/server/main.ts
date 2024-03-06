@@ -60,7 +60,6 @@ io.on("connection", (client) => {
       world.spawn(client.id, player);
 
       client.emit("joinedGame", world);
-      io.to(room).emit("entitySpawned", client.id, player);
     }
   }
 
@@ -69,11 +68,10 @@ io.on("connection", (client) => {
     // @ts-ignore the client.id always returns a `Player`.
     const player: Player = world.entities[client.id];
     player.move(new p5.Vector(x, y, z));
-
-    io.to(room).emit("entityMoved", client.id, player);
   }
 
   client.on("disconnect", () => {
+    if (world) delete world.entities[client.id];
     console.log("A client left the game.");
   });
 });
