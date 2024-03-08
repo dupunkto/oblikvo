@@ -129,6 +129,8 @@ Above is an example level layout with two floors. A 0 indicates an empty space,
 a 1 a filled space, and an x a launchpad. An X is a launchpad that launched you
 two blocks high. One block is a little higher than the height of the player.
 
+The process of making levels should be further automated using a level editor.
+
 The game should aesthetically be similar to a classic retro game, like
 Wolfenstein 3D. We're thinking of doing that by adding a shader to the end of
 our drawing pipeline that pixelates the video buffer. We also want items and
@@ -150,30 +152,24 @@ gradient over their sprite, ammo stats scrolling over the walls.
 
 ### Shared
 
-All code in the `common` folder is used in both the server and client processes. 
+All code in the `common` folder is used in both the server and client processes.
 That's currently a bunch of types, and:
 
 - `Block`: data for one block of the level.
-- `Level`: a class transforming a `Map` (one of the abovementioned types) 
+- `Level`: a class transforming a `Map` (one of the abovementioned types)
   into a bunch of `Block`s.
 
 ### Interfaces
 
 These are used for defining data sent back and forth between the server and client.
 
-- `CommonWorld`: the world state as pushed to the clients.
-- `CommonEntity`: positional and movement data for an entity, contained within 
-  the `CommonWorld` object.
+- `State`: the world state as pushed to the clients.
+- `Entity`: positional and movement data for an entity, contained within
+  the `State` object.
 
 ### Implementations
 
-These interfaces are implemented on the client and server:
+These interfaces are implemented on the server:
 
 - `World` (server) contains logic for running the game, calculating physics etc.
-- `World` (client) contains code for rendering the world and all entities in it.
 - `Entity` (server) contains logic for moving an entity.
-- `Entity` (client) -- doesn't exist yet, because the client only needs the data 
-   for drawing entities, no logic needed. I might create an empty class in the future 
-   tho, because it's kinda ugly and inconsistent to not have a client side class for 
-   this.
-

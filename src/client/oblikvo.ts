@@ -134,8 +134,8 @@ class Oblikvo {
     const normal = this.camera.normalDirection;
 
     if (this.p5.keyIsDown(W)) movement.add(facing);
-    if (this.p5.keyIsDown(D)) movement.add(normal);
-    if (this.p5.keyIsDown(A)) movement.add(normal.mult(-1));
+    if (this.p5.keyIsDown(A)) movement.add(normal);
+    if (this.p5.keyIsDown(D)) movement.add(normal.mult(-1));
     if (this.p5.keyIsDown(S)) movement.add(facing.mult(-1));
 
     if (movement.mag() > 0) this.broadcast("move", movement);
