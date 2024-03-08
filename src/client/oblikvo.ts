@@ -100,7 +100,7 @@ class Oblikvo {
   }
 
   unlockPointer() {
-    this.camera.useMouseControls = false;
+    if (!document.pointerLockElement) this.camera.useMouseControls = false;
   }
 
   public windowResized() {
