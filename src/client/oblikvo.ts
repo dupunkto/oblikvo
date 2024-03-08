@@ -39,6 +39,11 @@ class Oblikvo {
     return this.receive("createdGame");
   }
 
+  public async exists(inviteCode: string): Promise<Boolean> {
+    this.broadcast("gameExists", inviteCode);
+    return this.receive("gameExists");
+  }
+
   public async join(inviteCode: string): Promise<void> {
     this.broadcast("joinGame", inviteCode);
 
@@ -170,7 +175,7 @@ class Oblikvo {
     return this.entities[this.server.id];
   }
 
-  public broadcast(event: string, params: any) {
+  public broadcast(event: string, params: any = {}) {
     dbg(`Broadcasting ${event}`);
     this.server.emit(event, params);
   }

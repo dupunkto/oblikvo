@@ -18,8 +18,9 @@ io.on("connection", (client) => {
   let room: string;
   let world: World;
 
-  client.once("newGame", newGame);
-  client.once("joinGame", joinGame);
+  client.on("newGame", newGame);
+  client.on("gameExists", gameExists);
+  client.on("joinGame", joinGame);
 
   client.on("move", handleMovement);
 
@@ -44,10 +45,16 @@ io.on("connection", (client) => {
   function gameLoop(inviteCode: string) {
     const world = lookup[inviteCode];
 
-    world.update();
-    io.to(inviteCode).emit("update", world);
+    if (world) {
+      world.update();
+      io.to(inviteCode).emit("update", world);
 
-    setTimeout(() => gameLoop(inviteCode), 1000 / FPS);
+      setTimeout(() => gameLoop(inviteCode), 1000 / FPS);
+    }
+  }
+
+  function gameExists(inviteCode: string) {
+    client.emit("gameExists", inviteCode in lookup);
   }
 
   function joinGame(inviteCode: string) {
@@ -60,6 +67,8 @@ io.on("connection", (client) => {
       world.spawn(client.id, player);
 
       client.emit("joinedGame", world);
+    } else {
+      console.log("Warning: client tried to join game that doesn't exist.");
     }
   }
 
@@ -72,8 +81,15 @@ io.on("connection", (client) => {
     player.move(movement);
   }
 
+  function despawnPlayer() {
+    if (world) {
+      delete world.entities[client.id];
+      if (isEmpty(world.entities)) delete lookup[room];
+    }
+  }
+
   client.on("disconnect", () => {
-    if (world) delete world.entities[client.id];
+    despawnPlayer();
     console.log("A client left the game.");
   });
 });
@@ -97,4 +113,14 @@ function randomMap(): Map {
     [1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
   ];
+}
+
+function isEmpty(object) {
+  for (const prop in object) {
+    if (Object.hasOwn(object, prop)) {
+      return false;
+    }
+  }
+
+  return true;
 }

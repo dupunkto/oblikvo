@@ -12,21 +12,28 @@ let inviteCode = window.location.hash.replace("#", "");
 // or join an existing one.
 
 if (inviteCode) {
-  joinGame(inviteCode);
+  join(inviteCode);
 }
 
 async function newGame() {
   console.log("Creating new game");
 
   let inviteCode = await client.new();
-  joinGame(inviteCode);
+  join(inviteCode);
 }
 
-async function joinGame(inviteCode: string = "") {
-  while (!inviteCode) inviteCode = prompt("Invite code?") || "";
-  window.location.hash = inviteCode;
+function joinGame() {
+  let inviteCode = prompt("Invite code?");
+  if (inviteCode) join(inviteCode);
+}
 
-  await client.join(inviteCode);
+async function join(inviteCode: string) {
+  if (await client.exists(inviteCode)) {
+    window.location.hash = inviteCode;
+    client.join(inviteCode);
+  } else {
+    alert("Couldn't find an active game with that invite code.");
+  }
 }
 
 // Make public API available globally.
