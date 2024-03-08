@@ -67,7 +67,9 @@ io.on("connection", (client) => {
   function handleMovement({ x, y, z }: p5.Vector) {
     // @ts-ignore the client.id always returns a `Player`.
     const player: Player = world.entities[client.id];
-    player.move(new p5.Vector(x, y, z));
+    const movement = new p5.Vector(x, y, z);
+
+    player.move(movement);
   }
 
   client.on("disconnect", () => {

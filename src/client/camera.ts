@@ -67,7 +67,7 @@ class Camera {
 
   public follow(entity: Entity) {
     const direction = this.facingDirection;
-    const position = new p5.Vector(entity.position);
+    const position = entity.position;
 
     const center = p5.Vector.add(position, direction);
 

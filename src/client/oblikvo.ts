@@ -15,7 +15,7 @@ const S = 83;
 const D = 68;
 
 function dbg(message) {
-  console.log(message);
+  // console.log(message);
 }
 
 class Oblikvo {
@@ -32,14 +32,14 @@ class Oblikvo {
     this.entities = {};
   }
 
-  async new(): Promise<string> {
+  public async new(): Promise<string> {
     this.broadcast("newGame");
 
     // Return the inviteCode.
     return this.receive("createdGame");
   }
 
-  async join(inviteCode: string): Promise<void> {
+  public async join(inviteCode: string): Promise<void> {
     this.broadcast("joinGame", inviteCode);
 
     const state = await this.receive("joinedGame");
@@ -75,9 +75,6 @@ class Oblikvo {
   }
 
   public setup() {
-    console.log(this.entities);
-    console.log(this.level);
-
     this.p5.createCanvas(
       this.p5.windowWidth,
       this.p5.windowHeight,
@@ -111,8 +108,16 @@ class Oblikvo {
     this.camera.setPerspective();
   }
 
-  public update(state: State) {
-    this.entities = state.entities;
+  public update({ entities }: State) {
+    for (let id in entities) {
+      const entity = entities[id];
+
+      entity.position = toVector(entity.position);
+      entity.velocity = toVector(entity.velocity);
+      entity.dimensions = toVector(entity.dimensions);
+
+      this.entities[id] = entity;
+    }
   }
 
   public draw() {
@@ -165,7 +170,7 @@ class Oblikvo {
     return this.entities[this.server.id];
   }
 
-  public broadcast(event: string, ...params: any) {
+  public broadcast(event: string, params: any) {
     dbg(`Broadcasting ${event}`);
     this.server.emit(event, params);
   }
@@ -188,3 +193,7 @@ class Oblikvo {
 }
 
 export default Oblikvo;
+
+function toVector({ x, y, z }): p5.Vector {
+  return new p5.Vector(x, y, z);
+}
