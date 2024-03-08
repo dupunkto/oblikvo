@@ -6,7 +6,7 @@ import { Block } from "../common/block";
 import { Level } from "../common/level";
 import { Entity } from "./entity";
 
-import { CommonWorld } from "../common/interfaces";
+import { State as CommonWorld } from "../common/interfaces";
 
 export class World implements CommonWorld {
   entities: Lookup<Entity> = {};
