@@ -12,6 +12,6 @@ export interface Entity {
   isMoving: boolean;
 }
 
-export interface State {
+export interface World {
   entities: Lookup<Entity>;
 }

@@ -37,5 +37,8 @@ async function join(inviteCode: string) {
 }
 
 // Make public API available globally.
+
+// @ts-ignore
 window.newGame = newGame;
+// @ts-ignore
 window.joinGame = joinGame;

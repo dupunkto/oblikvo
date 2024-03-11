@@ -4,17 +4,13 @@ import { io, Socket } from "socket.io-client";
 import Camera from "./camera";
 
 import { Entity } from "../common/interfaces";
-import { State } from "../common/interfaces";
+import { World } from "../common/interfaces";
 import { Lookup } from "../common/types";
 
 const W = 87;
 const A = 65;
 const S = 83;
 const D = 68;
-
-function dbg(message) {
-  // console.log(message);
-}
 
 class Oblikvo {
   server: Socket;
@@ -44,13 +40,13 @@ class Oblikvo {
   public async join(inviteCode: string): Promise<void> {
     this.broadcast("joinGame", inviteCode);
 
-    const state = await this.receive("joinedGame");
-    await this.startGame(state);
+    const world = await this.receive("joinedGame");
+    await this.startGame(world);
 
     return;
   }
 
-  async startGame({ entities }: State) {
+  async startGame({ entities }: World) {
     new p5((renderer) => {
       this.p5 = renderer;
 
@@ -68,6 +64,7 @@ class Oblikvo {
   }
 
   bindMethod(method: any) {
+    // @ts-ignore This black magic fuckery works--don't touch it.
     this.p5[method] = () => this[method]();
   }
 
@@ -76,6 +73,9 @@ class Oblikvo {
   }
 
   public setup() {
+    if (!this.p5) throw "`setup` called but `p5` not set.";
+    if (!this.camera) throw "`setup` called but `camera` not set.";
+
     this.p5.createCanvas(
       this.p5.windowWidth,
       this.p5.windowHeight,
@@ -96,20 +96,27 @@ class Oblikvo {
   }
 
   lockPointer() {
+    // @ts-ignore This is only called in `setup`,
+    // and we already check if `p5` and `camera` are `undefined` there.
     this.camera.useMouseControls = true;
+    // @ts-ignore
     this.p5.requestPointerLock();
   }
 
   unlockPointer() {
+    // @ts-ignore (Same as `lockPointer` applies here)
     if (!document.pointerLockElement) this.camera.useMouseControls = false;
   }
 
   public windowResized() {
+    if (!this.p5) throw "`windowResized` called but `p5` not set.";
+    if (!this.camera) throw "`setwindowResizedup` called but `camera` not set.";
+
     this.p5.resizeCanvas(this.p5.windowWidth, this.p5.windowHeight);
     this.camera.setPerspective();
   }
 
-  public update({ entities }: State) {
+  public update({ entities }: World) {
     for (let id in entities) {
       const entity = entities[id];
 
@@ -122,6 +129,9 @@ class Oblikvo {
   }
 
   public draw() {
+    if (!this.p5) throw "`draw` called but `p5` not set.";
+    if (!this.camera) throw "`draw` called but `camera` not set.";
+
     this.p5.background(0, 0, 51);
     this.p5.pointLight(255, 255, 255, this.player.position);
 
@@ -133,26 +143,28 @@ class Oblikvo {
   }
 
   controller() {
+    if (!this.camera) throw "`controller` called but `camera` not set.";
+
     this.camera.controller();
 
     const movement = new p5.Vector();
     const facing = this.camera.facingDirection;
     const normal = this.camera.normalDirection;
 
-    if (this.p5.keyIsDown(W)) movement.add(facing);
-    if (this.p5.keyIsDown(A)) movement.add(normal);
-    if (this.p5.keyIsDown(D)) movement.add(normal.mult(-1));
-    if (this.p5.keyIsDown(S)) movement.add(facing.mult(-1));
+    if (this.p5?.keyIsDown(W)) movement.add(facing);
+    if (this.p5?.keyIsDown(A)) movement.add(normal);
+    if (this.p5?.keyIsDown(D)) movement.add(normal.mult(-1));
+    if (this.p5?.keyIsDown(S)) movement.add(facing.mult(-1));
 
     if (movement.mag() > 0) this.broadcast("move", movement);
   }
 
   drawEntity({ position, dimensions }: Entity) {
-    this.p5.push();
-    this.p5.fill("red");
-    this.p5.translate(position);
-    this.p5.box(dimensions);
-    this.p5.pop();
+    this.p5?.push();
+    this.p5?.fill("red");
+    this.p5?.translate(position);
+    this.p5?.box(dimensions);
+    this.p5?.pop();
   }
 
   public get player(): Entity {
@@ -177,6 +189,9 @@ class Oblikvo {
   public registerHandler(event: string) {
     this.server.on(event, (params) => {
       dbg(`Receiving ${event}`);
+
+      // @ts-ignore You're not supposed to call `registerHandler` if
+      // the method doesn't exist.
       this[event](params);
     });
   }
@@ -184,6 +199,10 @@ class Oblikvo {
 
 export default Oblikvo;
 
-function toVector({ x, y, z }): p5.Vector {
+function toVector({ x, y, z }: { x: number; y: number; z: number }): p5.Vector {
   return new p5.Vector(x, y, z);
+}
+
+function dbg(message: any) {
+  console.log(message);
 }

@@ -3,7 +3,7 @@ import p5 from "p5-node";
 import { Lookup } from "../common/types";
 import { Entity } from "./entity";
 
-import { State as CommonWorld } from "../common/interfaces";
+import { World as CommonWorld } from "../common/interfaces";
 
 export class World implements CommonWorld {
   entities: Lookup<Entity> = {};
@@ -13,6 +13,10 @@ export class World implements CommonWorld {
     entity.spawn(initialCoordinates);
 
     this.entities[id] = entity;
+  }
+
+  public despawn(id: string) {
+    delete this.entities[id];
   }
 
   public update() {

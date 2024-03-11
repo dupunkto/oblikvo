@@ -154,9 +154,9 @@ gradient over their sprite, ammo stats scrolling over the walls.
 
 These are used for defining data sent back and forth between the server and client.
 
-- `State`: the world state as pushed to the clients.
+- `World`: the world state as pushed to the clients.
 - `Entity`: positional and movement data for an entity, contained within
-  the `State` object.
+  the `World` object.
 
 ### Implementations
 
