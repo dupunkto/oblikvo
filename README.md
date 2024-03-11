@@ -150,15 +150,6 @@ gradient over their sprite, ammo stats scrolling over the walls.
 
 ## Project structure
 
-### Shared
-
-All code in the `common` folder is used in both the server and client processes.
-That's currently a bunch of types, and:
-
-- `Block`: data for one block of the level.
-- `Level`: a class transforming a `Map` (one of the abovementioned types)
-  into a bunch of `Block`s.
-
 ### Interfaces
 
 These are used for defining data sent back and forth between the server and client.

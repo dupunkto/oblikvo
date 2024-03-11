@@ -5,8 +5,6 @@ import Camera from "./camera";
 
 import { Entity } from "../common/interfaces";
 import { State } from "../common/interfaces";
-import { Level } from "../common/level";
-import { Block } from "../common/block";
 import { Lookup } from "../common/types";
 
 const W = 87;
@@ -24,7 +22,6 @@ class Oblikvo {
   // `undefined` before a game is joined.
   p5: p5 | undefined;
   camera: Camera | undefined;
-  level: Level | undefined;
   entities: Lookup<Entity>;
 
   constructor() {
@@ -53,12 +50,11 @@ class Oblikvo {
     return;
   }
 
-  async startGame({ map, entities }: State) {
+  async startGame({ entities }: State) {
     new p5((renderer) => {
       this.p5 = renderer;
 
       this.entities = entities;
-      this.level = new Level(map);
       this.camera = new Camera(renderer);
 
       this.bindMethod("setup");
@@ -132,8 +128,8 @@ class Oblikvo {
     this.controller();
     this.camera.follow(this.player);
 
-    for (let block of this.level.blocks) this.drawBlock(block);
-    for (let id in this.entities) this.drawEntity(this.entities[id]);
+    for (let id in this.entities)
+      if (id != this.server.id) this.drawEntity(this.entities[id]);
   }
 
   controller() {
@@ -151,23 +147,12 @@ class Oblikvo {
     if (movement.mag() > 0) this.broadcast("move", movement);
   }
 
-  drawBlock(block: Block) {
-    this.p5.push();
-    this.p5.fill(block.color);
-    this.placeBlock(block.position, block.dimensions);
-    this.p5.pop();
-  }
-
-  drawEntity(entity: Entity) {
+  drawEntity({ position, dimensions }: Entity) {
     this.p5.push();
     this.p5.fill("red");
-    this.placeBlock(entity.position, entity.dimensions);
+    this.p5.translate(position);
+    this.p5.box(dimensions);
     this.p5.pop();
-  }
-
-  placeBlock(position: p5.Vector, dimensions: p5.Vector): void {
-    this.p5.translate(position.x, -position.y, position.z);
-    this.p5.box(dimensions.x, dimensions.y, dimensions.z);
   }
 
   public get player(): Entity {

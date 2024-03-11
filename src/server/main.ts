@@ -26,14 +26,13 @@ io.on("connection", (client) => {
 
   function newGame() {
     const inviteCode = randomID();
-    const map = randomMap();
 
-    createGame(map, inviteCode);
+    createGame(inviteCode);
     joinGame(inviteCode);
   }
 
-  function createGame(map: Map, inviteCode: string) {
-    world = new World(map);
+  function createGame(inviteCode: string) {
+    world = new World();
     lookup[inviteCode] = world;
 
     client.emit("createdGame", inviteCode);
@@ -96,23 +95,6 @@ io.on("connection", (client) => {
 
 function randomID() {
   return (Math.random() + 1).toString(36).substring(7);
-}
-
-function randomMap(): Map {
-  // TODO(robin): this will be loaded from elsewhere,
-  // like a file or smth :)
-
-  return [
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1],
-    [1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-  ];
 }
 
 function isEmpty(object) {

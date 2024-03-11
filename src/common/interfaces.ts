@@ -1,6 +1,6 @@
 import p5 from "p5-node";
 
-import type { Map, Lookup } from "./types";
+import type { Lookup } from "./types";
 
 export interface Entity {
   position: p5.Vector;
@@ -13,6 +13,5 @@ export interface Entity {
 }
 
 export interface State {
-  map: Map;
   entities: Lookup<Entity>;
 }

@@ -19,7 +19,7 @@ export class Entity implements CommonEntity {
   constructor() {
     this.position = new p5.Vector(0, 0, 0);
     this.velocity = new p5.Vector(0, 0, 0);
-    this.dimensions = new p5.Vector(0, 0, 0);
+    this.dimensions = new p5.Vector(3, 3, 3);
   }
 
   public spawn(position: p5.Vector) {
