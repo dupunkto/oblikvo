@@ -17,7 +17,7 @@ io.on("connection", (client) => {
 
   let world: World | undefined;
 
-  client.on("newGame", () => {
+  client.once("newGame", () => {
     const inviteCode = randomID();
     rooms[inviteCode] = new World();
 
@@ -28,7 +28,7 @@ io.on("connection", (client) => {
     client.emit("gameExists", inviteCode in rooms);
   });
 
-  client.on("joinGame", (inviteCode: string) => {
+  client.once("joinGame", (inviteCode: string) => {
     if (inviteCode in rooms) {
       // TODO(robin): start gameloop if you're the first player
       // to join.
