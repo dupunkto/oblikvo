@@ -15,8 +15,6 @@ class Entity implements CommonEntity {
   isMoving: boolean;
 
   constructor(p5: p5, entity: CommonEntity) {
-    console.log(entity);
-
     this.p5 = p5;
     this.position = toVector(entity.position);
     this.velocity = toVector(entity.velocity);

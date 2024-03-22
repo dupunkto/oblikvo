@@ -13,8 +13,6 @@ let inviteCode = window.location.hash.replace("#", "");
 if (inviteCode) join(inviteCode);
 
 async function newGame() {
-  console.log("Creating new game");
-
   let inviteCode = await client.new();
   join(inviteCode);
 }

@@ -1,6 +1,7 @@
 import p5 from "p5-node";
-
 import { initializeServer } from "./server";
+
+import Vector from "../common/vector";
 import Player from "./player";
 import World from "./world";
 
@@ -12,7 +13,7 @@ const rooms: Map<inviteCode, World> = new Map();
 const io = initializeServer();
 
 io.on("connection", (client) => {
-  console.log("A new client connected.");
+  dbg("A new client connected.");
 
   let world: World | undefined;
 
@@ -35,18 +36,20 @@ io.on("connection", (client) => {
       // is defined in the fucking if-statement, but it complains anyway.
       if (!world) return;
 
-      // Start gameloop if you're the first player to join.
-      if (world.empty) gameLoop(inviteCode);
+      const firstPlayer = world.empty;
       world.spawn(client.id, new Player());
 
       client.join(inviteCode);
       client.emit("joinedGame", world.serialize());
+
+      // Kickstart gameloop if you're the first player to join.
+      if (firstPlayer) gameLoop(inviteCode);
     } else {
-      console.log("Warning: client tried to join game that doesn't exist.");
+      dbg("Warning: client tried to join game that doesn't exist.");
     }
   });
 
-  client.on("move", ({ x, y, z }) => {
+  client.on("move", ({ x, y, z }: Vector) => {
     if (!world) return;
 
     // @ts-ignore The `client.id` always returns an `Player` instance.
@@ -59,7 +62,8 @@ io.on("connection", (client) => {
   client.on("disconnect", () => {
     if (!world) return;
     world.despawn(client.id);
-    console.log("A client left the game.");
+
+    dbg("A client left the game.");
   });
 });
 
@@ -77,11 +81,16 @@ function gameLoop(inviteCode: inviteCode) {
     // @ts-ignore also see comment in `joinGame`.
     world.update();
 
-    io.to(inviteCode).emit("update", world);
+    // @ts-ignore again, see comment in `joinGame`
+    io.to(inviteCode).emit("update", world.serialize());
     setTimeout(() => gameLoop(inviteCode), 1000 / FPS);
   }
 }
 
 function randomID() {
   return (Math.random() + 1).toString(36).substring(7);
+}
+
+function dbg(message: string) {
+  console.log(message);
 }
