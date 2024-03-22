@@ -19,8 +19,11 @@ class World {
     });
   }
 
-  public draw() {
-    this.entities.forEach((entity) => entity.draw());
+  public draw(except: string) {
+    this.entities.forEach((entity, id) => {
+      if (id == except) return;
+      entity.draw();
+    });
   }
 }
 

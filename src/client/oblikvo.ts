@@ -121,6 +121,7 @@ class Oblikvo {
   }
 
   public draw() {
+    if (!this.server.id) throw "Not connected.";
     if (!this.p5) throw "`draw` called but `p5` not set.";
     if (!this.camera) throw "`draw` called but `camera` not set.";
     if (!this.world) throw "`draw` called but `world` not set.";
@@ -130,7 +131,7 @@ class Oblikvo {
 
     this.controller();
     this.camera.follow(this.player);
-    this.world.draw();
+    this.world.draw(this.server.id);
   }
 
   controller() {
