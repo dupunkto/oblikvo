@@ -1,10 +1,10 @@
 import p5 from "p5";
 import { io, Socket } from "socket.io-client";
 
+import Payload from "../common/payload";
 import Camera from "./camera";
-
-import { Entity } from "../common/interfaces";
-import { World } from "../common/interfaces";
+import Entity from "./entity";
+import World from "./world";
 
 const W = 87;
 const A = 65;
@@ -17,11 +17,10 @@ class Oblikvo {
   // `undefined` before a game is joined.
   p5: p5 | undefined;
   camera: Camera | undefined;
-  entities: Map<string, Entity>;
+  world: World | undefined;
 
   constructor() {
     this.server = io();
-    this.entities = new Map();
   }
 
   public async new(): Promise<string> {
@@ -39,17 +38,17 @@ class Oblikvo {
   public async join(inviteCode: string): Promise<void> {
     this.broadcast("joinGame", inviteCode);
 
-    const world = await this.receive("joinedGame");
-    await this.startGame(world);
+    const payload = await this.receive("joinedGame");
+    await this.startGame(payload);
 
     return;
   }
 
-  async startGame(world: World) {
+  async startGame(payload: Payload) {
     new p5((renderer) => {
       this.p5 = renderer;
 
-      this.update(world);
+      this.world = new World(renderer, payload);
       this.camera = new Camera(renderer);
 
       this.bindMethod("setup");
@@ -98,7 +97,7 @@ class Oblikvo {
     // @ts-ignore This is only called in `setup`,
     // and we already check if `p5` and `camera` are `undefined` there.
     this.camera.useMouseControls = true;
-    // @ts-ignore
+    // @ts-ignore (same)
     this.p5.requestPointerLock();
   }
 
@@ -115,31 +114,27 @@ class Oblikvo {
     this.camera.setPerspective();
   }
 
-  public update({ entities }: World) {
-    this.entities = entities;
-    this.entities.forEach((entity) => {
-      entity.position = toVector(entity.position);
-      entity.velocity = toVector(entity.velocity);
-      entity.dimensions = toVector(entity.dimensions);
-    });
+  public update(payload: Payload) {
+    // @ts-ignore update can only be called when registered with
+    // the hook in `startGame`, which also sets `this.world`.
+    this.world.load(payload);
   }
 
   public draw() {
     if (!this.p5) throw "`draw` called but `p5` not set.";
     if (!this.camera) throw "`draw` called but `camera` not set.";
+    if (!this.world) throw "`draw` called but `world` not set.";
 
     this.p5.background(0, 0, 51);
     this.p5.pointLight(255, 255, 255, this.player.position);
 
     this.controller();
     this.camera.follow(this.player);
-
-    this.entities.forEach((entity) => {
-      if (entity !== this.player) this.drawEntity(entity);
-    });
+    this.world.draw();
   }
 
   controller() {
+    if (!this.p5) throw "`controller` called but `p5` not set.";
     if (!this.camera) throw "`controller` called but `camera` not set.";
 
     this.camera.controller();
@@ -148,26 +143,20 @@ class Oblikvo {
     const facing = this.camera.facingDirection;
     const normal = this.camera.normalDirection;
 
-    if (this.p5?.keyIsDown(W)) movement.add(facing);
-    if (this.p5?.keyIsDown(A)) movement.add(normal);
-    if (this.p5?.keyIsDown(D)) movement.add(normal.mult(-1));
-    if (this.p5?.keyIsDown(S)) movement.add(facing.mult(-1));
+    if (this.p5.keyIsDown(W)) movement.add(facing);
+    if (this.p5.keyIsDown(A)) movement.add(normal);
+    if (this.p5.keyIsDown(D)) movement.add(normal.mult(-1));
+    if (this.p5.keyIsDown(S)) movement.add(facing.mult(-1));
 
     if (movement.mag() > 0) this.broadcast("move", movement);
   }
 
-  drawEntity({ position, dimensions }: Entity) {
-    this.p5?.push();
-    this.p5?.fill("red");
-    this.p5?.translate(position);
-    this.p5?.box(dimensions);
-    this.p5?.pop();
-  }
-
   public get player(): Entity {
     if (!this.server.id) throw "Not connected.";
-    // @ts-ignore the fucking maps. (this cannot return undefined)
-    return this.entities.get(this.server.id);
+
+    // @ts-ignore the entity with the server ID always exists;
+    // can't return undefined.
+    return this.world.entities.get(this.server.id);
   }
 
   public broadcast(event: string, params: any = {}) {
@@ -188,18 +177,14 @@ class Oblikvo {
     this.server.on(event, (params) => {
       dbg(`Receiving ${event}`);
 
-      // @ts-ignore You're not supposed to call `registerHandler` if
-      // the method doesn't exist.
+      // @ts-expect-error You're not supposed to call
+      // `registerHandler` if the method doesn't exist.
       this[event](params);
     });
   }
 }
 
 export default Oblikvo;
-
-function toVector({ x, y, z }: { x: number; y: number; z: number }): p5.Vector {
-  return new p5.Vector(x, y, z);
-}
 
 function dbg(message: any) {
   console.log(message);

@@ -1,7 +1,8 @@
 import p5 from "p5-node";
 
 import { initializeServer } from "./server";
-import { Player, World } from "./world";
+import Player from "./player";
+import World from "./world";
 
 const FPS = 60;
 
@@ -30,11 +31,16 @@ io.on("connection", (client) => {
     if (rooms.has(inviteCode)) {
       world = rooms.get(inviteCode);
 
+      // Please the TS compiler (yet again): we already check if `world`
+      // is defined in the fucking if-statement, but it complains anyway.
+      if (!world) return;
+
       // Start gameloop if you're the first player to join.
+      if (world.empty) gameLoop(inviteCode);
       world.spawn(client.id, new Player());
 
       client.join(inviteCode);
-      client.emit("joinedGame", world);
+      client.emit("joinedGame", world.serialize());
     } else {
       console.log("Warning: client tried to join game that doesn't exist.");
     }
@@ -61,10 +67,14 @@ function gameLoop(inviteCode: inviteCode) {
   if (!rooms.has(inviteCode)) return;
   const world = rooms.get(inviteCode);
 
+  // @ts-ignore see comment in `joinGame`.
   if (world.empty) {
+    // End game if there are no players left.
     rooms.delete(inviteCode);
+
     return;
   } else {
+    // @ts-ignore also see comment in `joinGame`.
     world.update();
 
     io.to(inviteCode).emit("update", world);

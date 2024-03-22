@@ -1,6 +1,6 @@
 import p5 from "p5";
 
-import { Entity } from "../common/interfaces";
+import Entity from "./entity";
 
 const LEFT = 37;
 const RIGHT = 39;
@@ -16,8 +16,8 @@ class Camera {
   isShaking: boolean;
   useMouseControls: boolean;
 
-  constructor(sketch: p5) {
-    this.p5 = sketch;
+  constructor(p5: p5) {
+    this.p5 = p5;
     this.pan = 0.0;
     this.tilt = 0.0;
     this.fov = 1.0;

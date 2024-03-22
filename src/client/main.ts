@@ -10,10 +10,7 @@ let inviteCode = window.location.hash.replace("#", "");
 // the game right away. Otherwise, we render a simple
 // menu that allows the player to create a new game
 // or join an existing one.
-
-if (inviteCode) {
-  join(inviteCode);
-}
+if (inviteCode) join(inviteCode);
 
 async function newGame() {
   console.log("Creating new game");
@@ -38,7 +35,5 @@ async function join(inviteCode: string) {
 
 // Make public API available globally.
 
-// @ts-ignore
-window.newGame = newGame;
-// @ts-ignore
-window.joinGame = joinGame;
+globalThis.newGame = newGame;
+globalThis.joinGame = joinGame;
