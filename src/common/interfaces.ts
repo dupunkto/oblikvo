@@ -1,7 +1,5 @@
 import p5 from "p5-node";
 
-import type { Lookup } from "./types";
-
 export interface Entity {
   position: p5.Vector;
   velocity: p5.Vector;
@@ -13,5 +11,5 @@ export interface Entity {
 }
 
 export interface World {
-  entities: Lookup<Entity>;
+  entities: Map<string, Entity>;
 }

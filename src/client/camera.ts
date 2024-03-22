@@ -20,7 +20,7 @@ class Camera {
     this.p5 = sketch;
     this.pan = 0.0;
     this.tilt = 0.0;
-    this.fov = 1;
+    this.fov = 1.0;
     this.sensitivity = 0.02;
     this.intensity = 1.2;
     this.offset = 0.0;
@@ -80,8 +80,8 @@ class Camera {
       );
     }
 
-    let bobbingAmount = Math.pow(Math.sin(this.offset), 2) * this.intensity;
     if (entity.isMoving && !entity.againstWall) this.offset += 0.1;
+    let bobbingAmount = Math.pow(Math.sin(this.offset), 2) * this.intensity;
 
     let offset = bobbingAmount + 1.5;
 
@@ -107,8 +107,7 @@ class Camera {
   }
 
   public get normalDirection(): p5.Vector {
-    const a = Math.PI / 2;
-    return new p5.Vector(Math.cos(this.pan - a), 0, Math.sin(this.pan - a));
+    return new p5.Vector(-Math.cos(this.pan), 0, -Math.sin(this.pan));
   }
 
   clamp(num: number, min: number, max: number): number {

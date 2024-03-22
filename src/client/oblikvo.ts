@@ -5,7 +5,6 @@ import Camera from "./camera";
 
 import { Entity } from "../common/interfaces";
 import { World } from "../common/interfaces";
-import { Lookup } from "../common/types";
 
 const W = 87;
 const A = 65;
@@ -18,11 +17,11 @@ class Oblikvo {
   // `undefined` before a game is joined.
   p5: p5 | undefined;
   camera: Camera | undefined;
-  entities: Lookup<Entity>;
+  entities: Map<string, Entity>;
 
   constructor() {
     this.server = io();
-    this.entities = {};
+    this.entities = new Map();
   }
 
   public async new(): Promise<string> {
@@ -117,15 +116,12 @@ class Oblikvo {
   }
 
   public update({ entities }: World) {
-    for (let id in entities) {
-      const entity = entities[id];
-
+    this.entities = entities;
+    this.entities.forEach((entity) => {
       entity.position = toVector(entity.position);
       entity.velocity = toVector(entity.velocity);
       entity.dimensions = toVector(entity.dimensions);
-
-      this.entities[id] = entity;
-    }
+    });
   }
 
   public draw() {
@@ -138,8 +134,9 @@ class Oblikvo {
     this.controller();
     this.camera.follow(this.player);
 
-    for (let id in this.entities)
-      if (id != this.server.id) this.drawEntity(this.entities[id]);
+    this.entities.forEach((entity) => {
+      if (entity !== this.player) this.drawEntity(entity);
+    });
   }
 
   controller() {
@@ -169,7 +166,8 @@ class Oblikvo {
 
   public get player(): Entity {
     if (!this.server.id) throw "Not connected.";
-    return this.entities[this.server.id];
+    // @ts-ignore the fucking maps. (this cannot return undefined)
+    return this.entities.get(this.server.id);
   }
 
   public broadcast(event: string, params: any = {}) {
