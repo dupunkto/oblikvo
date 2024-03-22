@@ -46,11 +46,11 @@ class Oblikvo {
     return;
   }
 
-  async startGame({ entities }: World) {
+  async startGame(world: World) {
     new p5((renderer) => {
       this.p5 = renderer;
 
-      this.entities = entities;
+      this.update(world);
       this.camera = new Camera(renderer);
 
       this.bindMethod("setup");
