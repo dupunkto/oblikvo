@@ -107,7 +107,8 @@ class Camera {
   }
 
   public get normalDirection(): p5.Vector {
-    return new p5.Vector(-Math.cos(this.pan), 0, -Math.sin(this.pan));
+    const a = Math.PI / 2;
+    return new p5.Vector(Math.cos(this.pan - a), 0, Math.sin(this.pan - a));
   }
 
   clamp(num: number, min: number, max: number): number {
