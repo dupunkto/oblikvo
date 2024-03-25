@@ -154,13 +154,23 @@ gradient over their sprite, ammo stats scrolling over the walls.
 
 These are used for defining data sent back and forth between the server and client.
 
-- `World`: the world state as pushed to the clients.
-- `Entity`: positional and movement data for an entity, contained within
-  the `World` object.
+- `InitialPayload`: the world state as pushed to the clients when they first connect.
+- `UpdatePayload`: the world state pushed to the clients every tick (60 times per second). If this seems inefficient, that's because it is :)
+- `Entity`: positional and movement data for an entity, contained within the `Payload` object.
+- `Block`: the positional and color data for a block, also contained within the `Payload` object.
 
 ### Implementations
 
-These interfaces are implemented on the server:
+The entity interface is implemented on both the client and server:
+
+- `Entity` (server) contains logic for moving an entity.
+- `Entity` (client) contains logic for drawing an entity.
+
+### Serialization
+
+The other interfaces are used for serialization. The `World` state on the server serializes to an `Payload`, which is then loaded into the `World` on the client. (The same for `Level`, which is part of `World`).
 
 - `World` (server) contains logic for running the game, calculating physics etc.
-- `Entity` (server) contains logic for moving an entity.
+- `Level` (server) contains logic for building up a level.
+- `World` (client) contains logic for drawing the world.
+- `Level` (client) contains logic for drawing a level.
