@@ -82,7 +82,7 @@ class World {
       case PayloadType.Initial:
         return {
           entities: [...this.entities.entries()],
-          level: [...this.level.blocks.entries()],
+          level: this.level.serialize(),
         };
 
       case PayloadType.Update:

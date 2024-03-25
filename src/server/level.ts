@@ -1,5 +1,6 @@
+import { default as Blocks, Block, Coords, Kind } from "../common/level";
+
 import Vector from "../common/vector";
-import { Block, Coords, Kind } from "../common/level";
 
 interface Format {
   offset: Vector;
@@ -34,6 +35,10 @@ class Level {
           });
       }
     }
+  }
+
+  serialize(): Blocks {
+    return [...this.blocks.entries()];
   }
 }
 
