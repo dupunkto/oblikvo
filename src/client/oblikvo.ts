@@ -1,7 +1,8 @@
 import p5 from "p5";
 import { io, Socket } from "socket.io-client";
 
-import Payload from "../common/payload";
+import { InitialPayload, UpdatePayload } from "../common/payload";
+
 import Camera from "./camera";
 import Entity from "./entity";
 import World from "./world";
@@ -44,7 +45,7 @@ class Oblikvo {
     return;
   }
 
-  async startGame(payload: Payload) {
+  async startGame(payload: InitialPayload) {
     new p5((renderer) => {
       this.p5 = renderer;
 
@@ -114,7 +115,7 @@ class Oblikvo {
     this.camera.setPerspective();
   }
 
-  public update(payload: Payload) {
+  public update(payload: UpdatePayload) {
     // @ts-ignore update can only be called when registered with
     // the hook in `startGame`, which also sets `this.world`.
     this.world.load(payload);
@@ -188,5 +189,5 @@ class Oblikvo {
 export default Oblikvo;
 
 function dbg(message: any) {
-  console.log(message);
+  // console.log(message);
 }

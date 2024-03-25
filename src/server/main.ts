@@ -5,6 +5,8 @@ import Vector from "../common/vector";
 import Player from "./player";
 import World from "./world";
 
+import { Type as PayloadType } from "../common/payload";
+
 const FPS = 60;
 
 type inviteCode = string;
@@ -40,7 +42,9 @@ io.on("connection", (client) => {
       world.spawn(client.id, new Player());
 
       client.join(inviteCode);
-      client.emit("joinedGame", world.serialize());
+
+      const payload = world.serialize(PayloadType.Initial);
+      client.emit("joinedGame", payload);
 
       // Kickstart gameloop if you're the first player to join.
       if (firstPlayer) gameLoop(inviteCode);
@@ -82,7 +86,9 @@ function gameLoop(inviteCode: inviteCode) {
     world.update();
 
     // @ts-ignore again, see comment in `joinGame`
-    io.to(inviteCode).emit("update", world.serialize());
+    const payload = world.serialize(PayloadType.Update);
+
+    io.to(inviteCode).emit("update", payload);
     setTimeout(() => gameLoop(inviteCode), 1000 / FPS);
   }
 }
