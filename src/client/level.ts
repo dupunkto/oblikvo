@@ -14,7 +14,7 @@ class Level {
   draw() {
     this.blocks.forEach(([coords, block]) => {
       let [x, y, z] = coords.split(",");
-      const dimensions = 7;
+      const dimensions = 9;
 
       this.p5.push();
       this.p5.fill(block.color);
