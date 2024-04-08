@@ -9,7 +9,7 @@ import Level from "./level";
 class World {
   p5: p5;
   level: Level;
-  entities: Map<String, Entity>;
+  entities: Map<string, Entity>;
 
   constructor(p5: p5, payload: InitialPayload) {
     this.p5 = p5;

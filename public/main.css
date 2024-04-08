@@ -19,13 +19,13 @@ body {
   text-transform: lowercase;
 }
 
-html:has(main) {
+html {
   background: #fcdf9b;
   border: 10px solid #fd4f08;
   padding: 10px;
 }
 
-body:has(main) {
+body {
   border: 7px solid #020202;
 }
 
@@ -34,6 +34,8 @@ main {
   max-width: 900px;
   margin: 0 auto;
   margin-top: 10vh;
+  display: none;
+  text-align: center;
 }
 
 main h1 {
@@ -44,11 +46,16 @@ main h1 {
 }
 
 main ul {
-  transform: scaleY(1.25);
   max-width: fit-content;
   margin: 0 auto;
   padding: 0;
   list-style: none;
+}
+
+main ul,
+main p,
+main button {
+  transform: scaleY(1.25);
 }
 
 a {
@@ -64,4 +71,23 @@ a:hover {
 a:hover::before {
   content: ":) ";
   margin-left: -1.22em;
+}
+
+button {
+  background: #020202;
+  border: none;
+  color: white;
+  font: inherit;
+  padding: 0.5em 2.5em;
+  cursor: pointer;
+  margin-top: 2.5em;
+}
+
+button:hover {
+  background: #fd4f08;
+}
+
+hgroup h1,
+hgroup h2 {
+  margin-bottom: 0;
 }

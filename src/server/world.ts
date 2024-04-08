@@ -8,7 +8,7 @@ import { Type as PayloadType } from "../common/payload";
 
 class World {
   level: Level = new Level();
-  entities: Map<String, Entity> = new Map();
+  entities: Map<string, Entity> = new Map();
 
   constructor() {
     this.level.appendFormat({

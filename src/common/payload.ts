@@ -7,11 +7,11 @@ enum Type {
 }
 
 interface UpdatePayload {
-  entities: [String, Entity][];
+  entities: [string, Entity][];
 }
 
 interface InitialPayload {
-  entities: [String, Entity][];
+  entities: [string, Entity][];
   level: Level;
 }
 

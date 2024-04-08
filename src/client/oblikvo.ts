@@ -13,14 +13,22 @@ const S = 83;
 const D = 68;
 
 class Oblikvo {
+  joined: boolean;
+  started: boolean;
   server: Socket;
 
   // `undefined` before a game is joined.
+  nick: string | undefined;
+  inviteCode: string | undefined;
+
+  // `undefined` before the game is started.
   p5: p5 | undefined;
   camera: Camera | undefined;
   world: World | undefined;
 
   constructor() {
+    this.joined = false;
+    this.started = false;
     this.server = io();
   }
 
@@ -31,7 +39,7 @@ class Oblikvo {
     return this.receive("createdGame");
   }
 
-  public async exists(inviteCode: string): Promise<Boolean> {
+  public async exists(inviteCode: string): Promise<boolean> {
     this.broadcast("gameExists", inviteCode);
     return this.receive("gameExists");
   }
@@ -39,10 +47,23 @@ class Oblikvo {
   public async join(inviteCode: string): Promise<void> {
     this.broadcast("joinGame", inviteCode);
 
-    const payload = await this.receive("joinedGame");
-    await this.startGame(payload);
+    this.receive("joinedGame").then((nick) => {
+      this.nick = nick;
+      this.inviteCode = inviteCode;
+      this.joined = true;
+    });
 
-    return;
+    this.receive("startedGame").then(async (payload) => {
+      await this.startGame(payload);
+    });
+  }
+
+  public start(): void {
+    this.broadcast("startGame", this.inviteCode);
+
+    // Handling actually starting the game is managed in
+    // the `startedGame` handler, that we registered in `join`
+    // earlier.
   }
 
   async startGame(payload: InitialPayload) {
@@ -57,18 +78,12 @@ class Oblikvo {
       this.bindMethod("windowResized");
 
       this.registerHandler("update");
-
-      this.hideMenu();
     }, document.body);
   }
 
   bindMethod(method: any) {
     // @ts-ignore This black magic fuckery works--don't touch it.
     this.p5[method] = () => this[method]();
-  }
-
-  hideMenu() {
-    document.querySelector("main")?.remove();
   }
 
   public setup() {
@@ -188,6 +203,6 @@ class Oblikvo {
 
 export default Oblikvo;
 
-function dbg(message: any) {
+function dbg(_message: any) {
   // console.log(message);
 }

@@ -1,4 +1,7 @@
 import Oblikvo from "./oblikvo";
+import * as UI from "./interface";
+
+UI.showScreen("main-menu");
 
 const client = new Oblikvo();
 
@@ -22,10 +25,22 @@ function joinGame() {
   if (inviteCode) join(inviteCode);
 }
 
+function startGame() {
+  if (client.joined) {
+    client.start();
+    UI.hideScreens();
+  } else {
+    alert("You have to join a game before you can start it.");
+  }
+}
+
 async function join(inviteCode: string) {
   if (await client.exists(inviteCode)) {
     window.location.hash = inviteCode;
     client.join(inviteCode);
+
+    UI.setCode(inviteCode);
+    UI.showScreen("lobby");
   } else {
     alert("Couldn't find an active game with that invite code.");
   }
@@ -35,3 +50,4 @@ async function join(inviteCode: string) {
 
 globalThis.newGame = newGame;
 globalThis.joinGame = joinGame;
+globalThis.startGame = startGame;

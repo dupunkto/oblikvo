@@ -22,10 +22,9 @@
     />
 
     <link href="main.css" rel="stylesheet" type="text/css" />
-    <script src="main.js"></script>
   </head>
   <body>
-    <main>
+    <main class="main-menu">
       <h1>Oblikvo</h1>
 
       <ul>
@@ -34,5 +33,16 @@
         <li><a href="https://dupunkto.org">Quit</a></li>
       </ul>
     </main>
+
+    <main class="lobby">
+      <hgroup>
+        <h1>Lobby</h2>
+        <p>Game code: <span class="code">xxxxx</span></p>
+      </hgroup>
+
+      <button onclick="startGame()">Start</button>
+    </main>
+
+    <script src="main.js"></script>
   </body>
 </html>
