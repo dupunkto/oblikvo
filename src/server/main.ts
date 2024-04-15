@@ -44,15 +44,21 @@ io.on("connection", (client) => {
       world.spawn(client.id, new Player());
 
       client.join(inviteCode);
-
-      const payload = world.serialize(PayloadType.Initial);
-      client.emit("joinedGame", payload);
-
-      // Kickstart gameloop if you're the first player to join.
-      if (firstPlayer) gameLoop(inviteCode);
+      client.emit("joinedGame", randomID());
     } else {
       dbg("Warning: client tried to join game that doesn't exist.");
     }
+  });
+
+  client.once("startGame", (inviteCode) => {
+    // Only allow players to start their own game.
+    if(world && world != rooms.get(inviteCode)) return;
+    
+    const payload = world.serialize(PayloadType.Initial);
+    io.to(inviteCode).emit("startedGame", payload);
+
+    // Kickstart gameloop.
+    gameLoop(inviteCode);
   });
 
   client.on("move", ({ x, y, z }: Vector) => {
@@ -65,7 +71,7 @@ io.on("connection", (client) => {
     player.move(movement);
   });
 
-  client.on("shoot", ({ x, y, z}: Vector) => {
+  client.on("shoot", ({ x, y, z }: Vector) => {
     if (!world) return;
 
     const player: Entity = world.entities.get(client.id);
@@ -74,8 +80,9 @@ io.on("connection", (client) => {
     world.entities.forEach((entity, id) => {
       if(intersects(entity, player.position, direction)) {
         const distance = distanceBetween(player.position, entity.position);
+
         entity.hit(distance);
-        client.emit("hit", id);
+        client.emit("hit", { from: client.id, to: id });
       }
     });    
   })

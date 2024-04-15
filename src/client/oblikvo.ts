@@ -64,6 +64,10 @@ class Oblikvo {
     // Handling actually starting the game is managed in
     // the `startedGame` handler, that we registered in `join`
     // earlier.
+
+    // This is because we don't only want to start our own game,
+    // but everyone's game. If we'd register it here, we'd only
+    // start our own game.
   }
 
   async startGame(payload: InitialPayload) {
@@ -78,6 +82,7 @@ class Oblikvo {
       this.bindMethod("windowResized");
 
       this.registerHandler("update");
+      this.registerHandler("hit");
     }, document.body);
   }
 
@@ -128,6 +133,11 @@ class Oblikvo {
 
     this.p5.resizeCanvas(this.p5.windowWidth, this.p5.windowHeight);
     this.camera.setPerspective();
+  }
+
+  public hit({ from, to }: { from: string, to: string }) {
+    if(from == this.server.id) // Play sound for hitting someone.
+    if(to == this.server.id) // Play sound for getting hit.
   }
 
   public update(payload: UpdatePayload) {
