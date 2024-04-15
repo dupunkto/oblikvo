@@ -1,16 +1,18 @@
 import p5 from "p5-node";
 import { initializeServer } from "./server";
 
+import { intersects, distanceBetween } from "./raycast";
+
 import Vector from "../common/vector";
 import Player from "./player";
 import World from "./world";
 
 import { Type as PayloadType } from "../common/payload";
 
-const FPS = 60;
-
 type inviteCode = string;
 const rooms: Map<inviteCode, World> = new Map();
+
+const FPS = 60;
 
 const io = initializeServer();
 
@@ -62,6 +64,19 @@ io.on("connection", (client) => {
 
     player.move(movement);
   });
+
+  client.on("shoot", (vector: Vector) => {
+    if (!world) return;
+
+    const player: Entity = world.entities.get(client.id);
+
+    world.entities.forEach((entity) => {
+      if(intersects(entity, player.position, direction)) {
+        const distance = distanceBetween(player.position, entity.position);
+        entity.hit(distance);
+      }
+    });    
+  })
 
   client.on("disconnect", () => {
     if (!world) return;

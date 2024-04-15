@@ -148,6 +148,8 @@ class Oblikvo {
     this.controller();
     this.camera.follow(this.player);
     this.world.draw(this.server.id);
+    
+    //this.broadcast("shoot", this.camera.facingDirection);
   }
 
   controller() {
