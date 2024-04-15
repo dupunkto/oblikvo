@@ -2,9 +2,11 @@ import p5 from "p5-node";
 
 import { default as CommonEntity } from "../common/entity";
 
-const G = 9.81;
+const G = 2;
 const FRICTION = 0.1;
 const SPEED = 8;
+const KNOCKBACK = 3;
+const POWER = 5;
 
 class Entity implements CommonEntity {
   position: p5.Vector;
@@ -29,13 +31,11 @@ class Entity implements CommonEntity {
 
   public hit(direction: p5.Vector, distance: number) {
     this.applyKnockback(direction, distance);
-
-    const k = 5;
-    this.health -= k / distance;
+    this.health -= POWER / distance;
   }
 
   applyKnockback(direction: p5.Vector, distance: number) {
-    this.velocity.add(direction.mult(3 / distance));
+    this.velocity.add(direction.mult(KNOCKBACK / distance));
   }
 
   public update() {
@@ -49,8 +49,8 @@ class Entity implements CommonEntity {
 
     this.position.add(this.velocity);
 
-    // Simulate collisions with the ground for now.
-    if (this.position.y < 0) this.position.y = 0;
+    const minY = 0;
+    if (this.position.y < minY) this.position.y = minY;
   }
 
   applyGravity() {

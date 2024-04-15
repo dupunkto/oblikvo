@@ -136,8 +136,8 @@ class Oblikvo {
   }
 
   public hit({ from, to }: { from: string, to: string }) {
-    if(from == this.server.id) // Play sound for hitting someone.
-    if(to == this.server.id) // Play sound for getting hit.
+    //if(from == this.server.id) // Play sound for hitting someone.
+    //if(to == this.server.id) // Play sound for getting hit.
   }
 
   public update(payload: UpdatePayload) {

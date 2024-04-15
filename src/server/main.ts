@@ -1,7 +1,7 @@
 import p5 from "p5-node";
 import { initializeServer } from "./server";
 
-import { intersects, distanceBetween } from "./raycast";
+import { willHit, distanceBetween } from "./raycast";
 
 import Vector from "../common/vector";
 import Player from "./player";
@@ -78,7 +78,7 @@ io.on("connection", (client) => {
     const direction = new p5.Vector(x, y, z);
 
     world.entities.forEach((entity, id) => {
-      if(intersects(entity, player.position, direction)) {
+      if(willHit(entity, player.position, direction)) {
         const distance = distanceBetween(player.position, entity.position);
 
         entity.hit(distance);

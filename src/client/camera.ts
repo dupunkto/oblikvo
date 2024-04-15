@@ -87,10 +87,10 @@ class Camera {
 
     this.p5.camera(
       position.x,
-      position.y - offset,
+      -position.y + offset,
       position.z,
       center.x,
-      center.y - offset,
+      -center.y + offset,
       center.z,
       0,
       1,
