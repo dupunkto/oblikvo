@@ -1,8 +1,9 @@
-import Vector from "../common/vector";
+import p5 from "p5-node";
+
 import Entity from "./entity";
 
 // Helpfully provided by ChatGPT. Fuck algorithms Am I Right.
-export function insertsects(entity: Entity, origin: Vector, direction: Vector) {
+export function insertsects(entity: Entity, origin: p5.Vector, direction: p5.Vector): boolean {
   let t1, t2;
   
   let tMin = Number.NEGATIVE_INFINITY;
@@ -39,6 +40,6 @@ export function insertsects(entity: Entity, origin: Vector, direction: Vector) {
 }
 
 // Implementation of 3D pythagoras
-export function distanceBetween(p1: Vector, p2: Vector) {
+export function distanceBetween(p1: p5.Vector, p2: p5.Vector): number {
   return Math.sqrt(Math.pow(p2.2 - p1.x, 2) + Math.pow(p2.y - p1.y, 2) + Math.pow(p2.z - p1.z, 2));
 }

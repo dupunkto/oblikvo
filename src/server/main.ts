@@ -65,15 +65,17 @@ io.on("connection", (client) => {
     player.move(movement);
   });
 
-  client.on("shoot", (vector: Vector) => {
+  client.on("shoot", ({ x, y, z}: Vector) => {
     if (!world) return;
 
     const player: Entity = world.entities.get(client.id);
+    const direction = new p5.Vector(x, y, z);
 
-    world.entities.forEach((entity) => {
+    world.entities.forEach((entity, id) => {
       if(intersects(entity, player.position, direction)) {
         const distance = distanceBetween(player.position, entity.position);
         entity.hit(distance);
+        client.emit("hit", id);
       }
     });    
   })

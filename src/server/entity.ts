@@ -27,6 +27,17 @@ class Entity implements CommonEntity {
     // TODO(robin): add other logic here later :)
   }
 
+  public hit(direction: p5.Vector, distance: number) {
+    this.applyKnockback(direction, distance);
+
+    const k = 5;
+    this.health -= k / distance;
+  }
+
+  applyKnockback(direction: p5.Vector, distance: number) {
+    this.velocity.add(direction.mult(3 / distance));
+  }
+
   public update() {
     // These will be set later, when checking collisions etc.
     this.isMoving = false;

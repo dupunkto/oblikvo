@@ -1,6 +1,7 @@
 import Vector from "./vector";
 
 interface Entity {
+  health: number;
   position: Vector;
   velocity: Vector;
   dimensions: Vector;
