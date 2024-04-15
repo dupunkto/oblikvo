@@ -11,4 +11,5 @@ export interface Block {
   kind: Kind;
 }
 
+export const SIZE = 9;
 export default Level;

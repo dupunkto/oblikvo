@@ -1,6 +1,6 @@
 import p5 from "p5";
 
-import { default as Blocks } from "../common/level";
+import { default as Blocks, SIZE } from "../common/level";
 
 class Level {
   p5: p5;
@@ -14,7 +14,7 @@ class Level {
   draw() {
     this.blocks.forEach(([coords, block]) => {
       let [x, y, z] = coords.split(",");
-      const dimensions = 9;
+      const dimensions = SIZE;
 
       this.p5.push();
       this.p5.fill(block.color);
