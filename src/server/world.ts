@@ -110,41 +110,59 @@ class World {
     let ix = Math.floor(player.position.x / SIZE);
     let iy = Math.floor(player.position.y / SIZE);
     let iz = Math.floor(player.position.z / SIZE);
-  
-    if (this.level.get(ix + 1, iy, iz) !== undefined && this.level.get(ix + 1, iy, iz) !== 0) {
-      let side = player.position.x+player.dimensions.x/2;
-      if (side >= (ix+1)*SIZE)
-        player.position.x = (ix+1)*SIZE - player.dimensions.x/2 - 1;
-    }
-  
-    if (this.level.get(ix - 1, iy, iz) !== undefined && this.level.get(ix - 1, iy, iz) !== 0) {
-      let side = player.position.x-player.dimensions.x/2;
-      if (side <= ix*SIZE)
-        player.position.x = ix*SIZE + player.dimensions.x/2 + 1;
-    }
-  
-    if (this.level.get(ix, iy + 1, iz) !== undefined && this.level.get(ix, iy + 1, iz) !== 0) {
-      let side = player.position.y+player.dimensions.y/2;
-      if (side >= (iy+1)*SIZE)
-        player.position.y = (iy+1)*SIZE - player.dimensions.y/2 - 1;
-    }
-  
-    if (this.level.get(ix, iy - 1, iz) !== undefined && this.level.get(ix, iy - 1, iz) !== 0) {
-      let side = player.position.y-player.dimensions.y/2;
-      if (side <= iy*SIZE)
-        player.position.y = iy*SIZE + player.dimensions.y/2 + 1;
-    }
-  
-    if (this.level.get(ix, iy, iz + 1) !== undefined && this.level.get(ix, iy, iz + 1) !== 0) {
-      let side = player.position.z+player.dimensions.z/2;
-      if (side >= (iz+1)*SIZE)
-        player.position.z = (iz+1)*SIZE - player.dimensions.z/2 - 1;
+
+    if (
+      this.level.get(ix + 1, iy, iz) !== undefined &&
+      this.level.get(ix + 1, iy, iz) !== 0
+    ) {
+      let side = player.position.x + player.dimensions.x / 2;
+      if (side >= (ix + 1) * SIZE)
+        player.position.x = (ix + 1) * SIZE - player.dimensions.x / 2 - 1;
     }
 
-    if (this.level.get(ix, iy, iz - 1) !== undefined && this.level.get(ix, iy, iz - 1) !== 0) {
-      let side = player.position.z-player.dimensions.z/2;
-      if (side <= iz*SIZE)
-        player.position.z = iz*SIZE + player.dimensions.z/2 + 1;
+    if (
+      this.level.get(ix - 1, iy, iz) !== undefined &&
+      this.level.get(ix - 1, iy, iz) !== 0
+    ) {
+      let side = player.position.x - player.dimensions.x / 2;
+      if (side <= ix * SIZE)
+        player.position.x = ix * SIZE + player.dimensions.x / 2 + 1;
+    }
+
+    if (
+      this.level.get(ix, iy + 1, iz) !== undefined &&
+      this.level.get(ix, iy + 1, iz) !== 0
+    ) {
+      let side = player.position.y + player.dimensions.y / 2;
+      if (side >= (iy + 1) * SIZE)
+        player.position.y = (iy + 1) * SIZE - player.dimensions.y / 2 - 1;
+    }
+
+    if (
+      this.level.get(ix, iy - 1, iz) !== undefined &&
+      this.level.get(ix, iy - 1, iz) !== 0
+    ) {
+      let side = player.position.y - player.dimensions.y / 2;
+      if (side <= iy * SIZE)
+        player.position.y = iy * SIZE + player.dimensions.y / 2 + 1;
+    }
+
+    if (
+      this.level.get(ix, iy, iz + 1) !== undefined &&
+      this.level.get(ix, iy, iz + 1) !== 0
+    ) {
+      let side = player.position.z + player.dimensions.z / 2;
+      if (side >= (iz + 1) * SIZE)
+        player.position.z = (iz + 1) * SIZE - player.dimensions.z / 2 - 1;
+    }
+
+    if (
+      this.level.get(ix, iy, iz - 1) !== undefined &&
+      this.level.get(ix, iy, iz - 1) !== 0
+    ) {
+      let side = player.position.z - player.dimensions.z / 2;
+      if (side <= iz * SIZE)
+        player.position.z = iz * SIZE + player.dimensions.z / 2 + 1;
     }
   }
 

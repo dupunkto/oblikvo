@@ -52,8 +52,8 @@ io.on("connection", (client) => {
 
   client.once("startGame", (inviteCode) => {
     // Only allow players to start their own game.
-    if(world && world != rooms.get(inviteCode)) return;
-    
+    if (world && world != rooms.get(inviteCode)) return;
+
     const payload = world.serialize(PayloadType.Initial);
     io.to(inviteCode).emit("startedGame", payload);
 
@@ -78,14 +78,14 @@ io.on("connection", (client) => {
     const direction = new p5.Vector(x, y, z);
 
     world.entities.forEach((entity, id) => {
-      if(willHit(entity, player.position, direction)) {
+      if (willHit(entity, player.position, direction)) {
         const distance = distanceBetween(player.position, entity.position);
 
         entity.hit(distance);
         client.emit("hit", { from: client.id, to: id });
       }
-    });    
-  })
+    });
+  });
 
   client.on("disconnect", () => {
     if (!world) return;

@@ -10,7 +10,7 @@ declare global {
 }
 
 Map.prototype.map = function <K, V, T>(
-  predicate: (value: V, key: K) => T
+  predicate: (value: V, key: K) => T,
 ): Map<K, T> {
   let map: Map<K, T> = new Map();
 

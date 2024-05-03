@@ -27,11 +27,11 @@ class Entity implements CommonEntity {
 
   public draw() {
     const coordinates = new p5.Vector(
-      this.position.x, 
-      -this.position.y, 
-      this.position.z
+      this.position.x,
+      -this.position.y,
+      this.position.z,
     );
-    
+
     const width = this.dimensions.x;
     const height = this.dimensions.y;
     const depth = this.dimensions.z;

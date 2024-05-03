@@ -33,7 +33,7 @@ class Camera {
       this.fov,
       this.p5.width / this.p5.height,
       0.01,
-      10000.0
+      10000.0,
     );
   }
 
@@ -76,7 +76,7 @@ class Camera {
 
       this.p5.translate(
         this.p5.random(-shakeIntensity, shakeIntensity),
-        this.p5.random(-shakeIntensity, shakeIntensity)
+        this.p5.random(-shakeIntensity, shakeIntensity),
       );
     }
 
@@ -94,7 +94,7 @@ class Camera {
       center.z,
       0,
       1,
-      0
+      0,
     );
   }
 
@@ -102,7 +102,7 @@ class Camera {
     return new p5.Vector(
       Math.cos(this.pan),
       Math.tan(this.tilt),
-      Math.sin(this.pan)
+      Math.sin(this.pan),
     ).normalize();
   }
 
