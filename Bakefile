@@ -5,6 +5,7 @@ trap clean 1 2 3 6 9
 SRC="src/client/main.ts"
 PUBLIC="public"
 DIST="dist"
+BUILD="bun build --target=browser --format=esm --sourcemap=inline --minify"
 
 setup() {
   bun install
@@ -24,7 +25,7 @@ build() {
   mkdir "$DIST"
   cp "$PUBLIC"/* "$DIST"/
 
-  bun build "$SRC" --outdir="$DIST"
+  $BUILD "$SRC" --outdir="$DIST"
 }
 
 serve() {
@@ -38,7 +39,7 @@ dev() {
   # for static assets to be rebuilt.
   
   DIST="$PUBLIC" serve &
-  bun build "$SRC" --watch --outdir="$PUBLIC"
+  $BUILD "$SRC" --watch --outdir="$PUBLIC"
 }
 
 clean() {

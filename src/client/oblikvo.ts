@@ -1,4 +1,6 @@
 import p5 from "p5";
+import "p5/lib/addons/p5.sound";
+
 import { io, Socket } from "socket.io-client";
 
 import { InitialPayload, UpdatePayload } from "../common/payload";
@@ -17,12 +19,17 @@ class Oblikvo {
   started: boolean;
   server: Socket;
 
+  // Lookup map containing assets like
+  // sprites and sounds.
+  assets: Map<string, any>;
+
   // `undefined` before a game is joined.
   nick: string | undefined;
   inviteCode: string | undefined;
 
   // `undefined` before the game is started.
   p5: p5 | undefined;
+  canvas: p5.Renderer | undefined;
   camera: Camera | undefined;
   world: World | undefined;
 
@@ -30,6 +37,7 @@ class Oblikvo {
     this.joined = false;
     this.started = false;
     this.server = io();
+    this.assets = new Map();
   }
 
   public async new(): Promise<string> {
@@ -77,6 +85,7 @@ class Oblikvo {
       this.world = new World(renderer, payload);
       this.camera = new Camera(renderer);
 
+      this.bindMethod("preload");
       this.bindMethod("setup");
       this.bindMethod("draw");
       this.bindMethod("windowResized");
@@ -91,19 +100,34 @@ class Oblikvo {
     this.p5[method] = () => this[method]();
   }
 
+  public preload() {
+    if (!this.p5) throw "`setup` called but `p5` not set.";
+
+    this.loadSound("hitAnotherPlayer");
+    this.loadSound("gotHit");
+    this.loadSound("shootLaser");
+  }
+
+  loadSound(identifier) {
+    // @ts-ignore p5 is set, I've checked it already in `preload`.
+    this.assets.set(identifier, this.p5.loadSound(`${identifier}.wav`));
+  }
+
   public setup() {
     if (!this.p5) throw "`setup` called but `p5` not set.";
     if (!this.camera) throw "`setup` called but `camera` not set.";
 
-    this.p5.createCanvas(
+    this.canvas = this.p5.createCanvas(
       this.p5.windowWidth,
       this.p5.windowHeight,
-      this.p5.WEBGL
+      this.p5.WEBGL,
     );
 
     this.p5.frameRate(60);
     this.p5.angleMode(this.p5.RADIANS);
     this.p5.noStroke();
+
+    this.canvas.mousePressed(() => this.mousePressed());
 
     this.camera.setPerspective();
     this.usePointerLock();
@@ -135,9 +159,19 @@ class Oblikvo {
     this.camera.setPerspective();
   }
 
-  public hit({ from, to }: { from: string, to: string }) {
-    //if(from == this.server.id) // Play sound for hitting someone.
-    //if(to == this.server.id) // Play sound for getting hit.
+  public mousePressed() {
+    if (!this.camera) throw "`mousePressed` called, but `camera` not set.";
+    this.broadcast("shoot", this.camera.facingDirection);
+    this.playSound("shoortLaser");
+  }
+
+  public hit({ from, to }: { from: string; to: string }) {
+    if (from == this.server.id) this.playSound("hitAnotherPlayer");
+    if (to == this.server.id) this.playSound("gotHit");
+  }
+
+  playSound(identifier) {
+    this.assets.get(identifier).play();
   }
 
   public update(payload: UpdatePayload) {
@@ -158,8 +192,6 @@ class Oblikvo {
     this.controller();
     this.camera.follow(this.player);
     this.world.draw(this.server.id);
-    
-    //this.broadcast("shoot", this.camera.facingDirection);
   }
 
   controller() {
