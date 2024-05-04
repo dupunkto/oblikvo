@@ -1,3 +1,7 @@
+// A world is the game state. It holds all the necessary data
+// to render the world at any point in time. It can be serialized into
+// a payload, to send to the client.
+
 import p5 from "p5-node";
 
 import Level from "./level";
@@ -93,10 +97,6 @@ class World {
 
   public despawn(id: string) {
     this.entities.delete(id);
-  }
-
-  public get empty(): boolean {
-    return this.entities.size < 1;
   }
 
   public update() {

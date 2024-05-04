@@ -1,9 +1,10 @@
 import p5 from "p5";
-import "p5/lib/addons/p5.sound";
+//import "p5/lib/addons/p5.sound";
+import "../common/string";
 
 import { io, Socket } from "socket.io-client";
 
-import { InitialPayload, UpdatePayload } from "../common/payload";
+import { JoinPayload, StartPayload, UpdatePayload } from "../common/payload";
 
 import Camera from "./camera";
 import Entity from "./entity";
@@ -25,6 +26,7 @@ class Oblikvo {
 
   // `undefined` before a game is joined.
   nick: string | undefined;
+  color: string | undefined;
   inviteCode: string | undefined;
 
   // `undefined` before the game is started.
@@ -39,6 +41,8 @@ class Oblikvo {
     this.server = io();
     this.assets = new Map();
   }
+
+  // Public API for interacting with the server.
 
   public async new(): Promise<string> {
     this.broadcast("newGame");
@@ -55,14 +59,13 @@ class Oblikvo {
   public async join(inviteCode: string): Promise<void> {
     this.broadcast("joinGame", inviteCode);
 
-    this.receive("joinedGame").then((nick) => {
-      this.nick = nick;
+    this.receive("joinedGame").then((payload) => {
       this.inviteCode = inviteCode;
-      this.joined = true;
+      this.handleJoined(payload);
     });
 
-    this.receive("startedGame").then(async (payload) => {
-      await this.startGame(payload);
+    this.receive("startedGame").then((payload) => {
+      this.handleStarted(payload);
     });
   }
 
@@ -78,7 +81,16 @@ class Oblikvo {
     // start our own game.
   }
 
-  async startGame(payload: InitialPayload) {
+  // Handlers for mutating client-side state.
+
+  handleJoined(payload: JoinPayload) {
+    this.inviteCode = payload.inviteCode;
+    this.nick = payload.nick;
+    this.color = payload.color;
+    this.joined = true;
+  }
+
+  handleStarted(payload: StartPayload) {
     new p5((renderer) => {
       this.p5 = renderer;
 
@@ -95,23 +107,35 @@ class Oblikvo {
     }, document.body);
   }
 
-  bindMethod(method: any) {
-    // @ts-ignore This black magic fuckery works--don't touch it.
-    this.p5[method] = () => this[method]();
+  handleHit({ from, to }: { from: string; to: string }) {
+    //if (from == this.server.id) this.playSound("hitAnotherPlayer");
+    //if (to == this.server.id) this.playSound("gotHit");
   }
+
+  handleUpdate(payload: UpdatePayload) {
+    // @ts-ignore update can only be called when registered with
+    // the hook in `startGame`, which also sets `this.world`.
+    this.world.load(payload);
+  }
+
+  // APIs implementing p5.js functionality.
 
   public preload() {
     if (!this.p5) throw "`setup` called but `p5` not set.";
 
-    this.loadSound("hitAnotherPlayer");
-    this.loadSound("gotHit");
-    this.loadSound("shootLaser");
+    //this.loadSound("hitAnotherPlayer");
+    //this.loadSound("gotHit");
+    //this.loadSound("shootLaser");
   }
 
-  loadSound(identifier) {
+  loadSound(identifier: string) {
     // @ts-ignore p5 is set, I've checked it already in `preload`.
     this.assets.set(identifier, this.p5.loadSound(`${identifier}.wav`));
   }
+
+  //playSound(identifier: string) {
+  //  this.assets.get(identifier).play();
+  //}
 
   public setup() {
     if (!this.p5) throw "`setup` called but `p5` not set.";
@@ -147,7 +171,7 @@ class Oblikvo {
   }
 
   unlockPointer() {
-    // @ts-ignore (Same as `lockPointer` applies here)
+    // @ts-ignore (same as `lockPointer` applies here)
     if (!document.pointerLockElement) this.camera.useMouseControls = false;
   }
 
@@ -162,22 +186,7 @@ class Oblikvo {
   public mousePressed() {
     if (!this.camera) throw "`mousePressed` called, but `camera` not set.";
     this.broadcast("shoot", this.camera.facingDirection);
-    this.playSound("shoortLaser");
-  }
-
-  public hit({ from, to }: { from: string; to: string }) {
-    if (from == this.server.id) this.playSound("hitAnotherPlayer");
-    if (to == this.server.id) this.playSound("gotHit");
-  }
-
-  playSound(identifier) {
-    this.assets.get(identifier).play();
-  }
-
-  public update(payload: UpdatePayload) {
-    // @ts-ignore update can only be called when registered with
-    // the hook in `startGame`, which also sets `this.world`.
-    this.world.load(payload);
+    //this.playSound("shoortLaser");
   }
 
   public draw() {
@@ -220,12 +229,14 @@ class Oblikvo {
     return this.world.entities.get(this.server.id);
   }
 
-  public broadcast(event: string, params: any = {}) {
+  // Helpers for interacting with the server and p5js.
+
+  broadcast(event: string, params: any = {}) {
     dbg(`Broadcasting ${event}`);
     this.server.emit(event, params);
   }
 
-  public async receive(event: string): Promise<any> {
+  async receive(event: string): Promise<any> {
     return new Promise((resolve) => {
       this.server.once(event, (params) => {
         dbg(`Receiving ${event}`);
@@ -234,13 +245,18 @@ class Oblikvo {
     });
   }
 
-  public registerHandler(event: string) {
+  bindMethod(method: any) {
+    // @ts-ignore This black magic fuckery works--don't touch it.
+    this.p5[method] = () => this[method]();
+  }
+
+  registerHandler(event: string) {
     this.server.on(event, (params) => {
       dbg(`Receiving ${event}`);
 
       // @ts-expect-error You're not supposed to call
       // `registerHandler` if the method doesn't exist.
-      this[event](params);
+      this[`handle-${event}`.camelize()](params);
     });
   }
 }

@@ -1,3 +1,11 @@
+// If a participant joins a game, they turn into a Player (which extends Entity)
+// with the same ID.
+
+// A participant (client that joined a room) doesn't always have a correspondig
+// entity. Forexample, a client can join after the game already started. In that
+// case, they get the ability to join the next game (as managed by the room), but
+// the current game doesn't have a corresponding entity.
+
 import p5 from "p5-node";
 
 import Entity from "./entity";

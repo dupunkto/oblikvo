@@ -29,6 +29,16 @@ Additionally, our `Bakefile` also includes a snippet for starting a live server 
 bake dev
 ```
 
+## TODO
+
+- [ ] Shooting
+- [ ] Hitting
+- [ ] (Re)spawning
+- [ ] Launchpads
+- [ ] Non-flaky collisions
+- [ ] Sprites
+- [ ] Shader
+
 ## Design ideas
 
 This game was built as a project for computer science. Our aim was to push

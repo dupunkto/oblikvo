@@ -2,20 +2,29 @@ import Entity from "./entity";
 import Level from "./level";
 
 enum Type {
-  Initial,
+  Join,
+  Start,
   Update,
+}
+
+interface JoinPayload {
+  inviteCode: string;
+  status: string; // "pending" | "ongoing" | "done"
+  nick: string;
+  color: string;
+  clients: number;
+}
+
+interface StartPayload {
+  entities: [string, Entity][];
+  level: Level;
 }
 
 interface UpdatePayload {
   entities: [string, Entity][];
 }
 
-interface InitialPayload {
-  entities: [string, Entity][];
-  level: Level;
-}
-
-type Payload = InitialPayload | UpdatePayload;
+type Payload = JoinPayload | StartPayload | UpdatePayload;
 
 export default Payload;
-export { Type, InitialPayload, UpdatePayload };
+export { Type, JoinPayload, StartPayload, UpdatePayload };

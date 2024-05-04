@@ -1,3 +1,8 @@
+// An entity is a *thing* in the game that's not part of the
+// level. It is subjective to physics and can be independently manipulated.
+
+// An entity is not necessarily a player. It can also be a bot or NPC.
+
 import p5 from "p5-node";
 
 import { default as CommonEntity } from "../common/entity";
@@ -14,6 +19,7 @@ class Entity implements CommonEntity {
   dimensions: p5.Vector;
   speed: number = SPEED;
 
+  inGame: boolean = false;
   onGround: boolean = false;
   againstWall: boolean = false;
   isMoving: boolean = false;
@@ -26,6 +32,8 @@ class Entity implements CommonEntity {
 
   public spawn(position: p5.Vector) {
     this.position = position;
+    this.inGame = true;
+
     // TODO(robin): add other logic here later :)
   }
 

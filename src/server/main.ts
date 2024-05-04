@@ -2,15 +2,14 @@ import p5 from "p5-node";
 import { initializeServer } from "./server";
 
 import { willHit, distanceBetween } from "./raycast";
+import { randomID } from "../common/random";
 
 import Vector from "../common/vector";
-import Player from "./player";
-import World from "./world";
-
-import { Type as PayloadType } from "../common/payload";
+import Entity from "./entity";
+import Room from "./room";
 
 type inviteCode = string;
-const rooms: Map<inviteCode, World> = new Map();
+const rooms: Map<inviteCode, Room> = new Map();
 
 const FPS = 60;
 
@@ -19,11 +18,11 @@ const io = initializeServer();
 io.on("connection", (client) => {
   dbg("A new client connected.");
 
-  let world: World | undefined;
+  let room: Room | undefined;
 
   client.once("newGame", () => {
     const inviteCode = randomID();
-    rooms.set(inviteCode, new World());
+    rooms.set(inviteCode, new Room());
 
     client.emit("createdGame", inviteCode);
   });
@@ -34,14 +33,7 @@ io.on("connection", (client) => {
 
   client.once("joinGame", (inviteCode: inviteCode) => {
     if (rooms.has(inviteCode)) {
-      world = rooms.get(inviteCode);
-
-      // Please the TS compiler (yet again): we already check if `world`
-      // is defined in the fucking if-statement, but it complains anyway.
-      if (!world) return;
-
-      const firstPlayer = world.empty;
-      world.spawn(client.id, new Player());
+      rooms.get(inviteCode)?.join(client.id);
 
       client.join(inviteCode);
       client.emit("joinedGame", randomID());
@@ -52,32 +44,24 @@ io.on("connection", (client) => {
 
   client.once("startGame", (inviteCode) => {
     // Only allow players to start their own game.
-    if (world && world != rooms.get(inviteCode)) return;
+    if (room && room != rooms.get(inviteCode)) return;
 
-    const payload = world.serialize(PayloadType.Initial);
-    io.to(inviteCode).emit("startedGame", payload);
-
-    // Kickstart gameloop.
-    gameLoop(inviteCode);
+    io.to(inviteCode).emit("startedGame", room.start());
+    gameLoop(inviteCode); // Kickstart gameloop.
   });
 
   client.on("move", ({ x, y, z }: Vector) => {
-    if (!world) return;
-
-    // @ts-ignore The `client.id` always returns an `Player` instance.
-    const player: Player = world.entities.get(client.id);
-    const movement = new p5.Vector(x, y, z);
-
-    player.move(movement);
+    if (!room) return;
+    room.move(client.id, new p5.Vector(x, y, z));
   });
 
   client.on("shoot", ({ x, y, z }: Vector) => {
-    if (!world) return;
+    if (!room) return;
 
-    const player: Entity = world.entities.get(client.id);
+    const player: Entity = room.world.entities.get(client.id);
     const direction = new p5.Vector(x, y, z);
 
-    world.entities.forEach((entity, id) => {
+    room.world.entities.forEach((entity, id) => {
       if (willHit(entity, player.position, direction)) {
         const distance = distanceBetween(player.position, entity.position);
 
@@ -88,8 +72,8 @@ io.on("connection", (client) => {
   });
 
   client.on("disconnect", () => {
-    if (!world) return;
-    world.despawn(client.id);
+    if (!room) return;
+    room.leave(client.id);
 
     dbg("A client left the game.");
   });
@@ -97,28 +81,16 @@ io.on("connection", (client) => {
 
 function gameLoop(inviteCode: inviteCode) {
   if (!rooms.has(inviteCode)) return;
-  const world = rooms.get(inviteCode);
+  const room = rooms.get(inviteCode);
 
-  // @ts-ignore see comment in `joinGame`.
-  if (world.empty) {
-    // End game if there are no players left.
+  // End game if there are no players left.
+  if (room.empty) {
     rooms.delete(inviteCode);
-
     return;
   } else {
-    // @ts-ignore also see comment in `joinGame`.
-    world.update();
-
-    // @ts-ignore again, see comment in `joinGame`
-    const payload = world.serialize(PayloadType.Update);
-
-    io.to(inviteCode).emit("update", payload);
+    io.to(inviteCode).emit("update", room.update());
     setTimeout(() => gameLoop(inviteCode), 1000 / FPS);
   }
-}
-
-function randomID() {
-  return (Math.random() + 1).toString(36).substring(7);
 }
 
 function dbg(message: string) {
