@@ -12,14 +12,19 @@ const FRICTION = 0.1;
 const SPEED = 8;
 const KNOCKBACK = 3;
 const POWER = 5;
+const HEALTH = 20;
+const INCREASE = 0.25;
 
 class Entity implements CommonEntity {
+  health: number = HEALTH;
+  speed: number = SPEED;
+  kills: number = 0;
+  killed: number = 0;
+
   position: p5.Vector;
   velocity: p5.Vector;
   dimensions: p5.Vector;
-  speed: number = SPEED;
 
-  inGame: boolean = false;
   onGround: boolean = false;
   againstWall: boolean = false;
   isMoving: boolean = false;
@@ -32,9 +37,13 @@ class Entity implements CommonEntity {
 
   public spawn(position: p5.Vector) {
     this.position = position;
-    this.inGame = true;
+  }
 
-    // TODO(robin): add other logic here later :)
+  public respawn(position: p5.Vector) {
+    this.killed += 1;
+    this.speed *= 1 + INCREASE;
+    this.health += INCREASE * HEALTH;
+    this.spawn(position);
   }
 
   public hit(direction: p5.Vector, distance: number) {

@@ -1,17 +1,13 @@
 import p5 from "p5-node";
-import { initializeServer } from "./server";
-
-import { willHit, distanceBetween } from "./raycast";
-import { randomID } from "../common/random";
 
 import Vector from "../common/vector";
-import Entity from "./entity";
 import Room from "./room";
+
+import { initializeServer } from "./server";
+import { randomID } from "../common/random";
 
 type inviteCode = string;
 const rooms: Map<inviteCode, Room> = new Map();
-
-const FPS = 60;
 
 const io = initializeServer();
 
@@ -22,7 +18,7 @@ io.on("connection", (client) => {
 
   client.once("newGame", () => {
     const inviteCode = randomID();
-    rooms.set(inviteCode, new Room());
+    rooms.set(inviteCode, new Room(inviteCode));
 
     client.emit("createdGame", inviteCode);
   });
@@ -33,10 +29,15 @@ io.on("connection", (client) => {
 
   client.once("joinGame", (inviteCode: inviteCode) => {
     if (rooms.has(inviteCode)) {
-      rooms.get(inviteCode)?.join(client.id);
+      room = rooms.get(inviteCode);
+
+      // @ts-ignore `room` is definitely not undefined.
+      // I just called rooms.has(inviteCode) in the if-statement.
+      // Fucking dumbass type checker.
+      const payload = room.join(client.id);
 
       client.join(inviteCode);
-      client.emit("joinedGame", randomID());
+      client.emit("joinedGame", payload);
     } else {
       dbg("Warning: client tried to join game that doesn't exist.");
     }
@@ -44,7 +45,7 @@ io.on("connection", (client) => {
 
   client.once("startGame", (inviteCode) => {
     // Only allow players to start their own game.
-    if (room && room != rooms.get(inviteCode)) return;
+    if (!room || room != rooms.get(inviteCode)) return;
 
     io.to(inviteCode).emit("startedGame", room.start());
     gameLoop(inviteCode); // Kickstart gameloop.
@@ -57,17 +58,9 @@ io.on("connection", (client) => {
 
   client.on("shoot", ({ x, y, z }: Vector) => {
     if (!room) return;
-
-    const player: Entity = room.world.entities.get(client.id);
-    const direction = new p5.Vector(x, y, z);
-
-    room.world.entities.forEach((entity, id) => {
-      if (willHit(entity, player.position, direction)) {
-        const distance = distanceBetween(player.position, entity.position);
-
-        entity.hit(distance);
-        client.emit("hit", { from: client.id, to: id });
-      }
+    room.shoot(client.id, new p5.Vector(x, y, z), (id: string) => {
+      // @ts-ignore ??
+      io.to(room.inviteCode).emit("hit", { from: client.id, to: id });
     });
   });
 
@@ -79,18 +72,20 @@ io.on("connection", (client) => {
   });
 });
 
+const FPS = 60;
+
 function gameLoop(inviteCode: inviteCode) {
   if (!rooms.has(inviteCode)) return;
   const room = rooms.get(inviteCode);
 
   // End game if there are no players left.
-  if (room.empty) {
+  if (!room || room.empty) {
     rooms.delete(inviteCode);
     return;
-  } else {
-    io.to(inviteCode).emit("update", room.update());
-    setTimeout(() => gameLoop(inviteCode), 1000 / FPS);
   }
+
+  io.to(inviteCode).emit("update", room.update());
+  setTimeout(() => gameLoop(inviteCode), 1000 / FPS);
 }
 
 function dbg(message: string) {

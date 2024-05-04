@@ -8,7 +8,7 @@ import Level from "./level";
 import Entity from "./entity";
 import Payload from "../common/payload";
 
-import { Type as PayloadType } from "../common/payload";
+import { Type } from "../common/payload";
 import { SIZE } from "../common/level";
 
 class World {
@@ -166,22 +166,26 @@ class World {
     }
   }
 
-  public serialize(type: PayloadType): Payload {
+  public serialize(type: Type): Payload {
     switch (type) {
-      case PayloadType.Start:
+      case Type.Start:
         return {
           entities: [...this.entities.entries()],
           level: this.level.serialize(),
         };
 
-      case PayloadType.Update:
+      case Type.Update:
         return {
           entities: [...this.entities.entries()],
         };
 
-      case PayloadType.Update:
+      case Type.Update:
         throw "can't serialize the world state to a `JoinPayload`, \
         as the world doesn't know room-specific client data";
+
+      // Here because TypeScript is a dumb bitch.
+      default:
+        throw "impossible";
     }
   }
 }

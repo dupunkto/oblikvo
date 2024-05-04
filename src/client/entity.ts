@@ -6,6 +6,7 @@ import { default as CommonEntity } from "../common/entity";
 
 class Entity implements CommonEntity {
   p5: p5;
+  health: number;
   position: p5.Vector;
   velocity: p5.Vector;
   dimensions: p5.Vector;
@@ -20,6 +21,7 @@ class Entity implements CommonEntity {
     this.velocity = toVector(entity.velocity);
     this.dimensions = toVector(entity.dimensions);
 
+    this.health = entity.health;
     this.onGround = entity.onGround;
     this.againstWall = entity.againstWall;
     this.isMoving = entity.isMoving;

@@ -256,7 +256,7 @@ class Oblikvo {
 
       // @ts-expect-error You're not supposed to call
       // `registerHandler` if the method doesn't exist.
-      this[`handle-${event}`.camelize()](params);
+      this[`handle${event.pascalize()}`](params);
     });
   }
 }

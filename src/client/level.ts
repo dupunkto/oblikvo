@@ -21,7 +21,7 @@ class Level {
       this.p5.translate(
         dimensions * (parseInt(x) + 0.5),
         -dimensions * (parseInt(y) + 0.5),
-        dimensions * (parseInt(z) + 0.5)
+        dimensions * (parseInt(z) + 0.5),
       );
       this.p5.box(dimensions);
       this.p5.pop();

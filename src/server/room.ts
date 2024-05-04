@@ -7,12 +7,15 @@ import p5 from "p5-node";
 
 import Participant from "./participant";
 import Player from "./player";
+import Entity from "./entity";
 import World from "./world";
 
 import { JoinPayload } from "../common/payload";
 import { StartPayload } from "../common/payload";
 import { UpdatePayload } from "../common/payload";
 import { Type } from "../common/payload";
+
+import { willHit, distanceBetween } from "./raycast";
 
 class Room {
   inviteCode: string;
@@ -49,6 +52,24 @@ class Room {
     // @ts-ignore the `id` always returns a Player.
     const player: Player = this.world.entities.get(id);
     player.move(movement);
+  }
+
+  public shoot(
+    shooterID: string,
+    direction: p5.Vector,
+    callback: (id: string, entity: Entity) => void,
+  ): void {
+    // @ts-ignore the `id` always returns a Player.
+    const player: Player = this.world.entities.get(shooterID);
+
+    this.world.entities.forEach((entity: Entity, id: string) => {
+      if (willHit(player.position, direction, entity)) {
+        const distance = distanceBetween(player.position, entity.position);
+        entity.hit(direction, distance);
+
+        callback(id, entity);
+      }
+    });
   }
 
   public start(): StartPayload {
