@@ -113,7 +113,7 @@ class World {
 
     if (
       this.level.get(ix + 1, iy, iz) !== undefined &&
-      this.level.get(ix + 1, iy, iz) !== 0
+      this.level.get(ix + 1, iy, iz)?.kind !== 0
     ) {
       let side = player.position.x + player.dimensions.x / 2;
       if (side >= (ix + 1) * SIZE)
@@ -122,7 +122,7 @@ class World {
 
     if (
       this.level.get(ix - 1, iy, iz) !== undefined &&
-      this.level.get(ix - 1, iy, iz) !== 0
+      this.level.get(ix - 1, iy, iz)?.kind !== 0
     ) {
       let side = player.position.x - player.dimensions.x / 2;
       if (side <= ix * SIZE)
@@ -131,7 +131,7 @@ class World {
 
     if (
       this.level.get(ix, iy + 1, iz) !== undefined &&
-      this.level.get(ix, iy + 1, iz) !== 0
+      this.level.get(ix, iy + 1, iz)?.kind !== 0
     ) {
       let side = player.position.y + player.dimensions.y / 2;
       if (side >= (iy + 1) * SIZE)
@@ -140,7 +140,7 @@ class World {
 
     if (
       this.level.get(ix, iy - 1, iz) !== undefined &&
-      this.level.get(ix, iy - 1, iz) !== 0
+      this.level.get(ix, iy - 1, iz)?.kind !== 0
     ) {
       let side = player.position.y - player.dimensions.y / 2;
       if (side <= iy * SIZE)
@@ -149,7 +149,7 @@ class World {
 
     if (
       this.level.get(ix, iy, iz + 1) !== undefined &&
-      this.level.get(ix, iy, iz + 1) !== 0
+      this.level.get(ix, iy, iz + 1)?.kind !== 0
     ) {
       let side = player.position.z + player.dimensions.z / 2;
       if (side >= (iz + 1) * SIZE)
@@ -158,7 +158,7 @@ class World {
 
     if (
       this.level.get(ix, iy, iz - 1) !== undefined &&
-      this.level.get(ix, iy, iz - 1) !== 0
+      this.level.get(ix, iy, iz - 1)?.kind !== 0
     ) {
       let side = player.position.z - player.dimensions.z / 2;
       if (side <= iz * SIZE)
@@ -168,7 +168,7 @@ class World {
 
   public serialize(type: PayloadType): Payload {
     switch (type) {
-      case PayloadType.Initial:
+      case PayloadType.Start:
         return {
           entities: [...this.entities.entries()],
           level: this.level.serialize(),
@@ -178,6 +178,10 @@ class World {
         return {
           entities: [...this.entities.entries()],
         };
+
+      case PayloadType.Update:
+        throw "can't serialize the world state to a `JoinPayload`, \
+        as the world doesn't know room-specific client data";
     }
   }
 }
