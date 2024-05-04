@@ -33,8 +33,12 @@ bake dev
 
 - [ ] Shooting
 - [ ] Hitting
-- [ ] (Re)spawning
+- [ ] Health
+- [ ] Leaderboard
+- [ ] Game end with play again button & podium
+- [ ] (Re)spawning (with bumping stats)
 - [ ] Launchpads
+- [ ] Camera effects (+fix scaling??)
 - [ ] Non-flaky collisions
 - [ ] Sprites
 - [ ] Shader
