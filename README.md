@@ -31,7 +31,12 @@ bake dev
 
 ## TODO
 
-- [ ] Shooting
+- [x] Menus
+- [x] Lobbies
+- [x] Nicknames
+- [x] Shooting
+- [ ] Start button disabled with < 4 players
+- [ ] Chat (without chat)
 - [ ] Hitting
 - [ ] Health
 - [ ] Leaderboard
@@ -42,6 +47,16 @@ bake dev
 - [ ] Non-flaky collisions
 - [ ] Sprites
 - [ ] Shader
+
+Chat messages:
+
+- PeculiarPinguin joined (total players: 5)
+- Robijntje left (total players: 4)
+- PeculiarPinguin is now SeanTheGamer
+- SeanTheGamer hit BumblingBummblebee
+- SeanTheGamer slashed BumblingBumblebee
+- Kevuit hasn't been hit yet!
+- FissaMetTissa hasn't been slashed yet!
 
 ## Design ideas
 
@@ -168,7 +183,8 @@ gradient over their sprite, ammo stats scrolling over the walls.
 
 These are used for defining data sent back and forth between the server and client.
 
-- `InitialPayload`: the world state as pushed to the clients when they first connect.
+- `JoinPayload`: some data for rendering the lobby.
+- `StartPayload`: the world state as pushed to the clients when they first connect.
 - `UpdatePayload`: the world state pushed to the clients every tick (60 times per second). If this seems inefficient, that's because it is :)
 - `Entity`: positional and movement data for an entity, contained within the `Payload` object.
 - `Block`: the positional and color data for a block, also contained within the `Payload` object.
@@ -177,7 +193,8 @@ These are used for defining data sent back and forth between the server and clie
 
 The entity interface is implemented on both the client and server:
 
-- `Entity` (server) contains logic for moving an entity.
+- `Entity` (server) contains logic for physics calculations.
+- `Player` (server) contains logic for moving players.
 - `Entity` (client) contains logic for drawing an entity.
 
 ### Serialization
