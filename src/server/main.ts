@@ -53,7 +53,7 @@ io.on("connection", (client) => {
     room?.shoot(client.id, direction, (entity: Entity) => {
       // Yup, yet again pleasing the TS compiler. More like BS
       // compiler at this point...
-      if(!room) throw "room not set?!";
+      if (!room) throw "room not set?!";
 
       if (entity.health <= 0) {
         io.to(room.inviteCode).emit("kill", { from: client.id, to: entity.id });

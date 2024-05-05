@@ -18,7 +18,7 @@ if (inviteCode) join(inviteCode);
 
 // UI state
 
-client.on("joined", ({color, nick}) => {
+client.on("joined", ({ color, nick }) => {
   UI.showScreen("lobby");
   UI.setCode(inviteCode);
   UI.setColor(color);
@@ -70,4 +70,3 @@ window.newGame = newGame;
 window.joinGame = joinGame;
 window.startGame = startGame;
 window.changeNick = changeNick;
-

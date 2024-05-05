@@ -79,7 +79,7 @@ a:hover::before {
 
 label {
   display: block;
-  font-size: .8em;
+  font-size: 0.8em;
   position: relative;
   width: min-content;
   margin: 2em auto;
@@ -87,8 +87,8 @@ label {
 
 label span {
   position: absolute;
-  right: .5em;
-  top: .7em;
+  right: 0.5em;
+  top: 0.7em;
 }
 
 input {
