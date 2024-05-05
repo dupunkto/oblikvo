@@ -18,7 +18,7 @@ io.on("connection", (client) => {
     const inviteCode = randomID();
     rooms.set(inviteCode, new Room(inviteCode));
 
-    client.emit("createdGame", inviteCode);
+    client.emit("created", inviteCode);
   });
 
   client.on("gameExists", (inviteCode: inviteCode) => {
@@ -31,7 +31,7 @@ io.on("connection", (client) => {
       const payload = room.join(client.id);
 
       client.join(inviteCode);
-      client.emit("joinedGame", payload);
+      client.emit("joined", payload);
     } else {
       dbg("Warning: client tried to join game that doesn't exist.");
     }
@@ -41,7 +41,7 @@ io.on("connection", (client) => {
     // Only allow players to start their own game.
     if (!room || room != rooms.get(inviteCode)) return;
 
-    io.to(inviteCode).emit("startedGame", room.start());
+    io.to(inviteCode).emit("started", room.start());
     gameLoop(inviteCode); // Kickstart gameloop.
   });
 
@@ -51,6 +51,10 @@ io.on("connection", (client) => {
 
   client.on("shoot", (direction) => {
     room?.shoot(client.id, direction, (entity: Entity) => {
+      // Yup, yet again pleasing the TS compiler. More like BS
+      // compiler at this point...
+      if(!room) throw "room not set?!";
+
       if (entity.health <= 0) {
         io.to(room.inviteCode).emit("kill", { from: client.id, to: entity.id });
       } else {

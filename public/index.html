@@ -24,6 +24,14 @@
     <link href="main.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
+    <noscript>
+      <h3>JavaScript is required. Sorry!</h3>
+    </noscript>
+
+    <main class="loading">
+      <h3>Loading...</h3>
+    </main>
+
     <main class="main-menu">
       <h1>Oblikvo</h1>
 
@@ -36,10 +44,15 @@
 
     <main class="lobby">
       <hgroup>
-        <h2>Lobby</h2>
-        <p>Game code: <span class="code">xxxxx</span></p>
+        <p>Invite Code</p>
+        <h1><span class="code">xxxxx</span></h1>
       </hgroup>
 
+      <label>
+        <span>Nick</span>
+        <input onchange="changeNick(event.target)" type="text" class="nick" />
+      </label>
+      
       <button onclick="startGame()">Start</button>
     </main>
 

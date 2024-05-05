@@ -54,7 +54,8 @@ main ul {
 
 main ul,
 main p,
-main button {
+main button,
+main label {
   transform: scaleY(1.25);
 }
 
@@ -73,6 +74,31 @@ a:hover::before {
   margin-left: -1.22em;
 }
 
+label {
+  display: block;
+  font-size: .8em;
+  position: relative;
+  width: min-content;
+  margin: 2em auto;
+}
+
+label span {
+  position: absolute;
+  right: .5em;
+  top: .7em;
+}
+
+input {
+  font: inherit;
+  padding: 0.5em 0.5em;
+  border: 5px solid #020202;
+}
+
+input:focus {
+  outline: none;
+  border-color: #fd4f08;
+}
+
 button {
   background: #020202;
   border: none;
@@ -80,7 +106,6 @@ button {
   font: inherit;
   padding: 0.5em 2.5em;
   cursor: pointer;
-  margin-top: 2.5em;
 }
 
 button:hover {
@@ -88,6 +113,7 @@ button:hover {
 }
 
 hgroup h1,
-hgroup h2 {
-  margin-bottom: 0;
+hgroup h2,
+hgroup p {
+  margin: 0;
 }

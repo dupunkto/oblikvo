@@ -47,7 +47,7 @@ class Oblikvo {
     this.broadcast("newGame");
 
     // Return the inviteCode.
-    return this.receive("createdGame");
+    return this.receive("created");
   }
 
   public async exists(inviteCode: string): Promise<boolean> {
@@ -57,14 +57,8 @@ class Oblikvo {
 
   public async join(inviteCode: string): Promise<void> {
     this.broadcast("joinGame", inviteCode);
-
-    this.receive("joinedGame").then((payload) => {
-      this.inviteCode = inviteCode;
+    return this.receive("joined").then((payload) => {
       this.handleJoined(payload);
-    });
-
-    this.receive("startedGame").then((payload) => {
-      this.handleStarted(payload);
     });
   }
 
@@ -72,8 +66,8 @@ class Oblikvo {
     this.broadcast("startGame", this.inviteCode);
 
     // Handling actually starting the game is managed in
-    // the `startedGame` handler, that we registered in `join`
-    // earlier.
+    // the `handleStarted` handler, that we registered in
+    // `handleJoined` earlier.
 
     // This is because we don't only want to start our own game,
     // but everyone's game. If we'd register it here, we'd only
@@ -87,6 +81,8 @@ class Oblikvo {
     this.nick = payload.nick;
     this.color = payload.color;
     this.joined = true;
+
+    this.registerHandler("started");
   }
 
   handleStarted(payload: StartPayload) {
@@ -103,12 +99,18 @@ class Oblikvo {
 
       this.registerHandler("update");
       this.registerHandler("hit");
+      this.registerHandler("kill");
     }, document.body);
   }
 
   handleHit({ from, to }: { from: string; to: string }) {
+    dbg(`${from} hit ${to}`);
     //if (from == this.server.id) this.playSound("hitAnotherPlayer");
     //if (to == this.server.id) this.playSound("gotHit");
+  }
+
+  handleKill({ from, to }: { from: string; to: string }) {
+    dbg(`${from} killed ${to}`);
   }
 
   handleUpdate(payload: UpdatePayload) {
@@ -228,14 +230,14 @@ class Oblikvo {
     return this.world.entities.get(this.server.id);
   }
 
-  // Helpers for interacting with the server and p5js.
+  // Public API for direct client-server communication.
 
-  broadcast(event: string, params: any = {}) {
+  public broadcast(event: string, params: any = {}) {
     dbg(`Broadcasting ${event}`);
     this.server.emit(event, params);
   }
 
-  async receive(event: string): Promise<any> {
+  public async receive(event: string): Promise<any> {
     return new Promise((resolve) => {
       this.server.once(event, (params) => {
         dbg(`Receiving ${event}`);
@@ -243,6 +245,12 @@ class Oblikvo {
       });
     });
   }
+
+  public on(event: string, callback: (...args: any[]) => void) {
+    this.server.on(event, callback);
+  }
+
+  // Internal APIs for client-server communications.
 
   bindMethod(method: any) {
     // @ts-ignore This black magic fuckery works--don't touch it.
@@ -262,7 +270,7 @@ class Oblikvo {
 
 export default Oblikvo;
 
-function dbg(_object: any) {
-  // console.log(object);
-  // return object;
+function dbg<T>(object: T): T {
+  console.log(object);
+  return object;
 }

@@ -15,6 +15,21 @@ let inviteCode = window.location.hash.replace("#", "");
 // or join an existing one.
 if (inviteCode) join(inviteCode);
 
+// UI state
+
+client.on("joined", ({color, nick}) => {
+  UI.showScreen("lobby");
+  UI.setCode(inviteCode);
+  UI.setColor(color);
+  UI.setNick(nick);
+});
+
+client.on("started", () => {
+  UI.hideScreens();
+});
+
+// Public API
+
 async function newGame() {
   let inviteCode = await client.new();
   join(inviteCode);
@@ -27,27 +42,30 @@ function joinGame() {
 
 function startGame() {
   if (client.joined) {
+    UI.showScreen("loading");
     client.start();
-    UI.hideScreens();
   } else {
     alert("You have to join a game before you can start it.");
   }
 }
 
+function changeNick(input: HTMLInputElement) {
+  client.broadcast("changeNick", input.value);
+}
+
 async function join(inviteCode: string) {
   if (await client.exists(inviteCode)) {
     window.location.hash = inviteCode;
-    client.join(inviteCode);
 
-    UI.setCode(inviteCode);
-    UI.showScreen("lobby");
+    UI.showScreen("loading");
+    client.join(inviteCode);
   } else {
     alert("Couldn't find an active game with that invite code.");
   }
 }
 
-// Make public API available globally.
+window.newGame = newGame;
+window.joinGame = joinGame;
+window.startGame = startGame;
+window.changeNick = changeNick;
 
-globalThis.newGame = newGame;
-globalThis.joinGame = joinGame;
-globalThis.startGame = startGame;
