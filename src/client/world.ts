@@ -1,7 +1,7 @@
 import p5 from "p5";
 import "../common/map";
 
-import { InitialPayload, UpdatePayload } from "../common/payload";
+import { StartPayload, UpdatePayload } from "../common/payload";
 
 import Entity from "./entity";
 import Level from "./level";
@@ -11,7 +11,7 @@ class World {
   level: Level;
   entities: Map<string, Entity>;
 
-  constructor(p5: p5, payload: InitialPayload) {
+  constructor(p5: p5, payload: StartPayload) {
     this.p5 = p5;
 
     const { level } = payload;

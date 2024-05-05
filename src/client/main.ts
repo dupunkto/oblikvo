@@ -28,6 +28,11 @@ client.on("joined", ({ color, nick }) => {
 client.on("started", () => {
   UI.hideScreens();
   UI.hideBorders();
+  UI.showHealthBar();
+});
+
+client.on("update", () => {
+  UI.updateHealthBar(client.player.health, client.player.maxHealth);
 });
 
 // Public API

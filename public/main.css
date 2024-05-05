@@ -33,11 +33,11 @@ html.soviet {
 }
 
 main {
+  display: none;
   width: 100%;
   max-width: 900px;
   margin: 0 auto;
   margin-top: 10vh;
-  display: none;
   text-align: center;
 }
 
@@ -119,4 +119,30 @@ hgroup h1,
 hgroup h2,
 hgroup p {
   margin: 0;
+}
+
+progress.health {
+  display: none;
+  position: absolute;
+  z-index: 100;
+  top: 0.5em;
+  left: 0.5em;
+  -webkit-appearance: none;
+  appearance: none;
+  border: none;
+  width: 25vw;
+  height: 1em;
+
+  &::-webkit-progress-bar {
+    background-color: #eee;
+    border: 5px solid #020202;
+  }
+
+  &::-webkit-progress-value {
+    background: #fd4f08;
+  }
+
+  &::-moz-progress-bar {
+    background: #fd4f08;
+  }
 }

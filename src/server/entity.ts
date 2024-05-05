@@ -8,18 +8,22 @@ import p5 from "p5-node";
 import { default as CommonEntity } from "../common/entity";
 import { randomID } from "../common/random";
 
-const G = 2;
-const FRICTION = 0.1;
-const SPEED = 8;
-const KNOCKBACK = 3;
-const POWER = 5;
-const HEALTH = 20;
-const INCREASE = 0.25;
+import {
+  G,
+  FRICTION,
+  SPEED,
+  KNOCKBACK,
+  POWER,
+  HEALTH,
+} from "../common/constants";
+
+export const INCREASE = 0.25;
 
 class Entity implements CommonEntity {
   id: string;
 
   health: number = HEALTH;
+  maxHealth: number = HEALTH;
   speed: number = SPEED;
   kills: number = 0;
   killed: number = 0;
@@ -46,7 +50,8 @@ class Entity implements CommonEntity {
   public respawn(position: p5.Vector) {
     this.killed += 1;
     this.speed *= 1 + INCREASE;
-    this.health += INCREASE * HEALTH;
+    this.maxHealth += INCREASE * HEALTH;
+    this.health = this.maxHealth;
     this.spawn(position);
   }
 

@@ -3,6 +3,7 @@ import Vector from "./vector";
 interface Entity {
   id: string;
   health: number;
+  maxHealth: number;
   kills: number;
   killed: number;
   position: Vector;

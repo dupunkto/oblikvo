@@ -16,6 +16,7 @@ class Entity implements CommonEntity {
   id: string;
 
   health: number;
+  maxHealth: number;
   kills: number;
   killed: number;
 
@@ -32,6 +33,7 @@ class Entity implements CommonEntity {
     this.id = entity.id;
 
     this.health = entity.health;
+    this.maxHealth = entity.maxHealth;
     this.kills = entity.kills;
     this.killed = entity.killed;
 
