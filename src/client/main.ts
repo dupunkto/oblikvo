@@ -2,6 +2,7 @@ import Oblikvo from "./oblikvo";
 import * as UI from "./interface";
 
 UI.showScreen("main-menu");
+UI.showBorders();
 
 const client = new Oblikvo();
 
@@ -26,6 +27,7 @@ client.on("joined", ({color, nick}) => {
 
 client.on("started", () => {
   UI.hideScreens();
+  UI.hideBorders();
 });
 
 // Public API

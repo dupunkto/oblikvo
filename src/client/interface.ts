@@ -1,3 +1,11 @@
+export function showBorders() {
+  document.documentElement.classList.add("soviet");
+}
+
+export function hideBorders() {
+  document.documentElement.classList.remove("soviet");
+}
+
 export function hideScreens() {
   document.querySelectorAll("main").forEach((element) => {
     element.style.display = "none";
