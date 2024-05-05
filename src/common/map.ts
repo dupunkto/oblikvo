@@ -1,4 +1,4 @@
-// Defines the .map method for maps.
+// Defines the .map and other handy methods for maps.
 // From https://stackoverflow.com/a/70877028
 
 export {};
@@ -19,24 +19,6 @@ Map.prototype.map = function <K, V, T>(
 
   this.forEach((value: V, key: K) => {
     map.set(key, predicate(value, key));
-  });
-
-  return map;
-};
-
-Map.prototype.mapFilter = function <K, V>(
-  predicate: (value: V, key: K) => V | undefined,
-): Map<K, V> {
-  let map: Map<K, V> = new Map();
-
-  this.forEach((value: V, key: K) => {
-    const next = predicate(value, key);
-
-    if (next) {
-      map.set(key, next);
-    } else {
-      map.delete(key);
-    }
   });
 
   return map;

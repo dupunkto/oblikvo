@@ -1,5 +1,6 @@
-// Defines the .camelize method for maps.
+// Defines the .camelize and .pascalize methods for strings.
 // From https://stackoverflow.com/a/57927739
+// From https://stackoverflow.com/a/53952925
 
 export {};
 

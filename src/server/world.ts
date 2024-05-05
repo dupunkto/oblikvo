@@ -3,6 +3,7 @@
 // a payload, to send to the client.
 
 import p5 from "p5-node";
+import "../common/map";
 
 import Level from "./level";
 import Entity from "./entity";
@@ -119,13 +120,13 @@ class World {
     const player = this.entities.get(id) as Player;
 
     return this.entities
-      .mapFilter((entity: Entity) => {
-        if (willHit(player.position, direction, entity)) {
-          const distance = distanceBetween(player.position, entity.position);
-          entity.hit(direction, distance);
+      .filter((entity) => willHit(player.position, direction, entity))
+      .filter((entity) => entity.id != player.id)
+      .map((entity: Entity) => {
+        const distance = distanceBetween(player.position, entity.position);
+        entity.hit(direction, distance);
 
-          return entity;
-        }
+        return entity;
       })
       .toArray();
   }
