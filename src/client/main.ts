@@ -18,7 +18,7 @@ if (inviteCode) join(inviteCode);
 
 // UI state
 
-client.on("joined", ({ color, nick }) => {
+client.on("joined", ({ inviteCode, color, nick }) => {
   UI.showScreen("lobby");
   UI.setCode(inviteCode);
   UI.setColor(color);

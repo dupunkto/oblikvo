@@ -126,6 +126,10 @@ class World {
         const distance = distanceBetween(player.position, entity.position);
         entity.hit(direction, distance);
 
+        if (entity.health <= 0) {
+          this.respawn(entity.id);
+        }
+
         return entity;
       })
       .toArray();
