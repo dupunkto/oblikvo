@@ -18,14 +18,13 @@ String.prototype.camelize = function (): string {
   return a.substring(0, 1).toLowerCase() + a.substring(1);
 };
 
-String.prototype.pascalize = function(): string {
-  return this
-    .toLowerCase()
-    .replace(new RegExp(/[-_]+/, 'g'), ' ')
-    .replace(new RegExp(/[^\w\s]/, 'g'), '')
+String.prototype.pascalize = function (): string {
+  return this.toLowerCase()
+    .replace(new RegExp(/[-_]+/, "g"), " ")
+    .replace(new RegExp(/[^\w\s]/, "g"), "")
     .replace(
-      new RegExp(/\s+(.)(\w*)/, 'g'),
-      (_, $2, $3) => `${$2.toUpperCase() + $3}`
+      new RegExp(/\s+(.)(\w*)/, "g"),
+      (_, $2, $3) => `${$2.toUpperCase() + $3}`,
     )
-    .replace(new RegExp(/\w/), s => s.toUpperCase());
+    .replace(new RegExp(/\w/), (s) => s.toUpperCase());
 };

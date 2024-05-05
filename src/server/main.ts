@@ -1,10 +1,8 @@
-import p5 from "p5-node";
-
-import Vector from "../common/vector";
-import Room from "./room";
-
 import { initializeServer } from "./server";
 import { randomID } from "../common/random";
+
+import Entity from "./entity";
+import Room from "./room";
 
 type inviteCode = string;
 const rooms: Map<inviteCode, Room> = new Map();
@@ -29,11 +27,7 @@ io.on("connection", (client) => {
 
   client.once("joinGame", (inviteCode: inviteCode) => {
     if (rooms.has(inviteCode)) {
-      room = rooms.get(inviteCode);
-
-      // @ts-ignore `room` is definitely not undefined.
-      // I just called rooms.has(inviteCode) in the if-statement.
-      // Fucking dumbass type checker.
+      room = rooms.get(inviteCode) as Room;
       const payload = room.join(client.id);
 
       client.join(inviteCode);
@@ -51,16 +45,17 @@ io.on("connection", (client) => {
     gameLoop(inviteCode); // Kickstart gameloop.
   });
 
-  client.on("move", ({ x, y, z }: Vector) => {
-    if (!room) return;
-    room.move(client.id, new p5.Vector(x, y, z));
+  client.on("move", (movement) => {
+    room?.move(client.id, movement);
   });
 
-  client.on("shoot", ({ x, y, z }: Vector) => {
-    if (!room) return;
-    room.shoot(client.id, new p5.Vector(x, y, z), (id: string) => {
-      // @ts-ignore ??
-      io.to(room.inviteCode).emit("hit", { from: client.id, to: id });
+  client.on("shoot", (direction) => {
+    room?.shoot(client.id, direction, (entity: Entity) => {
+      if (entity.health <= 0) {
+        io.to(room.inviteCode).emit("kill", { from: client.id, to: entity.id });
+      } else {
+        io.to(room.inviteCode).emit("hit", { from: client.id, to: entity.id });
+      }
     });
   });
 

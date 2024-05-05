@@ -6,10 +6,13 @@ import p5 from "p5-node";
 
 import Level from "./level";
 import Entity from "./entity";
+import Player from "./player";
 import Payload from "../common/payload";
 
 import { Type } from "../common/payload";
 import { SIZE } from "../common/level";
+
+import { willHit, distanceBetween } from "./raycast";
 
 class World {
   level: Level = new Level();
@@ -89,14 +92,42 @@ class World {
   }
 
   public spawn(id: string, entity: Entity) {
-    let initialCoordinates = new p5.Vector(0, 30, 0);
-    entity.spawn(initialCoordinates);
+    if (entity.id != id) throw "mismatch between entity ids";
 
+    // TODO(robin): make these random.
+    const initialCoordinates = new p5.Vector(0, 30, 0);
+    entity.spawn(initialCoordinates);
     this.entities.set(id, entity);
   }
 
   public despawn(id: string) {
     this.entities.delete(id);
+  }
+
+  public respawn(id: string) {
+    // TODO(robin): make these random.
+    const coordinates = new p5.Vector(0, 30, 0);
+    this.entities.get(id)?.respawn(coordinates);
+  }
+
+  public move(id: string, movement: p5.Vector): void {
+    const player = this.entities.get(id) as Player;
+    player.move(movement);
+  }
+
+  public shoot(id: string, direction: p5.Vector): Entity[] {
+    const player = this.entities.get(id) as Player;
+
+    return this.entities
+      .mapFilter((entity: Entity) => {
+        if (willHit(player.position, direction, entity)) {
+          const distance = distanceBetween(player.position, entity.position);
+          entity.hit(direction, distance);
+
+          return entity;
+        }
+      })
+      .toArray();
   }
 
   public update() {
@@ -111,55 +142,37 @@ class World {
     let iy = Math.floor(player.position.y / SIZE);
     let iz = Math.floor(player.position.z / SIZE);
 
-    if (
-      this.level.get(ix + 1, iy, iz) !== undefined &&
-      this.level.get(ix + 1, iy, iz)?.kind !== 0
-    ) {
+    if (this.level.get(ix + 1, iy, iz)) {
       let side = player.position.x + player.dimensions.x / 2;
       if (side >= (ix + 1) * SIZE)
         player.position.x = (ix + 1) * SIZE - player.dimensions.x / 2 - 1;
     }
 
-    if (
-      this.level.get(ix - 1, iy, iz) !== undefined &&
-      this.level.get(ix - 1, iy, iz)?.kind !== 0
-    ) {
+    if (this.level.get(ix - 1, iy, iz)) {
       let side = player.position.x - player.dimensions.x / 2;
       if (side <= ix * SIZE)
         player.position.x = ix * SIZE + player.dimensions.x / 2 + 1;
     }
 
-    if (
-      this.level.get(ix, iy + 1, iz) !== undefined &&
-      this.level.get(ix, iy + 1, iz)?.kind !== 0
-    ) {
+    if (this.level.get(ix, iy + 1, iz)) {
       let side = player.position.y + player.dimensions.y / 2;
       if (side >= (iy + 1) * SIZE)
         player.position.y = (iy + 1) * SIZE - player.dimensions.y / 2 - 1;
     }
 
-    if (
-      this.level.get(ix, iy - 1, iz) !== undefined &&
-      this.level.get(ix, iy - 1, iz)?.kind !== 0
-    ) {
+    if (this.level.get(ix, iy - 1, iz)) {
       let side = player.position.y - player.dimensions.y / 2;
       if (side <= iy * SIZE)
         player.position.y = iy * SIZE + player.dimensions.y / 2 + 1;
     }
 
-    if (
-      this.level.get(ix, iy, iz + 1) !== undefined &&
-      this.level.get(ix, iy, iz + 1)?.kind !== 0
-    ) {
+    if (this.level.get(ix, iy, iz + 1)) {
       let side = player.position.z + player.dimensions.z / 2;
       if (side >= (iz + 1) * SIZE)
         player.position.z = (iz + 1) * SIZE - player.dimensions.z / 2 - 1;
     }
 
-    if (
-      this.level.get(ix, iy, iz - 1) !== undefined &&
-      this.level.get(ix, iy, iz - 1)?.kind !== 0
-    ) {
+    if (this.level.get(ix, iy, iz - 1)) {
       let side = player.position.z - player.dimensions.z / 2;
       if (side <= iz * SIZE)
         player.position.z = iz * SIZE + player.dimensions.z / 2 + 1;

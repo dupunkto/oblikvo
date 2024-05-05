@@ -7,11 +7,8 @@ declare global {
   interface Map<K, V> {
     map<T>(predicate: (value: V, key: K) => T): Map<K, T>;
     filter(predicate: (value: V, key: K) => boolean): Map<K, V>;
-    map_filter(predicate: (value: V, key: K) => V | undefined): Map<K, V>;
-    reduce<T>(
-      acc: T,
-      predicate: (acc: T, value: V, key: K) => T | undefined,
-    ): T;
+    mapFilter(predicate: (value: V, key: K) => V | undefined): Map<K, V>;
+    toArray(): V[];
   }
 }
 
@@ -27,7 +24,7 @@ Map.prototype.map = function <K, V, T>(
   return map;
 };
 
-Map.prototype.map_filter = function <K, V>(
+Map.prototype.mapFilter = function <K, V>(
   predicate: (value: V, key: K) => V | undefined,
 ): Map<K, V> {
   let map: Map<K, V> = new Map();
@@ -45,20 +42,6 @@ Map.prototype.map_filter = function <K, V>(
   return map;
 };
 
-Map.prototype.reduce = function <K, V, T>(
-  acc: T,
-  predicate: (acc: T, value: V, key: K) => T,
-): T {
-  this.forEach((value: V, key: K) => {
-    const next = predicate(acc, value, key);
-    if (next != undefined) {
-      acc = next;
-    }
-  });
-
-  return acc;
-};
-
 Map.prototype.filter = function <K, V>(
   predicate: (value: V, key: K) => boolean,
 ): Map<K, V> {
@@ -73,4 +56,8 @@ Map.prototype.filter = function <K, V>(
   });
 
   return map;
+};
+
+Map.prototype.toArray = function <V>(): V[] {
+  return Array.from(this, ([_, value]) => value);
 };

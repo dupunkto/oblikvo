@@ -6,6 +6,7 @@
 import p5 from "p5-node";
 
 import { default as CommonEntity } from "../common/entity";
+import { randomID } from "../common/random";
 
 const G = 2;
 const FRICTION = 0.1;
@@ -16,6 +17,8 @@ const HEALTH = 20;
 const INCREASE = 0.25;
 
 class Entity implements CommonEntity {
+  id: string;
+
   health: number = HEALTH;
   speed: number = SPEED;
   kills: number = 0;
@@ -29,7 +32,8 @@ class Entity implements CommonEntity {
   againstWall: boolean = false;
   isMoving: boolean = false;
 
-  constructor() {
+  constructor(id: string | undefined = undefined) {
+    this.id = id || randomID();
     this.position = new p5.Vector(0, 0, 0);
     this.velocity = new p5.Vector(0, 0, 0);
     this.dimensions = new p5.Vector(3, 3, 3);

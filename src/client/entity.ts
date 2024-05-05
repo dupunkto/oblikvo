@@ -1,12 +1,16 @@
 import p5 from "p5";
 
-import Vector from "../common/vector";
-
 import { default as CommonEntity } from "../common/entity";
+import { toVector } from "../common/vector";
 
 class Entity implements CommonEntity {
   p5: p5;
+  id: string;
+
   health: number;
+  kills: number;
+  killed: number;
+
   position: p5.Vector;
   velocity: p5.Vector;
   dimensions: p5.Vector;
@@ -17,11 +21,16 @@ class Entity implements CommonEntity {
 
   constructor(p5: p5, entity: CommonEntity) {
     this.p5 = p5;
+    this.id = entity.id;
+
+    this.health = entity.health;
+    this.kills = entity.kills;
+    this.killed = entity.killed;
+
     this.position = toVector(entity.position);
     this.velocity = toVector(entity.velocity);
     this.dimensions = toVector(entity.dimensions);
 
-    this.health = entity.health;
     this.onGround = entity.onGround;
     this.againstWall = entity.againstWall;
     this.isMoving = entity.isMoving;
@@ -47,7 +56,3 @@ class Entity implements CommonEntity {
 }
 
 export default Entity;
-
-function toVector({ x, y, z }: Vector): p5.Vector {
-  return new p5.Vector(x, y, z);
-}

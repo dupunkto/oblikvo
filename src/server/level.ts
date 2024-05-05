@@ -14,31 +14,46 @@ class Level {
     this.blocks = new Map();
   }
 
-  insert(x: number, y: number, z: number, value: Block) {
-    let key = [x, y, z].toString();
-    this.blocks.set(key, value);
+  public insert(x: number, y: number, z: number, block: Block): void {
+    this.blocks.set(this.key(x, y, z), block);
   }
 
-  get(x: number, y: number, z: number): Block | undefined {
-    let key = [x, y, z].toString();
-    return this.blocks.get(key);
+  public clear(x: number, y: number, z: number): void {
+    if (this.get(x, y, z)) {
+      this.blocks.delete(this.key(x, y, z));
+    }
   }
 
-  appendFormat(fmt: Format) {
+  public get(x: number, y: number, z: number): Block | undefined {
+    return this.blocks.get(this.key(x, y, z));
+  }
+
+  public appendFormat(fmt: Format): void {
     for (let j = 0; j < fmt.source.length; j++) {
       for (let i = 0; i < fmt.source[0].length; i++) {
         const kind = fmt.source[j][i];
-        if (kind != 0)
-          this.insert(fmt.offset.x + i, fmt.offset.y, fmt.offset.z + j, {
+        const x = fmt.offset.x + i;
+        const y = fmt.offset.y;
+        const z = fmt.offset.z + j;
+
+        if (kind == 0) {
+          this.clear(x, y, z);
+        } else {
+          this.insert(x, y, z, {
             color: "white",
             kind: kind,
           });
+        }
       }
     }
   }
 
-  serialize(): Blocks {
+  public serialize(): Blocks {
     return [...this.blocks.entries()];
+  }
+
+  key(x: number, y: number, z: number): string {
+    return [x, y, z].toString();
   }
 }
 

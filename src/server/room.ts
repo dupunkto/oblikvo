@@ -3,19 +3,17 @@
 
 // The room also manages serialization.
 
-import p5 from "p5-node";
-
 import Participant from "./participant";
 import Player from "./player";
 import Entity from "./entity";
 import World from "./world";
+import Vector from "../common/vector";
 
 import { JoinPayload } from "../common/payload";
 import { StartPayload } from "../common/payload";
 import { UpdatePayload } from "../common/payload";
 import { Type } from "../common/payload";
-
-import { willHit, distanceBetween } from "./raycast";
+import { toVector } from "../common/vector";
 
 class Room {
   inviteCode: string;
@@ -48,34 +46,22 @@ class Room {
     this.world.entities.delete(id);
   }
 
-  public move(id: string, movement: p5.Vector): void {
-    // @ts-ignore the `id` always returns a Player.
-    const player: Player = this.world.entities.get(id);
-    player.move(movement);
+  public move(id: string, movement: Vector) {
+    this.world.move(id, toVector(movement));
   }
 
   public shoot(
-    shooterID: string,
-    direction: p5.Vector,
-    callback: (id: string, entity: Entity) => void,
+    id: string,
+    direction: Vector,
+    onhit: (entity: Entity) => void,
   ): void {
-    // @ts-ignore the `id` always returns a Player.
-    const player: Player = this.world.entities.get(shooterID);
-
-    this.world.entities.forEach((entity: Entity, id: string) => {
-      if (willHit(player.position, direction, entity)) {
-        const distance = distanceBetween(player.position, entity.position);
-        entity.hit(direction, distance);
-
-        callback(id, entity);
-      }
-    });
+    this.world.shoot(id, toVector(direction)).forEach(onhit);
   }
 
   public start(): StartPayload {
     this.status = "ongoing";
-    this.participants.forEach((participant) => {
-      this.world.spawn(participant.id, new Player());
+    this.participants.forEach(({ id }: Participant) => {
+      this.world.spawn(id, new Player(id));
     });
 
     return this.world.serialize(Type.Start) as StartPayload;
