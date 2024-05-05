@@ -1,7 +1,15 @@
 import p5 from "p5";
 
 import { default as CommonEntity } from "../common/entity";
-import { toVector } from "../common/vector";
+import Vector from "../common/vector";
+
+// Unfortunately we can't use the shared `toVector` util
+// from `common/vector.ts` here, as it serializes to the `p5-node`
+// instance of p5.Vector, and apparently other p5 methods then
+// silently fail :(
+export function toVector({ x, y, z }: Vector): p5.Vector {
+  return new p5.Vector(x, y, z);
+}
 
 class Entity implements CommonEntity {
   p5: p5;

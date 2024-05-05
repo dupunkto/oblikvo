@@ -3,7 +3,6 @@ import p5 from "p5";
 import "../common/string";
 
 import { io, Socket } from "socket.io-client";
-
 import { JoinPayload, StartPayload, UpdatePayload } from "../common/payload";
 
 import Camera from "./camera";
@@ -263,6 +262,7 @@ class Oblikvo {
 
 export default Oblikvo;
 
-function dbg(_message: any) {
-  // console.log(message);
+function dbg(_object: any) {
+  // console.log(object);
+  // return object;
 }
