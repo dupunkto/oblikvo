@@ -42,8 +42,8 @@ class Room {
   }
 
   public leave(id: string): void {
+    this.world.despawn(id);
     this.participants.delete(id);
-    this.world.entities.delete(id);
   }
 
   public move(id: string, movement: Vector) {
@@ -60,8 +60,9 @@ class Room {
 
   public start(): StartPayload {
     this.status = "ongoing";
-    this.participants.forEach(({ id }: Participant) => {
-      this.world.spawn(id, new Player(id));
+    this.participants.forEach((participant) => {
+      const player = new Player(participant);
+      this.world.spawn(player);
     });
 
     return this.world.serialize(Type.Start) as StartPayload;

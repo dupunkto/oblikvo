@@ -1,3 +1,5 @@
+import Entity from "./entity";
+
 export function showBorders() {
   document.documentElement.classList.add("soviet");
 }
@@ -30,6 +32,42 @@ export function updateHealthBar(hp: number, max: number) {
 
 export function hideHealthBar() {
   forElement(".health", (bar) => (bar.style.display = "none"));
+}
+
+export function showLeaderBoard() {
+  forElement(".leaderboard", (board) => (board.style.display = "block"));
+}
+
+export function updateLeaderBoard(entities: Entity[]) {
+  forElement(".leaderboard", (board) => {
+    board.innerHTML = "";
+
+    entities
+      .sort((a: Entity, b: Entity) => b.kills - a.kills)
+      .forEach((entity) => {
+        const line = renderLeaderLine(entity);
+        board.appendChild(line);
+      });
+  });
+}
+
+function renderLeaderLine(entity: Entity) {
+  const line = document.createElement("p");
+  const name = document.createElement("span");
+  const points = document.createElement("span");
+
+  points.innerText = entity.kills.toString();
+  name.innerText = entity.nick;
+  name.style.color = entity.color;
+
+  line.appendChild(name);
+  line.appendChild(points);
+
+  return line;
+}
+
+export function hideLeaderBoard() {
+  forElement(".leaderboard", (board) => (board.style.display = "none"));
 }
 
 export function setCode(inviteCode: string) {

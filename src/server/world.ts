@@ -92,13 +92,11 @@ class World {
     });
   }
 
-  public spawn(id: string, entity: Entity) {
-    if (entity.id != id) throw "mismatch between entity ids";
-
+  public spawn(entity: Entity) {
     // TODO(robin): make these random.
     const initialCoordinates = new p5.Vector(0, 30, 0);
     entity.spawn(initialCoordinates);
-    this.entities.set(id, entity);
+    this.entities.set(entity.id, entity);
   }
 
   public despawn(id: string) {
@@ -143,20 +141,26 @@ class World {
   }
 
   public collide(player: Entity) {
+    player.againstWall = false;
+
     let ix = Math.floor(player.position.x / SIZE);
     let iy = Math.floor(player.position.y / SIZE);
     let iz = Math.floor(player.position.z / SIZE);
 
     if (this.level.get(ix + 1, iy, iz)) {
       let side = player.position.x + player.dimensions.x / 2;
-      if (side >= (ix + 1) * SIZE)
+      if (side >= (ix + 1) * SIZE) {
         player.position.x = (ix + 1) * SIZE - player.dimensions.x / 2 - 1;
+        player.againstWall = true;
+      }
     }
 
     if (this.level.get(ix - 1, iy, iz)) {
       let side = player.position.x - player.dimensions.x / 2;
-      if (side <= ix * SIZE)
+      if (side <= ix * SIZE) {
         player.position.x = ix * SIZE + player.dimensions.x / 2 + 1;
+        player.againstWall = true;
+      }
     }
 
     if (this.level.get(ix, iy + 1, iz)) {
@@ -173,14 +177,18 @@ class World {
 
     if (this.level.get(ix, iy, iz + 1)) {
       let side = player.position.z + player.dimensions.z / 2;
-      if (side >= (iz + 1) * SIZE)
+      if (side >= (iz + 1) * SIZE) {
         player.position.z = (iz + 1) * SIZE - player.dimensions.z / 2 - 1;
+        player.againstWall = true;
+      }
     }
 
     if (this.level.get(ix, iy, iz - 1)) {
       let side = player.position.z - player.dimensions.z / 2;
-      if (side <= iz * SIZE)
+      if (side <= iz * SIZE) {
         player.position.z = iz * SIZE + player.dimensions.z / 2 + 1;
+        player.againstWall = true;
+      }
     }
   }
 

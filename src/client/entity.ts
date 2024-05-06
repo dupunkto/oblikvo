@@ -14,6 +14,8 @@ export function toVector({ x, y, z }: Vector): p5.Vector {
 class Entity implements CommonEntity {
   p5: p5;
   id: string;
+  nick: string;
+  color: string;
 
   health: number;
   maxHealth: number;
@@ -24,13 +26,14 @@ class Entity implements CommonEntity {
   velocity: p5.Vector;
   dimensions: p5.Vector;
 
-  onGround: boolean;
   againstWall: boolean;
   isMoving: boolean;
 
   constructor(p5: p5, entity: CommonEntity) {
     this.p5 = p5;
     this.id = entity.id;
+    this.nick = entity.nick;
+    this.color = entity.color;
 
     this.health = entity.health;
     this.maxHealth = entity.maxHealth;
@@ -41,7 +44,6 @@ class Entity implements CommonEntity {
     this.velocity = toVector(entity.velocity);
     this.dimensions = toVector(entity.dimensions);
 
-    this.onGround = entity.onGround;
     this.againstWall = entity.againstWall;
     this.isMoving = entity.isMoving;
   }

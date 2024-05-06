@@ -14,32 +14,34 @@ class Player extends Entity {
   // A `Player` is an `Entity` with an API for
   // controlling its movement.
 
+  processMovement: boolean = false;
+
   public move(direction: p5.Vector) {
     this.velocity.add(direction);
-    this.isMoving = true;
-  }
-
-  public jump() {
-    const speed = 2.5 * this.speed;
-    const movement = new p5.Vector(0, 1, 0).mult(speed);
-
-    this.velocity.add(movement);
+    this.processMovement = true;
   }
 
   public update() {
-    // Prevents cheating. Makes the X and Y components of the
-    // velocity p5.vector add up to exactly 1 and then multiplies
-    // by the speed.
-    if (this.isMoving) this.normalizeVelocity();
-
+    if (this.processMovement) this.normalizeVelocity();
     super.update();
+
+    this.isMoving = this.movement > 0.1;
+    this.processMovement = false;
   }
 
   normalizeVelocity() {
+    // Prevents cheating. Makes the X and Y components of the
+    // velocity p5.vector add up to exactly 1 and then multiplies
+    // by the speed.
+
     let vertical = this.velocity.y;
     this.velocity.y = 0;
     this.velocity.normalize().mult(this.speed);
     this.velocity.y = vertical;
+  }
+
+  public get movement(): number {
+    return Math.sqrt(this.velocity.x ** 2 + this.velocity.z ** 2);
   }
 }
 

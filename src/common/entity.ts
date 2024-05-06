@@ -2,6 +2,8 @@ import Vector from "./vector";
 
 interface Entity {
   id: string;
+  nick: string;
+  color: string;
   health: number;
   maxHealth: number;
   kills: number;
@@ -9,7 +11,6 @@ interface Entity {
   position: Vector;
   velocity: Vector;
   dimensions: Vector;
-  onGround: boolean;
   againstWall: boolean;
   isMoving: boolean;
 }
