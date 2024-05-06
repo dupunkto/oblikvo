@@ -27,11 +27,13 @@ class World {
     });
   }
 
-  public draw(except: string) {
+  public draw(perspective: Entity) {
     this.level.draw();
+
+    const toward = perspective.position;
     this.entities.forEach((entity, id) => {
-      if (id == except) return;
-      entity.draw();
+      if (id == perspective.id) return;
+      entity.draw(toward);
     });
   }
 }

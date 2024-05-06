@@ -150,6 +150,7 @@ class Oblikvo {
 
     this.p5.frameRate(60);
     this.p5.angleMode(this.p5.RADIANS);
+    this.p5.rectMode(this.p5.CENTER);
     this.p5.noStroke();
 
     this.canvas.mousePressed(() => this.mousePressed());
@@ -201,7 +202,7 @@ class Oblikvo {
 
     this.controller();
     this.camera.follow(this.player);
-    this.world.draw(this.server.id);
+    this.world.draw(this.player);
   }
 
   controller() {

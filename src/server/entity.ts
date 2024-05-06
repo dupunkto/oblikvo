@@ -40,7 +40,7 @@ class Entity implements CommonEntity {
     this.id = id || randomID();
     this.position = new p5.Vector(0, 0, 0);
     this.velocity = new p5.Vector(0, 0, 0);
-    this.dimensions = new p5.Vector(3, 3, 3);
+    this.dimensions = new p5.Vector(3, 5, 3);
   }
 
   public spawn(position: p5.Vector) {

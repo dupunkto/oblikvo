@@ -35,16 +35,16 @@ bake dev
 - [x] Lobbies
 - [x] Nicknames
 - [x] Shooting
+- [x] Hitting
+- [x] (Re)spawning
+- [x] Non-flaky collisions
 - [ ] Start button disabled with < 4 players
 - [ ] Chat (without chat)
-- [ ] Hitting
 - [ ] Health
 - [ ] Leaderboard
 - [ ] Game end with play again button & podium
-- [ ] (Re)spawning (with bumping stats)
 - [ ] Launchpads
 - [ ] Camera effects (+fix scaling??)
-- [ ] Non-flaky collisions
 - [ ] Sprites
 - [ ] Shader
 
