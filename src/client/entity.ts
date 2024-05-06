@@ -48,9 +48,11 @@ class Entity implements CommonEntity {
     this.isMoving = entity.isMoving;
   }
 
-  public draw(_towards: p5.Vector) {
-    // TODO(robin): rotate blocks towards position :)
-    // oke ik heb hulp van Sem gevraagd want ik wordt gek
+  public draw(towards: p5.Vector) {
+    const angle =
+      towards.z > Math.PI
+        ? Math.asin(towards.z)
+        : Math.PI + Math.asin(towards.z);
 
     const coordinates = new p5.Vector(
       this.position.x,
@@ -64,6 +66,7 @@ class Entity implements CommonEntity {
 
     this.p5.push();
     this.p5.fill("red");
+    this.p5.rotateY(angle);
     this.p5.translate(coordinates);
     this.p5.box(width, height, depth);
     this.p5.pop();

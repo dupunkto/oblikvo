@@ -124,9 +124,14 @@ class Oblikvo {
   public preload() {
     if (!this.p5) throw "`setup` called but `p5` not set.";
 
+    this.loadImage("Metal1");
     //this.loadSound("hitAnotherPlayer");
     //this.loadSound("gotHit");
     //this.loadSound("shootLaser");
+  }
+
+  loadImage(identifier: string) {
+    this.assets.set(identifier, this.p5?.loadImage(`${identifier}.bmp`));
   }
 
   loadSound(identifier: string) {
@@ -202,7 +207,7 @@ class Oblikvo {
 
     this.controller();
     this.camera.follow(this.player);
-    this.world.draw(this.player);
+    this.world.draw(this.player, this.camera.facingDirection);
   }
 
   controller() {
@@ -272,6 +277,6 @@ class Oblikvo {
 export default Oblikvo;
 
 function dbg<T>(object: T): T {
-  console.log(object);
+  // console.log(object);
   return object;
 }

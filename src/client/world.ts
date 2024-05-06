@@ -27,10 +27,8 @@ class World {
     });
   }
 
-  public draw(perspective: Entity) {
+  public draw(perspective: Entity, toward: p5.Vector) {
     this.level.draw();
-
-    const toward = perspective.position;
     this.entities.forEach((entity, id) => {
       if (id == perspective.id) return;
       entity.draw(toward);
