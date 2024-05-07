@@ -27,12 +27,12 @@ class World {
     });
   }
 
-  public draw(perspective: Entity, toward: p5.Vector) {
-    this.level.draw();
+  public draw(perspective: Entity, assets: Map<string, any>) {
+    this.level.draw(assets);
     this.entities.forEach((entity, id) => {
       if (id == perspective.id) return;
-      const actual_toward = p5.Vector.sub(perspective.position, entity.position);
-      entity.draw(actual_toward);
+      const toward = p5.Vector.sub(perspective.position, entity.position);
+      entity.draw(toward);
     });
   }
 }

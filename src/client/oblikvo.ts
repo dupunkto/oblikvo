@@ -125,6 +125,8 @@ class Oblikvo {
     if (!this.p5) throw "`setup` called but `p5` not set.";
 
     this.loadImage("Metal1");
+    this.loadImage("Sand1");
+    this.loadImage("Cobbles1");
     //this.loadSound("hitAnotherPlayer");
     //this.loadSound("gotHit");
     //this.loadSound("shootLaser");
@@ -204,10 +206,11 @@ class Oblikvo {
 
     this.p5.background(0, 0, 51);
     this.p5.pointLight(255, 255, 255, this.player.position);
+    this.p5.ambientLight(180, 180, 180);
 
     this.controller();
     this.camera.follow(this.player);
-    this.world.draw(this.player, this.camera.facingDirection);
+    this.world.draw(this.player, this.assets);
   }
 
   controller() {

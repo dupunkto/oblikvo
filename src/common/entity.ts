@@ -10,6 +10,7 @@ interface Entity {
   killed: number;
   position: Vector;
   velocity: Vector;
+  accel: Vector;
   dimensions: Vector;
   againstWall: boolean;
   isMoving: boolean;

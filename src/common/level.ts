@@ -13,3 +13,16 @@ export interface Block {
 
 export const SIZE = 9;
 export default Level;
+
+// TODO: Actually import all textures
+export const kindAssetMap: Map<Kind, string> = new Map([
+    [1, "Metal1"],
+    [2, "Metal2"],
+    [3, "Sand1"],
+    [4, "Sand2"],
+    [5, "Cobbles1"],
+    [6, "Cobbles2"],
+    [7, "Cobbles3"],
+    [8, "Bricks2"],
+    [9, "Bricks3"],
+]);

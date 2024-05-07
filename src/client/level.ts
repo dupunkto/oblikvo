@@ -1,6 +1,6 @@
 import p5 from "p5";
 
-import { default as Blocks, SIZE } from "../common/level";
+import { default as Blocks, SIZE, kindAssetMap } from "../common/level";
 
 class Level {
   p5: p5;
@@ -11,13 +11,14 @@ class Level {
     this.blocks = blocks;
   }
 
-  draw() {
+  draw(assets: Map<string, any>) {
     this.blocks.forEach(([coords, block]) => {
       let [x, y, z] = coords.split(",");
       const dimensions = SIZE;
 
       this.p5.push();
-      this.p5.fill(block.color);
+      // TODO(msb): Fix undefined issues
+      this.p5.texture(assets.get(kindAssetMap.get(block.kind)));
       this.p5.translate(
         dimensions * (parseInt(x) + 0.5),
         -dimensions * (parseInt(y) + 0.5),

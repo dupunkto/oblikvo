@@ -24,6 +24,7 @@ class Entity implements CommonEntity {
 
   position: p5.Vector;
   velocity: p5.Vector;
+  accel: p5.Vector;
   dimensions: p5.Vector;
 
   againstWall: boolean;
@@ -42,6 +43,7 @@ class Entity implements CommonEntity {
 
     this.position = toVector(entity.position);
     this.velocity = toVector(entity.velocity);
+    this.accel = toVector(entity.accel);
     this.dimensions = toVector(entity.dimensions);
 
     this.againstWall = entity.againstWall;
