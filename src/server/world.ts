@@ -170,7 +170,8 @@ class World {
     }
 
     if (this.level.get(ix, iy - 1, iz)) {
-      if (this.level.get(ix, iy - 1, iz)?.kind == 3) { // Sand1
+      if (this.level.get(ix, iy - 1, iz)?.kind == 3) {
+        // Sand1
         player.acceleration.y += 200;
       }
       let side = player.position.y - player.dimensions.y / 2;
