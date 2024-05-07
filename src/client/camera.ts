@@ -9,6 +9,7 @@ class Camera {
   p5: p5;
   pan: number;
   tilt: number;
+  sway: number;
   fov: number;
   sensitivity: number;
   intensity: number;
@@ -20,6 +21,7 @@ class Camera {
     this.p5 = p5;
     this.pan = 0.0;
     this.tilt = 0.0;
+    this.sway = 0.0;
     this.fov = 1.0;
     this.sensitivity = 0.02;
     this.intensity = 1.2;
@@ -80,6 +82,9 @@ class Camera {
       );
     }
 
+    let swing = p5.Vector.dot(entity.velocity, this.normalDirection);
+    this.sway = this.sway * 0.5 + swing * (this.intensity/15);
+
     if (entity.isMoving && !entity.againstWall) this.offset += 0.1;
     let bobbingAmount = Math.pow(Math.sin(this.offset), 2) * this.intensity;
 
@@ -92,9 +97,9 @@ class Camera {
       center.x,
       -(center.y + offset),
       center.z,
-      0,
+      this.normalDirection.x * this.sway,
       1,
-      0,
+      this.normalDirection.z * this.sway,
     );
   }
 
@@ -107,8 +112,7 @@ class Camera {
   }
 
   public get normalDirection(): p5.Vector {
-    const a = Math.PI / 2;
-    return new p5.Vector(Math.cos(this.pan - a), 0, Math.sin(this.pan - a));
+    return this.facingDirection.cross(new p5.Vector(0, 1, 0)).mult(-1);
   }
 
   clamp(num: number, min: number, max: number): number {
