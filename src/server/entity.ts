@@ -32,7 +32,7 @@ class Entity implements CommonEntity {
 
   position: p5.Vector;
   velocity: p5.Vector;
-  accel: p5.Vector;
+  acceleration: p5.Vector;
   dimensions: p5.Vector;
 
   againstWall: boolean = false;
@@ -44,7 +44,7 @@ class Entity implements CommonEntity {
     this.color = participant.nick;
     this.position = new p5.Vector(0, 0, 0);
     this.velocity = new p5.Vector(0, 0, 0);
-    this.accel = new p5.Vector(0, 0, 0);
+    this.acceleration = new p5.Vector(0, 0, 0);
     this.dimensions = new p5.Vector(3, 5, 3);
   }
 
@@ -74,19 +74,17 @@ class Entity implements CommonEntity {
     this.applyFriction();
     this.applyGravity();
 
-    this.velocity.add(this.accel);
+    this.velocity.add(this.acceleration);
     this.position.add(this.velocity);
 
     const minY = 0;
     if (this.position.y < minY) this.position.y = minY;
 
-    this.accel = new p5.Vector(0, 0, 0);
+    this.acceleration = new p5.Vector(0, 0, 0);
   }
 
   applyGravity() {
-    this.accel.y -= G;
-    //const acceleration = new p5.Vector(0, -G, 0);
-    //this.velocity.add(acceleration);
+    this.acceleration.y -= G;
   }
 
   applyFriction() {
