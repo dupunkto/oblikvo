@@ -31,7 +31,8 @@ class World {
     this.level.draw();
     this.entities.forEach((entity, id) => {
       if (id == perspective.id) return;
-      entity.draw(toward);
+      const actual_toward = p5.Vector.sub(perspective.position, entity.position);
+      entity.draw(actual_toward);
     });
   }
 }
