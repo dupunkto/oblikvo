@@ -125,6 +125,7 @@ class Oblikvo {
     if (!this.p5) throw "`setup` called but `p5` not set.";
 
     this.loadImage("Metal1");
+    this.loadImage("Metal2");
     this.loadImage("Sand1");
     this.loadImage("Cobbles1");
     //this.loadSound("hitAnotherPlayer");

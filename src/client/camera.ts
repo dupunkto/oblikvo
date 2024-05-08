@@ -83,7 +83,7 @@ class Camera {
     }
 
     let swing = p5.Vector.dot(entity.velocity, this.normalDirection);
-    this.sway = this.sway * 0.5 + swing * (this.intensity/15);
+    this.sway = this.sway * 0.5 + swing * (this.intensity / 15);
 
     if (entity.isMoving && !entity.againstWall) this.offset += 0.1;
     let bobbingAmount = Math.pow(Math.sin(this.offset), 2) * this.intensity;
