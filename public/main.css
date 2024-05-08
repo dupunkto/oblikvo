@@ -146,3 +146,9 @@ progress.health {
     background: #fd4f08;
   }
 }
+
+canvas {
+  width: 100% !important;
+  height: 100% !important;
+  image-rendering: pixelated;
+}

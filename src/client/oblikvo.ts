@@ -147,8 +147,8 @@ class Oblikvo {
     if (!this.camera) throw "`setup` called but `camera` not set.";
 
     this.canvas = this.p5.createCanvas(
-      this.p5.windowWidth,
-      this.p5.windowHeight,
+      this.p5.windowWidth / 8,
+      this.p5.windowHeight / 8,
       this.p5.WEBGL,
     );
 
