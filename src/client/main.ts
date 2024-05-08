@@ -18,12 +18,17 @@ if (inviteCode) join(inviteCode);
 
 // UI state
 
-client.on("joined", ({ inviteCode, color, nick }) => {
+client.on("joined", ({ inviteCode, color, nick, count }) => {
   UI.showScreen("lobby");
   UI.setCode(inviteCode);
   UI.setColor(color);
   UI.setNick(nick);
+  UI.setPlayerCount(count);
 });
+
+client.on("player-count", (count: number) => {
+  UI.setPlayerCount(count);
+})
 
 client.on("started", () => {
   UI.hideScreens();

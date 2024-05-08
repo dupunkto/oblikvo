@@ -34,10 +34,9 @@ class Room {
 
     return {
       inviteCode: this.inviteCode,
-      status: "pending",
       nick: participant.nick,
       color: participant.color,
-      clients: this.participants.size,
+      count: this.participants.size,
     };
   }
 

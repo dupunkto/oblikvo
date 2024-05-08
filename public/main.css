@@ -83,12 +83,19 @@ label {
   position: relative;
   width: min-content;
   margin: 2em auto;
+  margin-bottom: 0;
 }
 
 label span {
   position: absolute;
   right: 0.5em;
   top: 0.7em;
+}
+
+small {
+  display: block;
+  margin-top: .75em;
+  margin-bottom: 2em;
 }
 
 input {

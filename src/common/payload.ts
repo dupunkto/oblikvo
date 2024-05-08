@@ -9,10 +9,9 @@ enum Type {
 
 interface JoinPayload {
   inviteCode: string;
-  status: string; // "pending" | "ongoing" | "done"
   nick: string;
   color: string;
-  clients: number;
+  count: number;
 }
 
 interface StartPayload {

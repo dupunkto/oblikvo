@@ -70,6 +70,10 @@ export function hideLeaderBoard() {
   forElement(".leaderboard", (board) => (board.style.display = "none"));
 }
 
+export function setPlayerCount(playerCount: number) {
+  forElement(".count", (count) => (count.innerText = `${playerCount}`));
+}
+
 export function setCode(inviteCode: string) {
   forElement(".code", (code) => (code.innerText = inviteCode));
 }

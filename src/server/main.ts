@@ -22,7 +22,8 @@ io.on("connection", (client) => {
   });
 
   client.on("gameExists", (inviteCode: inviteCode) => {
-    client.emit("gameExists", rooms.has(inviteCode));
+    const joinable = rooms.get(inviteCode)?.status == "pending";
+    client.emit("gameExists", joinable);
   });
 
   client.once("joinGame", (inviteCode: inviteCode) => {
@@ -32,6 +33,8 @@ io.on("connection", (client) => {
 
       client.join(inviteCode);
       client.emit("joined", payload);
+      
+      io.to(inviteCode).emit("player-count", room.participants.size);
     } else {
       dbg("Warning: client tried to join game that doesn't exist.");
     }
