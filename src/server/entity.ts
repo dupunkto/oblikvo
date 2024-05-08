@@ -41,7 +41,7 @@ class Entity implements CommonEntity {
   constructor(participant: Participant) {
     this.id = participant.id;
     this.nick = participant.nick;
-    this.color = participant.nick;
+    this.color = participant.color;
     this.position = new p5.Vector(0, 0, 0);
     this.velocity = new p5.Vector(0, 0, 0);
     this.acceleration = new p5.Vector(0, 0, 0);

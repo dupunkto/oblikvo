@@ -66,6 +66,7 @@ class Entity implements CommonEntity {
     this.p5.push();
     // TODO(msb): Use dedicated player sprite
     this.p5.texture(assets.get("Metal2"));
+    this.p5.tint(this.color);
     this.p5.rotateY(-angle);
     this.p5.translate(coordinates);
     this.p5.box(width, height, depth);

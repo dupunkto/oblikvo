@@ -24,8 +24,6 @@ class Oblikvo {
   assets: Map<string, any>;
 
   // `undefined` before a game is joined.
-  nick: string | undefined;
-  color: string | undefined;
   inviteCode: string | undefined;
 
   // `undefined` before the game is started.
@@ -78,8 +76,6 @@ class Oblikvo {
 
   handleJoined(payload: JoinPayload) {
     this.inviteCode = payload.inviteCode;
-    this.nick = payload.nick;
-    this.color = payload.color;
     this.joined = true;
 
     this.registerHandler("started");
