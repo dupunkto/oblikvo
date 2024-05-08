@@ -37,14 +37,15 @@ bake dev
 - [x] Shooting
 - [x] Hitting
 - [x] (Re)spawning
+- [x] Health
 - [x] Non-flaky collisions
+- [x] Launchpads
+- [x] Camera effects
+- [ ] Level design
 - [ ] Start button disabled with < 4 players
 - [ ] Chat (without chat)
-- [ ] Health
 - [ ] Leaderboard
 - [ ] Game end with play again button & podium
-- [ ] Launchpads
-- [ ] Camera effects (+fix scaling??)
 - [ ] Sprites
 - [ ] Shader
 
