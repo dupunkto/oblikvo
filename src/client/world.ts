@@ -27,7 +27,7 @@ class World {
     });
   }
 
-  public draw(perspective: Entity, assets: Map<string, any>) {
+  public draw(assets: Map<string, any>, perspective: Entity) {
     this.level.draw(assets);
     this.entities.forEach((entity, id) => {
       if (id == perspective.id) return;

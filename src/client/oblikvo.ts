@@ -207,7 +207,7 @@ class Oblikvo {
 
     this.controller();
     this.camera.follow(this.player);
-    this.world.draw(this.player, this.assets);
+    this.world.draw(this.assets, this.player);
   }
 
   controller() {
