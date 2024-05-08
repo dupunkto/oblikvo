@@ -40,14 +40,14 @@ bake dev
 - [x] Health
 - [x] Non-flaky collisions
 - [x] Launchpads
+- [x] Shader
 - [x] Camera effects
+- [ ] Start button disabled with < 3 players
 - [ ] Level design
-- [ ] Start button disabled with < 4 players
 - [ ] Chat (without chat)
 - [ ] Leaderboard
 - [ ] Game end with play again button & podium
 - [ ] Sprites
-- [ ] Shader
 
 Chat messages:
 

@@ -19,6 +19,9 @@ const ADJECTIVES = [
   "Bumfuzzled",
   "Daft",
   "Incoherent",
+  "Unfortunate",
+  "Unidentified",
+  "Bamboozled",
   "Oblivious",
   "Ridiculous",
   "Reckless",
@@ -31,6 +34,7 @@ const ADJECTIVES = [
   "Outrageous",
   "Goofy",
   "Idiosyncratic",
+  "Despicable"
 ];
 
 const NOUNS = [
@@ -51,6 +55,7 @@ const NOUNS = [
   "Bumblebee",
   "Sillybilly",
   "Kitten",
+  "Baka"
 ];
 
 class Participant {
