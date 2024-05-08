@@ -50,10 +50,8 @@ class Entity implements CommonEntity {
     this.isMoving = entity.isMoving;
   }
 
-  public draw(assets: Map<string, any>, _towards: p5.Vector) {
-    // TODO(msb): this isn't working, it's placing entities at
-    // the wrong coords.
-    // const angle = new p5.Vector(towards.x, towards.z).heading();
+  public draw(assets: Map<string, any>, towards: p5.Vector) {
+    const angle = new p5.Vector(towards.x, towards.z).heading();
 
     const coordinates = new p5.Vector(
       this.position.x,
@@ -69,8 +67,8 @@ class Entity implements CommonEntity {
     // TODO(msb): Use dedicated player sprite
     this.p5.texture(assets.get("Metal2"));
     this.p5.tint(this.color);
-    // this.p5.rotateY(-angle);
     this.p5.translate(coordinates);
+    this.p5.rotateY(-angle);
     this.p5.box(width, height, depth);
     this.p5.pop();
   }
