@@ -18,7 +18,12 @@ interface UpdatePayload {
   entities: [string, Entity][];
 }
 
+interface FinishPayload {
+  winner: Entity;
+  loser: Entity;
+}
+
 type Payload = JoinPayload | StartPayload | UpdatePayload;
 
 export default Payload;
-export { JoinPayload, StartPayload, UpdatePayload };
+export { JoinPayload, StartPayload, UpdatePayload, FinishPayload };

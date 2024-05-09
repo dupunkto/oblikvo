@@ -130,10 +130,21 @@ export function setMVP(entity: Entity) {
   forElement(".mvp", (mvp) => mvp.innerHTML = formatName(entity));
 }
 
+export function setLoser(entity: Entity) {
+  forElement(".loser", (loser) => loser.innerHTML = formatName(entity));
+}
+
 export function setNick(nick: string, color: string) {
   forElement(".nick", (input) => {
     input.style.color = color;
     (input as HTMLInputElement).value = nick;
+  });
+}
+
+export function updateStartButton(count: number) {
+  forElement(".start", (button) => {
+    const disabled = count <= 1;
+    (button as HTMLButtonElement).disabled = disabled;
   });
 }
 

@@ -92,6 +92,11 @@ function gameLoop(inviteCode: inviteCode) {
     return;
   }
 
+  // End game when time's up.
+  if (room.timeLeft <= 0) {
+    io.to(inviteCode).emit("finished", room.finish());
+  }
+
   io.to(inviteCode).emit("update", room.update());
   setTimeout(() => gameLoop(inviteCode), 1000 / FPS);
 }

@@ -12,6 +12,7 @@ import Vector from "../common/vector";
 import { JoinPayload } from "../common/payload";
 import { StartPayload } from "../common/payload";
 import { UpdatePayload } from "../common/payload";
+import { FinishPayload } from "../common/payload";
 import { toVector } from "../common/vector";
 
 import { GAME_LENGTH, FPS } from "../common/constants";
@@ -68,20 +69,34 @@ class Room {
     return this.world.serialize();
   }
 
+  public get empty(): boolean {
+    return this.participants.size < 1;
+  }
+
   public get playerCount(): number {
     return this.participants.size;
   }
 
-  public get empty(): boolean {
-    return this.participants.size < 1;
+  public get timeLeft(): number {
+    return GAME_LENGTH - Math.floor(this.world.ticks / FPS);
   }
 
   public update(): UpdatePayload {
     this.world.update();
 
     return {
-      timeLeft: GAME_LENGTH - Math.floor(this.world.ticks / FPS),
+      timeLeft: this.timeLeft,
       entities: this.world.serialize().entities,
+    }
+  }
+
+  public finish(): FinishPayload {
+    this.status = "done";
+    const entities = this.world.entities.values();
+
+    return {
+      winner: Array.from(entities).reduce((a, b) => (a.kills > b.kills ? a : b)),
+      loser: Array.from(entities).reduce((a, b) => (a.killed > b.killed ? a : b)),
     }
   }
 }

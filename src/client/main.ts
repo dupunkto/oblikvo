@@ -23,10 +23,12 @@ client.on("joined", ({ inviteCode, color, nick, count }) => {
   UI.setCode(inviteCode);
   UI.setNick(nick, color);
   UI.setPlayerCount(count);
+  UI.updateStartButton(count);
 });
 
 client.on("player-count", (count: number) => {
   UI.setPlayerCount(count);
+  UI.updateStartButton(count);
 });
 
 client.on("started", () => {
@@ -37,9 +39,10 @@ client.on("started", () => {
   UI.showChat();
 });
 
-client.on("finished", (winner) => {
+client.on("finished", ({ winner, loser }) => {
   UI.showScreen("podium");
   UI.setMVP(winner);
+  UI.setLoser(loser);
 });
 
 client.on("update", ({ timeLeft }) => {

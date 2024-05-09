@@ -122,6 +122,11 @@ button:hover {
   background: #fd4f08;
 }
 
+button:disabled {
+  background: #505050;
+  cursor: not-allowed;
+}
+
 hgroup h1,
 hgroup h2,
 hgroup p {
