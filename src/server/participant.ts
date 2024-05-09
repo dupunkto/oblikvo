@@ -21,6 +21,7 @@ const ADJECTIVES = [
   "Incoherent",
   "Unfortunate",
   "Unidentified",
+  "Disoriented",
   "Bamboozled",
   "Oblivious",
   "Ridiculous",
@@ -34,7 +35,10 @@ const ADJECTIVES = [
   "Outrageous",
   "Goofy",
   "Idiosyncratic",
-  "Despicable"
+  "Despicable",
+  "xX_",
+  "xx_",
+  "Xx_",
 ];
 
 const NOUNS = [
@@ -51,11 +55,15 @@ const NOUNS = [
   "Aardvark",
   "Baboon",
   "Officer",
-  "Programmer",
   "Bumblebee",
   "Sillybilly",
   "Kitten",
-  "Baka"
+  "Baka",
+  "Cantaloupe",
+  "Quokka",
+  "_xx",
+  "_xX",
+  "_Xx",
 ];
 
 class Participant {
