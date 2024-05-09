@@ -219,7 +219,7 @@ class Oblikvo {
 
   public keyPressed() {
     if (!this.p5) throw "`mousePressed` called, but `p5` not set.";
-    if(this.p5.keyCode == SPACE) this.shoot();
+    if (this.p5.keyCode == SPACE) this.shoot();
   }
 
   shoot() {
