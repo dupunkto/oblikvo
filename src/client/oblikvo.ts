@@ -45,8 +45,10 @@ class Oblikvo {
     this.joined = false;
     this.started = false;
     this.inviteCode = undefined;
+    if (this.p5) this.p5.remove();
     this.p5 = undefined;
     this.canvas = undefined;
+    this.camera = undefined;
     this.world = undefined;
   }
 
@@ -84,8 +86,8 @@ class Oblikvo {
   }
 
   public async reuse(): Promise<string> {
-    this.initializeState();
     this.broadcast("new-from-existing", this.inviteCode);
+    this.initializeState();
 
     // Return the inviteCode.
     return this.receive("created");
@@ -184,16 +186,15 @@ class Oblikvo {
   }
 
   usePointerLock() {
-    document.addEventListener("click", () => this.lockPointer());
-    document.addEventListener("pointerlockchange", () => this.unlockPointer());
+    this.canvas?.elt.addEventListener("click", () => this.lockPointer());
+    this.canvas?.elt.addEventListener("pointerlockchange", () => this.unlockPointer());
   }
 
   lockPointer() {
     // @ts-ignore This is only called in `setup`,
     // and we already check if `p5` and `camera` are `undefined` there.
     this.camera.useMouseControls = true;
-    // @ts-ignore (same)
-    this.p5.requestPointerLock();
+    this.p5?.requestPointerLock();
   }
 
   unlockPointer() {

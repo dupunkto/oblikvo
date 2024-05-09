@@ -44,8 +44,11 @@ class Connection {
   }
 
   public handleNewFromExisting(previousCode: Code) {
+    dbg(previousCode);
     const replayExists = replays.has(previousCode);
+    dbg(replayExists);
     const newCode = replayExists ? replays.get(previousCode) : randomID();
+    dbg(newCode);
 
     if (!replayExists) this.createReplay(previousCode, newCode as string);
 
@@ -63,6 +66,8 @@ class Connection {
   }
 
   public handleJoin(inviteCode: Code) {
+    if(this.inviteCode) this.leaveExistingRoom();
+
     if (rooms.has(inviteCode)) {
       this.inviteCode = inviteCode;
       const payload = this.room.join(this.id);
@@ -101,15 +106,16 @@ class Connection {
   }
 
   public handleDisconnect() {
-    if (this.inviteCode) {
-      const entity = this.room.world.entities.get(this.id);
-
-      this.room.leave(this.id);
-      this.server.emit("left", entity);
-      this.server.emit("player-count", this.room.playerCount);
-    }
-
+    if (this.inviteCode) this.leaveExistingRoom();
     dbg("A client left the game.");
+  }
+
+  leaveExistingRoom() {
+    const entity = this.room.world.entities.get(this.id);
+
+    this.room.leave(this.id);
+    this.server.emit("left", entity);
+    this.server.emit("player-count", this.room.playerCount);
   }
 
   public get id(): string {
