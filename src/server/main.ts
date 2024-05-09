@@ -95,6 +95,7 @@ function gameLoop(inviteCode: inviteCode) {
   // End game when time's up.
   if (room.timeLeft <= 0) {
     io.to(inviteCode).emit("finished", room.finish());
+    return;
   }
 
   io.to(inviteCode).emit("update", room.update());
