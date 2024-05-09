@@ -14,6 +14,10 @@ const A = 65;
 const S = 83;
 const D = 68;
 
+// This means the canvas will be rendered at 1/8 the size
+// of the screen and then upscaled, for our retro-pixelation effect.
+const PIXELATION = 8;
+
 class Oblikvo {
   joined: boolean;
   started: boolean;
@@ -147,8 +151,8 @@ class Oblikvo {
     if (!this.camera) throw "`setup` called but `camera` not set.";
 
     this.canvas = this.p5.createCanvas(
-      this.p5.windowWidth / 8,
-      this.p5.windowHeight / 8,
+      this.p5.windowWidth / PIXELATION,
+      this.p5.windowHeight / PIXELATION,
       this.p5.WEBGL,
     );
 
@@ -185,7 +189,10 @@ class Oblikvo {
     if (!this.p5) throw "`windowResized` called but `p5` not set.";
     if (!this.camera) throw "`setwindowResizedup` called but `camera` not set.";
 
-    this.p5.resizeCanvas(this.p5.windowWidth, this.p5.windowHeight);
+    this.p5.resizeCanvas(
+      this.p5.windowWidth / PIXELATION,
+      this.p5.windowHeight / PIXELATION,
+    );
     this.camera.setPerspective();
   }
 
