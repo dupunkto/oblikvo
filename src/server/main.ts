@@ -1,11 +1,12 @@
 import { initializeServer } from "./server";
 import { randomID } from "../common/random";
+import "../common/string";
 
 import Vector from "../common/vector";
 import Entity from "./entity";
 import Room from "./room";
 
-import { FPS } from "../common/constants";
+import { FPS, LOGGING } from "../common/constants";
 
 type Socket = any;
 type Code = string;
@@ -25,20 +26,24 @@ class Connection {
     this.client = client;
     this.inviteCode = undefined;
 
-    this.registerHandler("newGame");
-    this.registerHandler("newGameFromExisting");
-    this.registerHandler("gameExists");
-    this.registerHandler("joinGame");
+    this.registerHandler("new");
+    this.registerHandler("new-from-existing");
+    this.registerHandler("joinable");
+    this.registerHandler("join");
+    this.registerHandler("start");
+    this.registerHandler("move");
+    this.registerHandler("shoot");
+    this.registerHandler("disconnect");
   }
 
-  public handleNewGame() {
+  public handleNew() {
     const inviteCode = randomID();
     rooms.set(inviteCode, new Room(inviteCode));
 
     this.client.emit("created", inviteCode);
   }
 
-  public handleNewGameFromExisting(previousCode: Code) {
+  public handleNewFromExisting(previousCode: Code) {
     const replayExists = replays.has(previousCode);
     const newCode = replayExists ? replays.get(previousCode) : randomID();
 
@@ -52,15 +57,15 @@ class Connection {
     replays.set(previousCode, newCode);
   }
 
-  public handleGameExists(inviteCode: Code) {
+  public handleJoinable(inviteCode: Code) {
     const joinable = rooms.get(inviteCode)?.joinable;
-    this.client.emit("gameExists", joinable);
+    this.client.emit("joinable", joinable);
   }
 
-  public handleJoinGame(inviteCode: Code) {
+  public handleJoin(inviteCode: Code) {
     if (rooms.has(inviteCode)) {
       this.inviteCode = inviteCode;
-      const payload = this.room.join(this.client.id);
+      const payload = this.room.join(this.id);
 
       this.client.join(inviteCode);
       this.client.emit("joined", payload);
@@ -70,40 +75,53 @@ class Connection {
     }
   }
 
-  public handleStartGame() {
-    if (this.room) {
+  public handleChangeNick(nick: string) {
+    if (this.inviteCode) {
+      // @ts-ignore it definitely exists. shut up.
+      this.room.participants.get(this.id).nick = nick;
+    }
+  }
+
+  public handleStart() {
+    if (this.inviteCode) {
       this.server.emit("started", this.room.start());
       gameLoop(this.inviteCode as string);
     }
   }
 
   public handleMove(movement: Vector) {
-    this.room.move(this.client.id, movement);
+    this.room.move(this.id, movement);
   }
 
   public handleShoot(direction: Vector) {
-    this.room.shoot(this.client.id, direction, (entity: Entity) => {
+    this.room.shoot(this.id, direction, (entity: Entity) => {
       const event = entity.health <= 0 ? "kill" : "hit";
-      this.server.emit(event, { from: this.client.id, to: entity.id });
+      this.server.emit(event, { from: this.id, to: entity.id });
     });
   }
 
   public handleDisconnect() {
-    const entity = this.room.world.entities.get(this.client.id);
+    if (this.inviteCode) {
+      const entity = this.room.world.entities.get(this.id);
 
-    this.room.leave(this.client.id);
-    this.server.emit("left", entity);
-    this.server.emit("player-count", this.room.playerCount);
+      this.room.leave(this.id);
+      this.server.emit("left", entity);
+      this.server.emit("player-count", this.room.playerCount);
+    }
 
     dbg("A client left the game.");
   }
 
-  public get server() {
+  public get id(): string {
+    return this.client.id;
+  }
+
+  public get server(): Socket {
     if (this.inviteCode) return io.to(this.inviteCode);
     else throw "Warning: `this.inviteCode` is undefined.";
   }
 
-  public get room() {
+  public get room(): Room {
     if (this.inviteCode) return rooms.get(this.inviteCode) as Room;
     else throw "Warning: `this.inviteCode` is undefined.";
   }
@@ -147,6 +165,7 @@ function gameLoop(inviteCode: Code) {
   setTimeout(() => gameLoop(inviteCode), 1000 / FPS);
 }
 
-function dbg(message: string) {
-  console.log(message);
+function dbg<T>(object: T): T {
+  if (LOGGING) console.log(object);
+  return object;
 }

@@ -106,11 +106,11 @@ async function playAgain() {
 }
 
 function changeNick(input: HTMLInputElement) {
-  client.broadcast("changeNick", input.value);
+  client.broadcast("change-nick", input.value);
 }
 
 async function join(inviteCode: string) {
-  if (await client.exists(inviteCode)) {
+  if (await client.joinable(inviteCode)) {
     window.location.hash = inviteCode;
 
     UI.showScreen("loading");

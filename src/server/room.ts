@@ -15,7 +15,7 @@ import { UpdatePayload } from "../common/payload";
 import { FinishPayload } from "../common/payload";
 import { toVector } from "../common/vector";
 
-import { GAME_LENGTH, FPS } from "../common/constants";
+import { DURATION, FPS } from "../common/constants";
 
 enum Status {
   Pending,
@@ -88,7 +88,7 @@ class Room {
   }
 
   public get timeLeft(): number {
-    return GAME_LENGTH - Math.floor(this.world.ticks / FPS);
+    return DURATION - Math.floor(this.world.ticks / FPS);
   }
 
   public update(): UpdatePayload {

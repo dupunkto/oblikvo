@@ -15,9 +15,7 @@ const S = 83;
 const D = 68;
 const SPACE = 32;
 
-// This means the canvas will be rendered at 1/8 the size
-// of the screen and then upscaled, for our retro-pixelation effect.
-const PIXELATION = 8;
+import { PIXELATION, LOGGING } from "../common/constants";
 
 class Oblikvo {
   joined: boolean = false;
@@ -55,26 +53,26 @@ class Oblikvo {
   // Public API for interacting with the server.
 
   public async new(): Promise<string> {
-    this.broadcast("newGame");
+    this.broadcast("new");
 
     // Return the inviteCode.
     return this.receive("created");
   }
 
-  public async exists(inviteCode: string): Promise<boolean> {
-    this.broadcast("gameExists", inviteCode);
-    return this.receive("gameExists");
+  public async joinable(inviteCode: string): Promise<boolean> {
+    this.broadcast("joinable", inviteCode);
+    return this.receive("joinable");
   }
 
   public async join(inviteCode: string): Promise<void> {
-    this.broadcast("joinGame", inviteCode);
+    this.broadcast("join", inviteCode);
     return this.receive("joined").then((payload) => {
       this.handleJoined(payload);
     });
   }
 
   public start(): void {
-    this.broadcast("startGame");
+    this.broadcast("start");
 
     // Handling actually starting the game is managed in
     // the `handleStarted` handler, that we registered in
@@ -87,7 +85,7 @@ class Oblikvo {
 
   public async reuse(): Promise<string> {
     this.initializeState();
-    this.broadcast("newGameFromExisting", this.inviteCode);
+    this.broadcast("new-from-existing", this.inviteCode);
 
     // Return the inviteCode.
     return this.receive("created");
@@ -315,6 +313,6 @@ class Oblikvo {
 export default Oblikvo;
 
 function dbg<T>(object: T): T {
-  // console.log(object);
+  if (LOGGING) console.log(object);
   return object;
 }
