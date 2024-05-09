@@ -190,3 +190,7 @@ canvas {
   top: 0;
   left: 0;
 }
+
+.name {
+  text-transform: none;
+}

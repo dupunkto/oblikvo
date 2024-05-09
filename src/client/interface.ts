@@ -112,6 +112,7 @@ export function appendChatLine(callback: (line: HTMLElement) => void) {
 export function formatName(entity: Entity | undefined): string {
   if (entity) {
     const name = document.createElement("span");
+    name.className = "name";
     name.innerText = entity.nick;
     name.style.color = entity.color;
 
