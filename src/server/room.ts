@@ -20,7 +20,7 @@ import { GAME_LENGTH, FPS } from "../common/constants";
 enum Status {
   Pending,
   Ongoing,
-  Done
+  Done,
 }
 
 class Room {

@@ -42,7 +42,7 @@ class Connection {
     const replayExists = replays.has(previousCode);
     const newCode = replayExists ? replays.get(previousCode) : randomID();
 
-    if(!replayExists) this.createReplay(previousCode, newCode as string);
+    if (!replayExists) this.createReplay(previousCode, newCode as string);
 
     this.client.emit("created", newCode);
   }
@@ -71,7 +71,7 @@ class Connection {
   }
 
   public handleStartGame() {
-    if(this.room) {
+    if (this.room) {
       this.server.emit("started", this.room.start());
       gameLoop(this.inviteCode as string);
     }
@@ -84,7 +84,7 @@ class Connection {
   public handleShoot(direction: Vector) {
     this.room.shoot(this.client.id, direction, (entity: Entity) => {
       const event = entity.health <= 0 ? "kill" : "hit";
-      this.server.emit(event, { from: this.client.id, to: entity.id })
+      this.server.emit(event, { from: this.client.id, to: entity.id });
     });
   }
 
@@ -99,12 +99,12 @@ class Connection {
   }
 
   public get server() {
-    if(this.inviteCode) return io.to(this.inviteCode);
+    if (this.inviteCode) return io.to(this.inviteCode);
     else throw "Warning: `this.inviteCode` is undefined.";
   }
 
   public get room() {
-    if(this.inviteCode) return rooms.get(this.inviteCode) as Room;
+    if (this.inviteCode) return rooms.get(this.inviteCode) as Room;
     else throw "Warning: `this.inviteCode` is undefined.";
   }
 
