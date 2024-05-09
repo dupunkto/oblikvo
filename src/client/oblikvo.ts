@@ -85,11 +85,12 @@ class Oblikvo {
     // start our own game.
   }
 
-  public restart() {
+  public async reuse(): Promise<string> {
+    this.initializeState();
     this.broadcast("newGameFromExisting", this.inviteCode);
-    return this.receive("joined").then((payload) => {
-      this.handleJoined(payload);
-    });
+
+    // Return the inviteCode.
+    return this.receive("created");
   }
 
   // Handlers for mutating client-side state.

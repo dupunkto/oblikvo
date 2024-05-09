@@ -98,10 +98,10 @@ function startGame() {
   }
 }
 
-function playAgain() {
-  if (client.joined) {
-    UI.showScreen("loading");
-    client.restart();
+async function playAgain() {
+  if (client.joined) {    
+    const inviteCode = await client.reuse();
+    join(inviteCode);
   }
 }
 

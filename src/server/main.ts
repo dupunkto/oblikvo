@@ -24,6 +24,19 @@ io.on("connection", (client) => {
     client.emit("created", inviteCode);
   });
 
+  client.on("newGameFromExisting", (previousCode: inviteCode) => {
+    const replayExists = replays.has(previousCode);
+    const newCode = replayExists ? replays.get(previousCode) : randomID();
+
+    if(!replayExists) {
+      // TODO(robin): fix undefined error (it's not actually an error).
+      rooms.set(newCode, new Room(newCode));
+      replays.set(previousCode, newCode);
+    }
+
+    client.emit("created", newCode);
+  })
+
   client.on("gameExists", (inviteCode: inviteCode) => {
     const joinable = rooms.get(inviteCode)?.status == "pending";
     client.emit("gameExists", joinable);
