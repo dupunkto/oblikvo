@@ -7,7 +7,6 @@ declare global {
   interface Map<K, V> {
     map<T>(predicate: (value: V, key: K) => T): Map<K, T>;
     filter(predicate: (value: V, key: K) => boolean): Map<K, V>;
-    mapFilter(predicate: (value: V, key: K) => V | undefined): Map<K, V>;
     toArray(): V[];
   }
 }
