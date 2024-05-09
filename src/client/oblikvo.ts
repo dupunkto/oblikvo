@@ -74,7 +74,7 @@ class Oblikvo {
   }
 
   public start(): void {
-    this.broadcast("startGame", this.inviteCode);
+    this.broadcast("startGame");
 
     // Handling actually starting the game is managed in
     // the `handleStarted` handler, that we registered in
@@ -302,7 +302,7 @@ class Oblikvo {
   }
 
   registerHandler(event: string) {
-    this.server.on(event, (params) => {
+    this.server.on(event, (params: any) => {
       dbg(`Receiving ${event}`);
 
       // @ts-expect-error You're not supposed to call

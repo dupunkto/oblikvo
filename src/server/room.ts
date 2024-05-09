@@ -17,15 +17,21 @@ import { toVector } from "../common/vector";
 
 import { GAME_LENGTH, FPS } from "../common/constants";
 
+enum Status {
+  Pending,
+  Ongoing,
+  Done
+}
+
 class Room {
   inviteCode: string;
-  status: string; // "pending" | "ongoing" | "done"
+  status: Status;
   participants: Map<string, Participant>;
   world: World;
 
   constructor(inviteCode: string) {
     this.inviteCode = inviteCode;
-    this.status = "pending";
+    this.status = Status.Pending;
     this.participants = new Map();
     this.world = new World();
   }
@@ -60,13 +66,17 @@ class Room {
   }
 
   public start(): StartPayload {
-    this.status = "ongoing";
+    this.status = Status.Ongoing;
     this.participants.forEach((participant) => {
       const player = new Player(participant);
       this.world.spawn(player);
     });
 
     return this.world.serialize();
+  }
+
+  public get joinable(): boolean {
+    return this.status == Status.Pending;
   }
 
   public get empty(): boolean {
@@ -91,7 +101,7 @@ class Room {
   }
 
   public finish(): FinishPayload {
-    this.status = "done";
+    this.status = Status.Done;
     const entities = [...this.world.entities.values()];
 
     return {

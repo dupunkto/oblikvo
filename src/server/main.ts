@@ -1,101 +1,129 @@
 import { initializeServer } from "./server";
 import { randomID } from "../common/random";
 
+import Vector from "../common/vector";
 import Entity from "./entity";
 import Room from "./room";
 
 import { FPS } from "../common/constants";
 
-type inviteCode = string;
-const rooms: Map<inviteCode, Room> = new Map();
-const replays: Map<inviteCode, inviteCode> = new Map();
+type Socket = any;
+type Code = string;
+
+const rooms: Map<Code, Room> = new Map();
+const replays: Map<Code, Code> = new Map();
 
 const io = initializeServer();
 
-io.on("connection", (client) => {
-  dbg("A new client connected.");
+class Connection {
+  client: Socket;
+  inviteCode: Code | undefined;
 
-  let room: Room | undefined;
+  constructor(client: Socket) {
+    dbg("A new client connected.");
 
-  client.on("newGame", () => {
+    this.client = client;
+    this.inviteCode = undefined;
+
+    this.registerHandler("newGame");
+    this.registerHandler("newGameFromExisting");
+    this.registerHandler("gameExists");
+    this.registerHandler("joinGame");
+  }
+
+  public handleNewGame() {
     const inviteCode = randomID();
     rooms.set(inviteCode, new Room(inviteCode));
 
-    client.emit("created", inviteCode);
-  });
+    this.client.emit("created", inviteCode);
+  }
 
-  client.on("newGameFromExisting", (previousCode: inviteCode) => {
+  public handleNewGameFromExisting(previousCode: Code) {
     const replayExists = replays.has(previousCode);
     const newCode = replayExists ? replays.get(previousCode) : randomID();
 
-    if(!replayExists) {
-      // TODO(robin): fix undefined error (it's not actually an error).
-      rooms.set(newCode, new Room(newCode));
-      replays.set(previousCode, newCode);
-    }
+    if(!replayExists) this.createReplay(previousCode, newCode as string);
 
-    client.emit("created", newCode);
-  })
+    this.client.emit("created", newCode);
+  }
 
-  client.on("gameExists", (inviteCode: inviteCode) => {
-    const joinable = rooms.get(inviteCode)?.status == "pending";
-    client.emit("gameExists", joinable);
-  });
+  createReplay(previousCode: Code, newCode: Code) {
+    rooms.set(newCode, new Room(newCode));
+    replays.set(previousCode, newCode);
+  }
 
-  client.on("joinGame", (inviteCode: inviteCode) => {
+  public handleGameExists(inviteCode: Code) {
+    const joinable = rooms.get(inviteCode)?.joinable;
+    this.client.emit("gameExists", joinable);
+  }
+
+  public handleJoinGame(inviteCode: Code) {
     if (rooms.has(inviteCode)) {
-      room = rooms.get(inviteCode) as Room;
-      const payload = room.join(client.id);
+      this.inviteCode = inviteCode;
+      const payload = this.room.join(this.client.id);
 
-      client.join(inviteCode);
-      client.emit("joined", payload);
-
-      io.to(inviteCode).emit("player-count", room.playerCount);
+      this.client.join(inviteCode);
+      this.client.emit("joined", payload);
+      this.server.emit("player-count", this.room.playerCount);
     } else {
       dbg("Warning: client tried to join game that doesn't exist.");
     }
-  });
+  }
 
-  client.on("startGame", (inviteCode) => {
-    // Only allow players to start their own game.
-    if (!room || room != rooms.get(inviteCode)) return;
+  public handleStartGame() {
+    if(this.room) {
+      this.server.emit("started", this.room.start());
+      gameLoop(this.inviteCode as string);
+    }
+  }
 
-    io.to(inviteCode).emit("started", room.start());
-    gameLoop(inviteCode); // Kickstart gameloop.
-  });
+  public handleMove(movement: Vector) {
+    this.room.move(this.client.id, movement);
+  }
 
-  client.on("move", (movement) => {
-    room?.move(client.id, movement);
-  });
-
-  client.on("shoot", (direction) => {
-    room?.shoot(client.id, direction, (entity: Entity) => {
-      // Yup, yet again pleasing the TS compiler. More like BS
-      // compiler at this point...
-      // (Context: the room cannot be nil, because we're in the
-      // callback ON THE FUCKING ROOM.)
-      if (!room) throw "room not set?!";
-
-      if (entity.health <= 0) {
-        io.to(room.inviteCode).emit("kill", { from: client.id, to: entity.id });
-      } else {
-        io.to(room.inviteCode).emit("hit", { from: client.id, to: entity.id });
-      }
+  public handleShoot(direction: Vector) {
+    this.room.shoot(this.client.id, direction, (entity: Entity) => {
+      const event = entity.health <= 0 ? "kill" : "hit";
+      this.server.emit(event, { from: this.client.id, to: entity.id })
     });
-  });
+  }
 
-  client.on("disconnect", () => {
-    if (!room) return;
+  public handleDisconnect() {
+    const entity = this.room.world.entities.get(this.client.id);
 
-    io.to(room.inviteCode).emit("left", room.world.entities.get(client.id));
-    io.to(room.inviteCode).emit("player-count", room.playerCount - 1);
+    this.room.leave(this.client.id);
+    this.server.emit("left", entity);
+    this.server.emit("player-count", this.room.playerCount);
 
-    room.leave(client.id);
     dbg("A client left the game.");
-  });
+  }
+
+  public get server() {
+    if(this.inviteCode) return io.to(this.inviteCode);
+    else throw "Warning: `this.inviteCode` is undefined.";
+  }
+
+  public get room() {
+    if(this.inviteCode) return rooms.get(this.inviteCode) as Room;
+    else throw "Warning: `this.inviteCode` is undefined.";
+  }
+
+  registerHandler(event: string) {
+    this.client.on(event, (params: any) => {
+      dbg(`Receiving ${event}`);
+
+      // @ts-expect-error You're not supposed to call
+      // `registerHandler` if the method doesn't exist.
+      this[`handle${event.pascalize()}`](params);
+    });
+  }
+}
+
+io.on("connection", (client) => {
+  new Connection(client);
 });
 
-function gameLoop(inviteCode: inviteCode) {
+function gameLoop(inviteCode: Code) {
   if (!rooms.has(inviteCode)) return;
   const room = rooms.get(inviteCode);
 
@@ -108,6 +136,10 @@ function gameLoop(inviteCode: inviteCode) {
   // End game when time's up.
   if (room.timeLeft <= 0) {
     io.to(inviteCode).emit("finished", room.finish());
+    room.participants.forEach((_, id) => {
+      io.sockets.sockets.get(id)?.leave(inviteCode);
+    });
+
     return;
   }
 

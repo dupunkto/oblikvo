@@ -99,7 +99,7 @@ function startGame() {
 }
 
 async function playAgain() {
-  if (client.joined) {    
+  if (client.joined) {
     const inviteCode = await client.reuse();
     join(inviteCode);
   }
