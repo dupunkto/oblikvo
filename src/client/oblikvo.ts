@@ -3,7 +3,7 @@ import p5 from "p5";
 import "../common/string";
 
 import { io, Socket } from "socket.io-client";
-import { JoinPayload, StartPayload, UpdatePayload } from "../common/payload";
+import { JoinPayload, StartPayload, UpdatePayload, FinishPayload } from "../common/payload";
 
 import Camera from "./camera";
 import Entity from "./entity";
@@ -42,10 +42,11 @@ class Oblikvo {
   }
 
   initializeState() {
+    if (this.p5) this.p5.remove();
+
     this.joined = false;
     this.started = false;
     this.inviteCode = undefined;
-    if (this.p5) this.p5.remove();
     this.p5 = undefined;
     this.canvas = undefined;
     this.camera = undefined;
@@ -100,6 +101,7 @@ class Oblikvo {
     this.joined = true;
 
     this.registerHandler("started");
+    this.registerHandler("finished");
   }
 
   handleStarted(payload: StartPayload) {
@@ -119,6 +121,10 @@ class Oblikvo {
       this.registerHandler("hit");
       this.registerHandler("kill");
     }, document.body);
+  }
+
+  handleFinished(_payload: FinishPayload) {
+    this.p5?.remove();
   }
 
   handleHit({ from, to }: { from: string; to: string }) {
