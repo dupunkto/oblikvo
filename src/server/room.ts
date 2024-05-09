@@ -87,7 +87,7 @@ class Room {
     return {
       timeLeft: this.timeLeft,
       entities: this.world.serialize().entities,
-    }
+    };
   }
 
   public finish(): FinishPayload {
@@ -95,9 +95,13 @@ class Room {
     const entities = this.world.entities.values();
 
     return {
-      winner: Array.from(entities).reduce((a, b) => (a.kills > b.kills ? a : b)),
-      loser: Array.from(entities).reduce((a, b) => (a.killed > b.killed ? a : b)),
-    }
+      winner: Array.from(entities).reduce((a, b) =>
+        a.kills > b.kills ? a : b,
+      ),
+      loser: Array.from(entities).reduce((a, b) =>
+        a.killed > b.killed ? a : b,
+      ),
+    };
   }
 }
 

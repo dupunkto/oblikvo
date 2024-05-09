@@ -127,11 +127,11 @@ export function setCode(inviteCode: string) {
 }
 
 export function setMVP(entity: Entity) {
-  forElement(".mvp", (mvp) => mvp.innerHTML = formatName(entity));
+  forElement(".mvp", (mvp) => (mvp.innerHTML = formatName(entity)));
 }
 
 export function setLoser(entity: Entity) {
-  forElement(".loser", (loser) => loser.innerHTML = formatName(entity));
+  forElement(".loser", (loser) => (loser.innerHTML = formatName(entity)));
 }
 
 export function setNick(nick: string, color: string) {

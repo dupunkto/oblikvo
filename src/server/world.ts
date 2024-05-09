@@ -123,7 +123,7 @@ class World {
       .map((entity: Entity) => {
         const distance = distanceBetween(player.position, entity.position);
         entity.hit(direction, distance);
-        if(entity.health <= 0) player.kills += 1;
+        if (entity.health <= 0) player.kills += 1;
 
         return entity;
       })
@@ -133,7 +133,7 @@ class World {
   public update() {
     this.ticks += 1;
     this.entities.forEach((entity) => {
-      if(entity.health <= 0) {
+      if (entity.health <= 0) {
         this.respawn(entity);
       }
 

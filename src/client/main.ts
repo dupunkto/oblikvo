@@ -51,16 +51,22 @@ client.on("update", ({ timeLeft }) => {
 });
 
 client.on("hit", ({ from, to }) => {
-  UI.appendChatLine((line) => line.innerHTML += name(from) + " hit " + name(to));
+  UI.appendChatLine(
+    (line) => (line.innerHTML += name(from) + " hit " + name(to)),
+  );
 });
 
 client.on("kill", ({ from, to }) => {
-  UI.appendChatLine((line) => line.innerHTML += name(from) + " slashed " + name(to));
+  UI.appendChatLine(
+    (line) => (line.innerHTML += name(from) + " slashed " + name(to)),
+  );
 });
 
 client.on("left", (entity) => {
-  UI.appendChatLine((line) => line.innerHTML += UI.formatName(entity) + " left");
-})
+  UI.appendChatLine(
+    (line) => (line.innerHTML += UI.formatName(entity) + " left"),
+  );
+});
 
 function name(id: string) {
   const entity = client.getEntity(id);
@@ -89,7 +95,7 @@ function startGame() {
 }
 
 function playAgain() {
-  if(client.joined) {
+  if (client.joined) {
     UI.showScreen("loading");
     client.restart();
   }
@@ -106,7 +112,9 @@ async function join(inviteCode: string) {
     UI.showScreen("loading");
     client.join(inviteCode);
   } else {
-    alert("Couldn't join a game using that code. Either the game doesn't exist or has already started.");
+    alert(
+      "Couldn't join a game using that code. Either the game doesn't exist or has already started.",
+    );
   }
 }
 

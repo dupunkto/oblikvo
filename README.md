@@ -42,11 +42,11 @@ bake dev
 - [x] Launchpads
 - [x] Shader
 - [x] Camera effects
-- [ ] Start button disabled with < 3 players
-- [ ] Level design
-- [ ] Chat (without chat)
-- [ ] Leaderboard
+- [x] Chat (without chat)
+- [x] Start button disabled with < 2 players
 - [ ] Game end with play again button & podium
+- [ ] Level design
+- [ ] Leaderboard
 - [ ] Sprites
 
 Chat messages:
