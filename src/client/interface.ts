@@ -14,8 +14,15 @@ export function hideScreens() {
   });
 }
 
+export function deleteCanvases() {
+  document.querySelectorAll("canvas").forEach((element) => {
+    element.remove();
+  });
+}
+
 export function showScreen(screen: string) {
   hideScreens();
+  deleteCanvases();
   forElement(`.${screen}`, (screen) => (screen.style.display = "block"));
 }
 
