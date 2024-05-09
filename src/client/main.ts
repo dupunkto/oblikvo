@@ -40,6 +40,10 @@ client.on("started", () => {
 });
 
 client.on("finished", ({ winner, loser }) => {
+  UI.showBorders();
+  UI.hideHealthBar();
+  UI.hideTimer();
+  UI.hideChat();
   UI.showScreen("podium");
   UI.setMVP(winner);
   UI.setLoser(loser);
