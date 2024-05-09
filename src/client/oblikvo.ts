@@ -13,6 +13,7 @@ const W = 87;
 const A = 65;
 const S = 83;
 const D = 68;
+const SPACE = 32;
 
 // This means the canvas will be rendered at 1/8 the size
 // of the screen and then upscaled, for our retro-pixelation effect.
@@ -111,6 +112,7 @@ class Oblikvo {
       this.bindMethod("setup");
       this.bindMethod("draw");
       this.bindMethod("windowResized");
+      this.bindMethod("keyPressed");
 
       this.registerHandler("update");
       this.registerHandler("hit");
@@ -212,9 +214,18 @@ class Oblikvo {
   }
 
   public mousePressed() {
-    if (!this.camera) throw "`mousePressed` called, but `camera` not set.";
+    this.shoot();
+  }
+
+  public keyPressed() {
+    if (!this.p5) throw "`mousePressed` called, but `p5` not set.";
+    if(this.p5.keyCode == SPACE) this.shoot();
+  }
+
+  shoot() {
+    if (!this.camera) throw "`shoot` called, but `camera` not set.";
     this.broadcast("shoot", this.camera.facingDirection);
-    //this.playSound("shoortLaser");
+    //this.playSound("shootLaser");
   }
 
   public draw() {
