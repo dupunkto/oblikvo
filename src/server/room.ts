@@ -92,7 +92,7 @@ class Room {
 
   public finish(): FinishPayload {
     this.status = "done";
-    const entities = this.world.entities.values();
+    const entities = [...this.world.entities.values()];
 
     return {
       winner: Array.from(entities).reduce((a, b) =>
