@@ -8,14 +8,14 @@ import "../common/map";
 import Level from "./level";
 import Entity from "./entity";
 import Player from "./player";
-import Payload from "../common/payload";
 
-import { Type } from "../common/payload";
 import { SIZE } from "../common/level";
-
 import { willHit, distanceBetween } from "./raycast";
 
+import { StartPayload } from "../common/payload";
+
 class World {
+  ticks: number = 0;
   level: Level = new Level();
   entities: Map<string, Entity> = new Map();
 
@@ -103,10 +103,10 @@ class World {
     this.entities.delete(id);
   }
 
-  public respawn(id: string) {
+  public respawn(entity: Entity) {
     // TODO(robin): make these random.
     const coordinates = new p5.Vector(0, 30, 0);
-    this.entities.get(id)?.respawn(coordinates);
+    entity.respawn(coordinates);
   }
 
   public move(id: string, movement: p5.Vector): void {
@@ -123,10 +123,7 @@ class World {
       .map((entity: Entity) => {
         const distance = distanceBetween(player.position, entity.position);
         entity.hit(direction, distance);
-
-        if (entity.health <= 0) {
-          this.respawn(entity.id);
-        }
+        if(entity.health <= 0) player.kills += 1;
 
         return entity;
       })
@@ -134,7 +131,12 @@ class World {
   }
 
   public update() {
+    this.ticks += 1;
     this.entities.forEach((entity) => {
+      if(entity.health <= 0) {
+        this.respawn(entity);
+      }
+
       entity.update();
       this.collide(entity);
     });
@@ -196,27 +198,11 @@ class World {
     }
   }
 
-  public serialize(type: Type): Payload {
-    switch (type) {
-      case Type.Start:
-        return {
-          entities: [...this.entities.entries()],
-          level: this.level.serialize(),
-        };
-
-      case Type.Update:
-        return {
-          entities: [...this.entities.entries()],
-        };
-
-      case Type.Update:
-        throw "can't serialize the world state to a `JoinPayload`, \
-        as the world doesn't know room-specific client data";
-
-      // Here because TypeScript is a dumb bitch.
-      default:
-        throw "impossible";
-    }
+  public serialize(): StartPayload {
+    return {
+      entities: [...this.entities.entries()],
+      level: this.level.serialize(),
+    };
   }
 }
 

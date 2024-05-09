@@ -21,24 +21,48 @@ if (inviteCode) join(inviteCode);
 client.on("joined", ({ inviteCode, color, nick, count }) => {
   UI.showScreen("lobby");
   UI.setCode(inviteCode);
-  UI.setColor(color);
-  UI.setNick(nick);
+  UI.setNick(nick, color);
   UI.setPlayerCount(count);
 });
 
 client.on("player-count", (count: number) => {
   UI.setPlayerCount(count);
-})
+});
 
 client.on("started", () => {
   UI.hideScreens();
   UI.hideBorders();
   UI.showHealthBar();
+  UI.showTimer();
+  UI.showChat();
 });
 
-client.on("update", () => {
-  UI.updateHealthBar(client.player.health, client.player.maxHealth);
+client.on("finished", (winner) => {
+  UI.showScreen("podium");
+  UI.setMVP(winner);
 });
+
+client.on("update", ({ timeLeft }) => {
+  UI.updateHealthBar(client.player.health, client.player.maxHealth);
+  UI.updateTimer(timeLeft);
+});
+
+client.on("hit", ({ from, to }) => {
+  UI.appendChatLine((line) => line.innerHTML += name(from) + " hit " + name(to));
+});
+
+client.on("kill", ({ from, to }) => {
+  UI.appendChatLine((line) => line.innerHTML += name(from) + " slashed " + name(to));
+});
+
+client.on("left", (entity) => {
+  UI.appendChatLine((line) => line.innerHTML += UI.formatName(entity) + " left");
+})
+
+function name(id: string) {
+  const entity = client.getEntity(id);
+  return entity ? UI.formatName(entity) : "";
+}
 
 // Public API
 
@@ -61,6 +85,13 @@ function startGame() {
   }
 }
 
+function playAgain() {
+  if(client.joined) {
+    UI.showScreen("loading");
+    client.restart();
+  }
+}
+
 function changeNick(input: HTMLInputElement) {
   client.broadcast("changeNick", input.value);
 }
@@ -72,7 +103,7 @@ async function join(inviteCode: string) {
     UI.showScreen("loading");
     client.join(inviteCode);
   } else {
-    alert("Couldn't find an active game with that invite code.");
+    alert("Couldn't join a game using that code. Either the game doesn't exist or has already started.");
   }
 }
 
@@ -80,3 +111,4 @@ window.newGame = newGame;
 window.joinGame = joinGame;
 window.startGame = startGame;
 window.changeNick = changeNick;
+window.playAgain = playAgain;

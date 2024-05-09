@@ -24,7 +24,9 @@
     <link href="main.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
+    <time class="timer">xx:xx</time>
     <progress class="health"></progress>
+    <div class="chat"></div>
 
     <noscript>
       <h3>JavaScript is required. Sorry!</h3>
@@ -59,6 +61,18 @@
 
       <button onclick="startGame()">Start</button>
     </main>
+
+    <main class="podium">
+      <hgroup>
+        <p>MVP</p>
+        <h1><span class="mvp">Xx_SUSSY_xX</span></h1>
+      </hgroup>
+
+      <small><span class="count">x</span> players in the lobby</small>
+
+      <button onclick="playAgain()">Play again</button>
+    </main>
+
     <script type="module" src="main.js"></script>
   </body>
 </html>

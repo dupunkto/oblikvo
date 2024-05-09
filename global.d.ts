@@ -4,6 +4,7 @@ declare global {
     joinGame: function;
     startGame: function;
     changeNick: function;
+    playAgain: function;
   }
 }
 

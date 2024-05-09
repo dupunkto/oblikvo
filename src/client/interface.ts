@@ -70,6 +70,54 @@ export function hideLeaderBoard() {
   forElement(".leaderboard", (board) => (board.style.display = "none"));
 }
 
+export function showTimer() {
+  forElement(".timer", (timer) => (timer.style.display = "block"));
+}
+
+export function updateTimer(left: number) {
+  forElement(".timer", (timer) => {
+    const minutes = Math.floor(left / 60);
+    const seconds = `${left % 60}`.padStart(2, "0");
+
+    timer.innerText = `${minutes}:${seconds}`;
+  });
+}
+
+export function hideTimer() {
+  forElement(".timer", (timer) => (timer.style.display = "none"));
+}
+
+export function showChat() {
+  forElement(".chat", (chat) => (chat.style.display = "block"));
+}
+
+export function appendChatLine(callback: (line: HTMLElement) => void) {
+  forElement(".chat", (chat) => {
+    const line = document.createElement("span");
+    callback(line);
+    chat.appendChild(line);
+    window.setTimeout(() => {
+      line.remove();
+    }, 3000);
+  });
+}
+
+export function formatName(entity: Entity | undefined): string {
+  if (entity) {
+    const name = document.createElement("span");
+    name.innerText = entity.nick;
+    name.style.color = entity.color;
+
+    return name.outerHTML;
+  } else {
+    return "";
+  }
+}
+
+export function hideChat() {
+  forElement(".chat", (chat) => (chat.style.display = "none"));
+}
+
 export function setPlayerCount(playerCount: number) {
   forElement(".count", (count) => (count.innerText = `${playerCount}`));
 }
@@ -78,12 +126,13 @@ export function setCode(inviteCode: string) {
   forElement(".code", (code) => (code.innerText = inviteCode));
 }
 
-export function setColor(color: string) {
-  forElement(".nick", (nick) => (nick.style.color = color));
+export function setMVP(entity: Entity) {
+  forElement(".mvp", (mvp) => mvp.innerHTML = formatName(entity));
 }
 
-export function setNick(nick: string) {
+export function setNick(nick: string, color: string) {
   forElement(".nick", (input) => {
+    input.style.color = color;
     (input as HTMLInputElement).value = nick;
   });
 }
@@ -92,6 +141,7 @@ function forElement(
   selector: string,
   callback: (element: HTMLElement) => void,
 ) {
-  const element = document.querySelector(selector);
-  if (element) callback(element as HTMLElement);
+  document.querySelectorAll(selector).forEach((element) => {
+    callback(element as HTMLElement);
+  });
 }

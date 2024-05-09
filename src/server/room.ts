@@ -12,8 +12,9 @@ import Vector from "../common/vector";
 import { JoinPayload } from "../common/payload";
 import { StartPayload } from "../common/payload";
 import { UpdatePayload } from "../common/payload";
-import { Type } from "../common/payload";
 import { toVector } from "../common/vector";
+
+import { GAME_LENGTH, FPS } from "../common/constants";
 
 class Room {
   inviteCode: string;
@@ -64,7 +65,11 @@ class Room {
       this.world.spawn(player);
     });
 
-    return this.world.serialize(Type.Start) as StartPayload;
+    return this.world.serialize();
+  }
+
+  public get playerCount(): number {
+    return this.participants.size;
   }
 
   public get empty(): boolean {
@@ -73,7 +78,11 @@ class Room {
 
   public update(): UpdatePayload {
     this.world.update();
-    return this.world.serialize(Type.Update) as UpdatePayload;
+
+    return {
+      timeLeft: GAME_LENGTH - Math.floor(this.world.ticks / FPS),
+      entities: this.world.serialize().entities,
+    }
   }
 }
 

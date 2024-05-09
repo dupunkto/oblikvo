@@ -19,8 +19,8 @@ const D = 68;
 const PIXELATION = 8;
 
 class Oblikvo {
-  joined: boolean;
-  started: boolean;
+  joined: boolean = false;
+  started: boolean = false;
   server: Socket;
 
   // Lookup map containing assets like
@@ -37,10 +37,18 @@ class Oblikvo {
   world: World | undefined;
 
   constructor() {
-    this.joined = false;
-    this.started = false;
+    this.initializeState();
     this.server = io();
     this.assets = new Map();
+  }
+
+  initializeState() {
+    this.joined = false;
+    this.started = false;
+    this.inviteCode = undefined;
+    this.p5 = undefined;
+    this.canvas = undefined;
+    this.world = undefined;
   }
 
   // Public API for interacting with the server.
@@ -74,6 +82,13 @@ class Oblikvo {
     // This is because we don't only want to start our own game,
     // but everyone's game. If we'd register it here, we'd only
     // start our own game.
+  }
+
+  public restart() {
+    this.broadcast("newGameFromExisting", this.inviteCode);
+    return this.receive("joined").then((payload) => {
+      this.handleJoined(payload);
+    });
   }
 
   // Handlers for mutating client-side state.
@@ -233,6 +248,10 @@ class Oblikvo {
     if (this.p5.keyIsDown(S)) movement.add(facing.mult(-1));
 
     if (movement.mag() > 0) this.broadcast("move", movement);
+  }
+
+  public getEntity(id: string): Entity | undefined {
+    return this.world?.entities.get(id);
   }
 
   public get player(): Entity {

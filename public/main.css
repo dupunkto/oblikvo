@@ -94,7 +94,7 @@ label span {
 
 small {
   display: block;
-  margin-top: .75em;
+  margin-top: 0.75em;
   margin-bottom: 2em;
 }
 
@@ -131,7 +131,6 @@ hgroup p {
 progress.health {
   display: none;
   position: absolute;
-  z-index: 100;
   top: 0.5em;
   left: 0.5em;
   -webkit-appearance: none;
@@ -158,4 +157,31 @@ canvas {
   width: 100% !important;
   height: 100% !important;
   image-rendering: pixelated;
+}
+
+.chat {
+  display: none;
+  position: absolute;
+  top: 2em;
+  left: 0.5em;
+  width: 100%;
+  height: 25vh;
+  color: white;
+  padding: 1px;
+}
+
+.chat > span {
+  font-size: .6rem;
+  display: block;
+}
+
+.timer {
+  display: none;
+  color: white;
+  width: 100%;
+  font-size: 2em;
+  text-align: center;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
