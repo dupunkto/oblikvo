@@ -21,7 +21,7 @@ class World {
     this.load(payload);
   }
 
-  public load({ entities }: UpdatePayload) {
+  public load({ entities }: StartPayload | UpdatePayload ) {
     this.entities = new Map(entities).map((entity) => {
       return new Entity(this.p5, entity);
     });
