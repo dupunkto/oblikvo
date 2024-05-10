@@ -9,7 +9,7 @@ import Level from "./level";
 import Entity from "./entity";
 import Player from "./player";
 
-import { SIZE } from "../common/level";
+import { SIZE, MIN_Y } from "../common/level";
 import { willHit, distanceBetween } from "./raycast";
 
 import { StartPayload } from "../common/payload";
@@ -103,10 +103,11 @@ class World {
     this.entities.delete(id);
   }
 
-  public respawn(entity: Entity) {
+  public respawn(entity: Entity, bumpStats: boolean = true) {
     // TODO(robin): make these random.
     const coordinates = new p5.Vector(0, 30, 0);
-    entity.respawn(coordinates);
+    if(bumpStats) entity.bump();
+    entity.spawn(coordinates);
   }
 
   public move(id: string, movement: p5.Vector): void {
@@ -133,9 +134,9 @@ class World {
   public update() {
     this.ticks += 1;
     this.entities.forEach((entity) => {
-      if (entity.health <= 0) {
-        this.respawn(entity);
-      }
+      if (entity.health <= 0) this.respawn(entity);
+      // Don't bump their stats when they commit suicide.
+      if (entity.position.y < MIN_Y) this.respawn(entity, false);
 
       entity.update();
       this.collide(entity);

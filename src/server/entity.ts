@@ -52,12 +52,11 @@ class Entity implements CommonEntity {
     this.position = position;
   }
 
-  public respawn(position: p5.Vector) {
+  public bump() {
     this.killed += 1;
     this.speed *= 1 + INCREASE;
     this.maxHealth += INCREASE * HEALTH;
     this.health = this.maxHealth;
-    this.spawn(position);
   }
 
   public hit(direction: p5.Vector, distance: number) {
@@ -76,10 +75,6 @@ class Entity implements CommonEntity {
 
     this.velocity.add(this.acceleration);
     this.position.add(this.velocity);
-
-    const minY = 0;
-    if (this.position.y < minY) this.position.y = minY;
-
     this.acceleration = new p5.Vector(0, 0, 0);
   }
 

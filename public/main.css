@@ -205,7 +205,8 @@ canvas {
   top: calc(50vh - var(--size) / 2);
   z-index: 10000;
 
-  &::before, &::after {
+  &::before,
+  &::after {
     content: " ";
     border-bottom: 1px solid var(--color);
     display: inline-block;
@@ -220,7 +221,6 @@ canvas {
 
   &::before {
     right: calc(var(--size) / 2);
-
   }
 
   &::after {

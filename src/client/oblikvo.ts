@@ -3,7 +3,12 @@ import p5 from "p5";
 import "../common/string";
 
 import { io, Socket } from "socket.io-client";
-import { JoinPayload, StartPayload, UpdatePayload, FinishPayload } from "../common/payload";
+import {
+  JoinPayload,
+  StartPayload,
+  UpdatePayload,
+  FinishPayload,
+} from "../common/payload";
 
 import Camera from "./camera";
 import Entity from "./entity";
@@ -193,7 +198,9 @@ class Oblikvo {
 
   usePointerLock() {
     this.canvas?.elt.addEventListener("click", () => this.lockPointer());
-    this.canvas?.elt.addEventListener("pointerlockchange", () => this.unlockPointer());
+    this.canvas?.elt.addEventListener("pointerlockchange", () =>
+      this.unlockPointer(),
+    );
   }
 
   lockPointer() {

@@ -66,7 +66,7 @@ class Connection {
   }
 
   public handleJoin(inviteCode: Code) {
-    if(this.inviteCode) this.leaveExistingRoom();
+    if (this.inviteCode) this.leaveExistingRoom();
 
     if (rooms.has(inviteCode)) {
       this.inviteCode = inviteCode;

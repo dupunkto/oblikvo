@@ -1,3 +1,4 @@
+import { MIN_PLAYERS } from "../common/constants";
 import Entity from "./entity";
 
 export function showBorders() {
@@ -150,9 +151,9 @@ export function setNick(nick: string, color: string) {
   });
 }
 
-export function updateStartButton(count: number) {
+export function updateStartButton(count: number, min: number = MIN_PLAYERS) {
   forElement(".start", (button) => {
-    const disabled = count <= 1;
+    const disabled = count < min;
     (button as HTMLButtonElement).disabled = disabled;
   });
 }
