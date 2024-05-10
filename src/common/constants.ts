@@ -1,4 +1,4 @@
-export const DURATION = 3;
+export const DURATION = 2 * 60;
 export const FPS = 60;
 export const G = 2;
 export const FRICTION = 0.1;
