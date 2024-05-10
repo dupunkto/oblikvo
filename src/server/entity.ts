@@ -35,6 +35,7 @@ class Entity implements CommonEntity {
   acceleration: p5.Vector;
   dimensions: p5.Vector;
 
+  onGround: boolean = false;
   againstWall: boolean = false;
   isMoving: boolean = false;
 
@@ -81,7 +82,7 @@ class Entity implements CommonEntity {
   }
 
   applyGravity() {
-    this.acceleration.y -= G;
+    if(!this.onGround) this.acceleration.y -= G;
   }
 
   applyFriction() {
