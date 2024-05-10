@@ -50,6 +50,8 @@ class Entity implements CommonEntity {
 
   public spawn(position: p5.Vector) {
     this.position = position;
+    this.velocity = new p5.Vector(0, 0, 0);
+    this.acceleration = new p5.Vector(0, 0, 0);
   }
 
   public bump() {

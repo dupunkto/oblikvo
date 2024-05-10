@@ -29,13 +29,13 @@ class World {
         [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
         [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
         [1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1],
-        [1, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 1, 3, 1, 0, 1, 0, 1, 3, 1, 0, 0, 0, 0, 1],
         [1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1],
         [1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1],
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         [1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1],
         [1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1],
-        [1, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 1, 3, 1, 0, 1, 0, 1, 3, 1, 0, 0, 0, 0, 1],
         [1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1],
         [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
         [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
@@ -93,10 +93,8 @@ class World {
   }
 
   public spawn(entity: Entity) {
-    // TODO(robin): make these random.
-    const initialCoordinates = new p5.Vector(0, 30, 0);
-    entity.spawn(initialCoordinates);
     this.entities.set(entity.id, entity);
+    entity.spawn(this.level.randomCoords());
   }
 
   public despawn(id: string) {
@@ -104,10 +102,8 @@ class World {
   }
 
   public respawn(entity: Entity, bumpStats: boolean = true) {
-    // TODO(robin): make these random.
-    const coordinates = new p5.Vector(0, 30, 0);
     if(bumpStats) entity.bump();
-    entity.spawn(coordinates);
+    entity.spawn(this.level.randomCoords());
   }
 
   public move(id: string, movement: p5.Vector): void {
@@ -175,7 +171,7 @@ class World {
     if (this.level.get(ix, iy - 1, iz)) {
       if (this.level.get(ix, iy - 1, iz)?.kind == 3) {
         // Sand1
-        player.acceleration.y += 200;
+        player.acceleration.y += 15;
       }
       let side = player.position.y - player.dimensions.y / 2;
       if (side <= iy * SIZE)

@@ -12,7 +12,7 @@ export interface Block {
 }
 
 export const SIZE = 9;
-export const MIN_Y = -20;
+export const MIN_Y = -200;
 export default Level;
 
 // TODO: Actually import all textures

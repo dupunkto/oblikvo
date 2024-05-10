@@ -1,4 +1,7 @@
-import { default as Blocks, Block, Coords, Kind } from "../common/level";
+import p5 from "p5-node";
+
+import { default as Blocks } from "../common/level";
+import { Block, Coords, Kind } from "../common/level";
 
 import Vector from "../common/vector";
 
@@ -46,6 +49,11 @@ class Level {
         }
       }
     }
+  }
+
+  public randomCoords(): p5.Vector {
+    // TODO(msb)
+    return new p5.Vector(1, 10, 1)
   }
 
   public serialize(): Blocks {
