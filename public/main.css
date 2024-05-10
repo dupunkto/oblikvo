@@ -196,16 +196,18 @@ canvas {
 }
 
 .crosshair {
+  --color: white;
   --size: 3em;
+
   display: none;
   position: absolute;
   left: calc(50vw - var(--size) / 2);
   top: calc(50vh - var(--size) / 2);
-  color: white;
   z-index: 10000;
 
   &::before, &::after {
-    content: "——";
+    content: " ";
+    border-bottom: 1px solid var(--color);
     display: inline-block;
     width: var(--size);
     height: var(--size);
@@ -214,6 +216,16 @@ canvas {
     position: absolute;
     top: 0;
     left: 0;
+  }
+
+  &::before {
+    right: calc(var(--size) / 2);
+
+  }
+
+  &::after {
+    top: calc(var(--size) / 2);
+    left: calc(var(--size) / 2);
   }
 
   &::after {
