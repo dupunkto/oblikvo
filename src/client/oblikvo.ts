@@ -156,7 +156,12 @@ class Oblikvo {
     this.loadImage("Metal1");
     this.loadImage("Metal2");
     this.loadImage("Sand1");
+    this.loadImage("Sand2");
     this.loadImage("Cobbles1");
+    this.loadImage("Cobbles2");
+    this.loadImage("Cobbles3");
+    this.loadImage("Bricks2");
+    this.loadImage("Bricks3");
     //this.loadSound("hitAnotherPlayer");
     //this.loadSound("gotHit");
     //this.loadSound("shootLaser");

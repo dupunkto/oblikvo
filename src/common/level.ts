@@ -1,22 +1,20 @@
 type Level = [Coords, Block][];
 
-// 0 = air, 1 = filled
+// 0 = air, 1..9 = filled
 export type Kind = number;
 
 // "x,y,z" (needs to be a string because JS is a horrible language)
 export type Coords = string;
+
+export const SIZE = 14;
+export const MIN_Y = -200;
 
 export interface Block {
   color: string;
   kind: Kind;
 }
 
-export const SIZE = 14;
-export const MIN_Y = -200;
-export default Level;
-
-// TODO: Actually import all textures
-export const textures: Map<Kind, string> = new Map([
+export const textureMap: Map<Kind, string> = new Map([
   [1, "Metal1"],
   [2, "Metal2"],
   [3, "Sand1"],
@@ -27,3 +25,5 @@ export const textures: Map<Kind, string> = new Map([
   [8, "Bricks2"],
   [9, "Bricks3"],
 ]);
+
+export default Level;

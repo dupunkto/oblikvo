@@ -1,6 +1,6 @@
 import p5 from "p5";
 
-import { default as Blocks, SIZE, textures } from "../common/level";
+import { default as Blocks, SIZE, Block, textureMap } from "../common/level";
 
 class Level {
   p5: p5;
@@ -17,8 +17,7 @@ class Level {
       const dimensions = SIZE;
 
       this.p5.push();
-      // TODO(msb): Fix undefined issues
-      this.p5.texture(assets.get(textures.get(block.kind)));
+      this.p5.texture(getTexture(assets, block));
       this.p5.translate(
         dimensions * (parseInt(x) + 0.5),
         -dimensions * (parseInt(y) + 0.5),
@@ -28,6 +27,12 @@ class Level {
       this.p5.pop();
     });
   }
+}
+
+function getTexture(assets: Map<string, any>, block: Block) {
+  const identifier = textureMap.get(block.kind) as string;
+  console.log(identifier);
+  return assets.get(identifier);
 }
 
 export default Level;
