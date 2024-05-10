@@ -103,7 +103,14 @@ function startGame() {
 async function playAgain() {
   if (client.joined) {
     const inviteCode = await client.reuse();
-    join(inviteCode);
+
+    // We're doing a full-reload here to start the new game
+    // from a known-state, because in spite of my attempts of
+    // cleaning the client up for reuse, p5 refuses to collaborate.
+    // So yeah, `join(inviteCode)` would be beautiful.
+    // But not realistic.
+    window.location.hash = inviteCode;
+    window.location.reload();
   }
 }
 
