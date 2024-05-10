@@ -34,6 +34,7 @@ client.on("player-count", (count: number) => {
 client.on("started", () => {
   UI.hideScreens();
   UI.hideBorders();
+  UI.showCrosshair();
   UI.showHealthBar();
   UI.showTimer();
   UI.showChat();
@@ -41,6 +42,7 @@ client.on("started", () => {
 
 client.on("finished", ({ winner, loser }) => {
   UI.showBorders();
+  UI.hideCrosshair();
   UI.hideHealthBar();
   UI.hideTimer();
   UI.hideChat();

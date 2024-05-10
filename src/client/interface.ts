@@ -19,6 +19,14 @@ export function showScreen(screen: string) {
   forElement(`.${screen}`, (screen) => (screen.style.display = "block"));
 }
 
+export function showCrosshair() {
+  forElement(".crosshair", (bar) => (bar.style.display = "block"));
+}
+
+export function hideCrosshair() {
+  forElement(".crosshair", (bar) => (bar.style.display = "none"));
+}
+
 export function showHealthBar() {
   forElement(".health", (bar) => (bar.style.display = "block"));
 }
