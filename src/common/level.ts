@@ -11,12 +11,12 @@ export interface Block {
   kind: Kind;
 }
 
-export const SIZE = 9;
+export const SIZE = 14;
 export const MIN_Y = -200;
 export default Level;
 
 // TODO: Actually import all textures
-export const kindAssetMap: Map<Kind, string> = new Map([
+export const textures: Map<Kind, string> = new Map([
   [1, "Metal1"],
   [2, "Metal2"],
   [3, "Sand1"],

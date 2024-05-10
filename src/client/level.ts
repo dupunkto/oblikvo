@@ -1,6 +1,6 @@
 import p5 from "p5";
 
-import { default as Blocks, SIZE, kindAssetMap } from "../common/level";
+import { default as Blocks, SIZE, textures } from "../common/level";
 
 class Level {
   p5: p5;
@@ -18,7 +18,7 @@ class Level {
 
       this.p5.push();
       // TODO(msb): Fix undefined issues
-      this.p5.texture(assets.get(kindAssetMap.get(block.kind)));
+      this.p5.texture(assets.get(textures.get(block.kind)));
       this.p5.translate(
         dimensions * (parseInt(x) + 0.5),
         -dimensions * (parseInt(y) + 0.5),
