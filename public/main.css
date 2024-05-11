@@ -219,7 +219,7 @@ canvas {
   display: none;
   position: absolute;
   left: calc(50vw - var(--size) / 2);
-  top: calc(50vh - var(--size) / 2);
+  top: calc(50vh - var(--size));
   z-index: 10000;
 
   &::before,
