@@ -45,7 +45,7 @@ bake dev
 - [x] Chat (without chat)
 - [x] Start button disabled with < 2 players
 - [x] Game end with play again button & podium
-- [ ] Leaderboard
+- [x] Leaderboard
 - [ ] Level design
 - [ ] Sprites
 
