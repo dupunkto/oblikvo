@@ -1,6 +1,7 @@
 import p5 from "p5";
-//import "p5/lib/addons/p5.sound";
 import "../common/string";
+window.p5 = p5;
+require("p5/lib/addons/p5.sound");
 
 import { io, Socket } from "socket.io-client";
 import {
@@ -133,13 +134,15 @@ class Oblikvo {
   }
 
   handleHit({ from, to }: { from: string; to: string }) {
-    dbg(`${from} hit ${to}`);
-    //if (from == this.server.id) this.playSound("hitAnotherPlayer");
-    //if (to == this.server.id) this.playSound("gotHit");
+    if (to == this.server.id) this.playSound("gotHit");
+    if (from == this.server.id) setTimeout(() => {
+      this.playSound("hitAnotherPlayer");
+      this.camera.shake();
+    }, 50);
   }
 
-  handleKill({ from, to }: { from: string; to: string }) {
-    dbg(`${from} killed ${to}`);
+  handleKill(payload) {
+    this.handleHit(payload);
   }
 
   handleUpdate(payload: UpdatePayload) {
@@ -162,9 +165,9 @@ class Oblikvo {
     this.loadImage("Cobbles3");
     this.loadImage("Bricks2");
     this.loadImage("Bricks3");
-    //this.loadSound("hitAnotherPlayer");
-    //this.loadSound("gotHit");
-    //this.loadSound("shootLaser");
+    this.loadSound("hitAnotherPlayer");
+    this.loadSound("gotHit");
+    this.loadSound("shootLaser");
   }
 
   loadImage(identifier: string) {
@@ -176,9 +179,9 @@ class Oblikvo {
     this.assets.set(identifier, this.p5.loadSound(`${identifier}.wav`));
   }
 
-  //playSound(identifier: string) {
-  //  this.assets.get(identifier).play();
-  //}
+  playSound(identifier: string) {
+    this.assets.get(identifier).play();
+  }
 
   public setup() {
     if (!this.p5) throw "`setup` called but `p5` not set.";
@@ -243,7 +246,7 @@ class Oblikvo {
   shoot() {
     if (!this.camera) throw "`shoot` called, but `camera` not set.";
     this.broadcast("shoot", this.camera.facingDirection);
-    //this.playSound("shootLaser");
+    this.playSound("shootLaser");
   }
 
   public draw() {

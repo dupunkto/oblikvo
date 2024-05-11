@@ -1,6 +1,7 @@
 import p5 from "p5";
 
 import Entity from "./entity";
+import { randomBetween } from "../common/random";
 
 const LEFT = 37;
 const RIGHT = 39;
@@ -10,10 +11,10 @@ class Camera {
   pan: number;
   tilt: number;
   sway: number;
+  bob: number;
   fov: number;
   sensitivity: number;
   intensity: number;
-  offset: number;
   isShaking: boolean;
   useMouseControls: boolean;
 
@@ -22,10 +23,10 @@ class Camera {
     this.pan = 0.0;
     this.tilt = 0.0;
     this.sway = 0.0;
+    this.bob = 0.0;
     this.fov = 1.0;
     this.sensitivity = 0.02;
     this.intensity = 1.2;
-    this.offset = 0.0;
     this.isShaking = false;
     this.useMouseControls = false;
   }
@@ -49,7 +50,7 @@ class Camera {
     if (this.tilt == Math.PI / 2.0) this.tilt += 0.001;
   }
 
-  public shake(duration: number) {
+  public shake(duration: number = 100) {
     this.isShaking = true;
     setTimeout(() => (this.isShaking = false), duration);
   }
@@ -73,34 +74,30 @@ class Camera {
 
     const center = p5.Vector.add(position, direction);
 
-    if (this.isShaking) {
-      let shakeIntensity = 5 * this.intensity;
+    this.sway *= 0.5;
+    this.sway += p5.Vector.dot(entity.velocity, this.normalDirection);
 
-      this.p5.translate(
-        this.p5.random(-shakeIntensity, shakeIntensity),
-        this.p5.random(-shakeIntensity, shakeIntensity),
-      );
-    }
+    if (entity.isMoving && !entity.againstWall) this.bob += 0.1;
+    let bobbingAmount = this.intensity * Math.sin(this.bob) ** 2;
 
-    let swing = p5.Vector.dot(entity.velocity, this.normalDirection);
-    this.sway = this.sway * 0.5 + swing * (this.intensity / 15);
-
-    if (entity.isMoving && !entity.againstWall) this.offset += 0.1;
-    let bobbingAmount = Math.pow(Math.sin(this.offset), 2) * this.intensity;
-
+    let sway = this.intensity * this.sway / 15;
     let offset = bobbingAmount + 1.5;
 
     this.p5.camera(
-      position.x,
+      position.x + this.shakiness,
       -(position.y + offset),
-      position.z,
-      center.x,
+      position.z + this.shakiness,
+      center.x + this.shakiness,
       -(center.y + offset),
-      center.z,
-      this.normalDirection.x * this.sway,
+      center.z + this.shakiness,
+      this.normalDirection.x * sway + this.shakiness,
       1,
-      this.normalDirection.z * this.sway,
+      this.normalDirection.z * sway + this.shakiness,
     );
+  }
+
+  public get shakiness(): number {
+    return this.isShaking ? 0.015 * randomBetween(-this.intensity, this.intensity) : 0;
   }
 
   public get facingDirection(): p5.Vector {
