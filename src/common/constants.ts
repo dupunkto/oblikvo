@@ -11,4 +11,4 @@ export const LOGGING = false;
 
 // This means the canvas will be rendered at 1/8 the size
 // of the screen and then upscaled, for our retro-pixelation effect.
-export const PIXELATION = 10;
+export const PIXELATION = 6;
