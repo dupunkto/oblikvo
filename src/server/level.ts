@@ -53,7 +53,7 @@ class Level {
 
   public randomCoords(): p5.Vector {
     // TODO(msb)
-    return new p5.Vector(1, 100, 1)
+    return new p5.Vector(1, 100, 1);
   }
 
   public serialize(): Blocks {

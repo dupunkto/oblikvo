@@ -82,7 +82,7 @@ class Entity implements CommonEntity {
   }
 
   applyGravity() {
-    if(!this.onGround) this.acceleration.y -= G;
+    if (!this.onGround) this.acceleration.y -= G;
   }
 
   applyFriction() {

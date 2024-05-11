@@ -7,7 +7,7 @@ export const SPEED = 1.8;
 export const KNOCKBACK = 30;
 export const POWER = 20;
 export const HEALTH = 20;
-export const LOGGING = true;
+export const LOGGING = false;
 
 // This means the canvas will be rendered at 1/8 the size
 // of the screen and then upscaled, for our retro-pixelation effect.

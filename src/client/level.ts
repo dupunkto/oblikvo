@@ -31,7 +31,6 @@ class Level {
 
 function getTexture(assets: Map<string, any>, block: Block) {
   const identifier = textureMap.get(block.kind) as string;
-  console.log(identifier);
   return assets.get(identifier);
 }
 
