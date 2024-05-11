@@ -135,10 +135,11 @@ class Oblikvo {
 
   handleHit({ from, to }: { from: string; to: string }) {
     if (to == this.server.id) this.playSound("gotHit");
-    if (from == this.server.id) setTimeout(() => {
-      this.playSound("hitAnotherPlayer");
-      this.camera.shake();
-    }, 50);
+    if (from == this.server.id)
+      setTimeout(() => {
+        this.playSound("hitAnotherPlayer");
+        this.camera.shake();
+      }, 50);
   }
 
   handleKill(payload) {

@@ -80,7 +80,7 @@ class Camera {
     if (entity.isMoving && !entity.againstWall) this.bob += 0.1;
     let bobbingAmount = this.intensity * Math.sin(this.bob) ** 2;
 
-    let sway = this.intensity * this.sway / 15;
+    let sway = (this.intensity * this.sway) / 15;
     let offset = bobbingAmount + 1.5;
 
     this.p5.camera(
@@ -97,7 +97,9 @@ class Camera {
   }
 
   public get shakiness(): number {
-    return this.isShaking ? 0.015 * randomBetween(-this.intensity, this.intensity) : 0;
+    return this.isShaking
+      ? 0.015 * randomBetween(-this.intensity, this.intensity)
+      : 0;
   }
 
   public get facingDirection(): p5.Vector {
