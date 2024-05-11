@@ -105,7 +105,7 @@ class World {
 
   public respawn(entity: Entity, bumpStats: boolean = true) {
     if (bumpStats) entity.bump();
-    entity.spawn(this.level.randomCoords());
+    entity.respawn(this.level.randomCoords());
   }
 
   public move(id: string, movement: p5.Vector): void {
