@@ -133,7 +133,7 @@ hgroup p {
   margin: 0;
 }
 
-progress.health {
+.health {
   display: none;
   position: absolute;
   top: 0.5em;
@@ -175,9 +175,26 @@ canvas {
   padding: 1px;
 }
 
-.chat > span {
+.leaderboard {
+  display: none;
+  position: absolute;
+  top: 0.5em;
+  right: 0.5em;
+  width: fit-content;
+  height: 25vh;
+  color: white;
+  padding: 1px;
+}
+
+.chat > span,
+.leaderboard > span {
   font-size: 0.6rem;
   display: block;
+}
+
+.leaderboard > span {
+  display: flex;
+  gap: 0.5em;
 }
 
 .timer {

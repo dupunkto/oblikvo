@@ -43,17 +43,17 @@ export function hideHealthBar() {
   forElement(".health", (bar) => (bar.style.display = "none"));
 }
 
-export function showLeaderBoard() {
+export function showLeaderboard() {
   forElement(".leaderboard", (board) => (board.style.display = "block"));
 }
 
-export function updateLeaderBoard(entities: Entity[]) {
+export function updateLeaderboard(entities: [string, Entity][]) {
   forElement(".leaderboard", (board) => {
     board.innerHTML = "";
 
     entities
-      .sort((a: Entity, b: Entity) => b.kills - a.kills)
-      .forEach((entity) => {
+      .sort((a, b) => b[1].kills - a[1].kills)
+      .forEach(([_, entity]) => {
         const line = renderLeaderLine(entity);
         board.appendChild(line);
       });
@@ -61,12 +61,12 @@ export function updateLeaderBoard(entities: Entity[]) {
 }
 
 function renderLeaderLine(entity: Entity) {
-  const line = document.createElement("p");
+  const line = document.createElement("span");
   const name = document.createElement("span");
   const points = document.createElement("span");
 
   points.innerText = entity.kills.toString();
-  name.innerText = entity.nick;
+  name.innerText = `${entity.nick} (${entity.killed})`;
   name.style.color = entity.color;
 
   line.appendChild(name);
@@ -75,7 +75,7 @@ function renderLeaderLine(entity: Entity) {
   return line;
 }
 
-export function hideLeaderBoard() {
+export function hideLeaderboard() {
   forElement(".leaderboard", (board) => (board.style.display = "none"));
 }
 

@@ -2,6 +2,7 @@ import Oblikvo from "./oblikvo";
 import * as UI from "./interface";
 
 UI.showScreen("main-menu");
+UI.showLeaderboard();
 UI.showBorders();
 
 const client = new Oblikvo();
@@ -36,6 +37,7 @@ client.on("started", () => {
   UI.hideBorders();
   UI.showCrosshair();
   UI.showHealthBar();
+  UI.showLeaderboard();
   UI.showTimer();
   UI.showChat();
 });
@@ -44,6 +46,7 @@ client.on("finished", ({ winner, loser }) => {
   UI.showBorders();
   UI.hideCrosshair();
   UI.hideHealthBar();
+  UI.hideLeaderboard();
   UI.hideTimer();
   UI.hideChat();
   UI.showScreen("podium");
@@ -51,8 +54,9 @@ client.on("finished", ({ winner, loser }) => {
   UI.setLoser(loser);
 });
 
-client.on("update", ({ timeLeft }) => {
+client.on("update", ({ entities, timeLeft }) => {
   UI.updateHealthBar(client.player.health, client.player.maxHealth);
+  UI.updateLeaderboard(entities);
   UI.updateTimer(timeLeft);
 });
 
