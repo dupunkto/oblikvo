@@ -52,7 +52,7 @@ export function updateLeaderboard(entities: [string, Entity][]) {
     board.innerHTML = "";
 
     entities
-      .sort((a, b) => b[1].kills - a[1].kills)
+      .sort((a, b) => b[1].kills - b[1].killed - (a[1].kills - a[1].killed))
       .forEach(([_, entity]) => {
         const line = renderLeaderLine(entity);
         board.appendChild(line);

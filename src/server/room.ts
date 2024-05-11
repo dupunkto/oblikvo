@@ -106,7 +106,7 @@ class Room {
 
     return {
       winner: Array.from(entities).reduce((a, b) =>
-        a.kills > b.kills ? a : b,
+        a.kills - a.killed > b.kills - b.killed ? a : b,
       ),
       loser: Array.from(entities).reduce((a, b) =>
         a.killed > b.killed ? a : b,
