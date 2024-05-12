@@ -1,7 +1,7 @@
 import p5 from "p5-node";
 
 import { default as Blocks } from "../common/level";
-import { Block, Coords, Kind } from "../common/level";
+import { SIZE, Block, Coords, Kind } from "../common/level";
 
 import Vector from "../common/vector";
 
@@ -12,9 +12,11 @@ interface Format {
 
 class Level {
   blocks: Map<Coords, Block>;
+  spawnable: number[3][];
 
   constructor() {
     this.blocks = new Map();
+    this.spawnable = [];
   }
 
   public insert(x: number, y: number, z: number, block: Block): void {
@@ -46,14 +48,21 @@ class Level {
             color: "white",
             kind: kind,
           });
+
+          if (kind == 10) this.spawnable.push([x, y, z]);
         }
       }
     }
   }
 
   public randomCoords(): p5.Vector {
-    // TODO(msb)
-    return new p5.Vector(1, 100, 1);
+    const length = this.spawnable.length;
+    const coords = this.spawnable[Math.floor(Math.random() * length)];
+    return new p5.Vector(
+      coords[0] * SIZE + SIZE / 2,
+      (coords[1] + 1) * SIZE + 1,
+      coords[2] * SIZE + SIZE / 2,
+    );
   }
 
   public serialize(): Blocks {
