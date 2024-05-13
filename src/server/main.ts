@@ -28,6 +28,7 @@ class Connection {
 
     this.registerHandler("new");
     this.registerHandler("new-from-existing");
+    this.registerHandler("change-nick");
     this.registerHandler("joinable");
     this.registerHandler("join");
     this.registerHandler("start");
