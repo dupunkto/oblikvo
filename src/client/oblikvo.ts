@@ -191,7 +191,11 @@ class Oblikvo {
   }
 
   playSound(identifier: string) {
-    this.assets.get(identifier)?.play();
+    try {
+      this.assets.get(identifier)?.play();
+    } finally {
+      dbg("I AM GOING INSANE.");
+    }
   }
 
   public setup() {
