@@ -19,6 +19,11 @@ class World {
   level: Level = new Level();
   entities: Map<string, Entity> = new Map();
 
+  // Maps the ID of a player to the ID of
+  // the player that last hit them within
+  // X seconds.
+  hitters: Map<string, string> = new Map();
+
   constructor() {
     this.level.appendFormat({
       offset: { x: 0, y: -1, z: 0 },
@@ -103,8 +108,13 @@ class World {
     this.entities.delete(id);
   }
 
-  public respawn(entity: Entity, bumpStats: boolean = true) {
-    if (bumpStats) entity.bump();
+  public respawn(entity: Entity) {
+    const hitter = this.hitters.get(entity.id);
+    if(hitter) {
+      this.entities.get(hitter.id).kills += 1;
+      entity.bumpStats();
+    }
+
     entity.respawn(this.level.randomCoords());
   }
 
@@ -124,6 +134,10 @@ class World {
         entity.hit(direction, distance);
         if (entity.health <= 0) player.kills += 1;
 
+        // Set hitter
+        this.hitters.set(entity.id, player.id);
+        setTimeout(() => (this.hitters.delete(entity.id)), 3000);
+
         return entity;
       })
       .toArray();
@@ -132,9 +146,9 @@ class World {
   public update() {
     this.ticks += 1;
     this.entities.forEach((entity) => {
-      if (entity.health <= 0) this.respawn(entity);
-      // Don't bump their stats when they commit suicide.
-      if (entity.position.y < MIN_Y) this.respawn(entity, false);
+      if (entity.health <= 0 || entity.position.y < MIN_Y) {
+        this.respawn(entity);
+      }
 
       entity.update();
       this.collide(entity);

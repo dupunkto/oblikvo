@@ -60,7 +60,7 @@ class Entity implements CommonEntity {
     this.spawn(position);
   }
 
-  public bump() {
+  public bumpStats() {
     this.maxHealth += INCREASE * HEALTH;
     this.health = this.maxHealth;
   }
