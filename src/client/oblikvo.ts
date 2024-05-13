@@ -179,7 +179,7 @@ class Oblikvo {
   }
 
   playSound(identifier: string) {
-    this.assets.get(identifier)?.play();
+    this.assets.get(identifier)?.cloneNode(true).play();
   }
 
   public setup() {
