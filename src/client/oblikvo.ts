@@ -171,6 +171,8 @@ class Oblikvo {
       this.loadSound("hitAnotherPlayer");
       this.loadSound("gotHit");
       this.loadSound("shootLaser");
+    } finally {
+      dbg("Couldn't load sounds. Fuck Google Chrome >:(");
     }
   }
 
