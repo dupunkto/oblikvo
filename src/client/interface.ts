@@ -67,6 +67,7 @@ function renderLeaderLine(entity: Entity) {
 
   points.innerText = entity.kills.toString();
   name.innerText = `${entity.nick} (${entity.killed})`;
+  name.className = "name";
   name.style.color = entity.color;
 
   line.appendChild(name);
