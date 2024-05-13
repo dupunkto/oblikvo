@@ -1,13 +1,6 @@
 import p5 from "p5";
 import "../common/string";
 
-try {
-  //window.p5 = p5;
-  //require("p5/lib/addons/p5.sound");
-} catch(error) {
-  dbg("It no workey workey");
-}
-
 import { io, Socket } from "socket.io-client";
 import {
   JoinPayload,
@@ -172,13 +165,9 @@ class Oblikvo {
     this.loadImage("Bricks2");
     this.loadImage("Bricks3");
 
-    try {
-      //this.loadSound("hitAnotherPlayer");
-      //this.loadSound("gotHit");
-      //this.loadSound("shootLaser");
-    } catch(error) {
-      dbg("Couldn't load sounds. Fuck Google Chrome >:(");
-    }
+    this.loadSound("hitAnotherPlayer");
+    this.loadSound("gotHit");
+    this.loadSound("shootLaser");
   }
 
   loadImage(identifier: string) {
@@ -186,16 +175,11 @@ class Oblikvo {
   }
 
   loadSound(identifier: string) {
-    // @ts-ignore p5 is set, I've checked it already in `preload`.
-    this.assets.set(identifier, this.p5.loadSound(`${identifier}.wav`));
+    this.assets.set(identifier, new Audio(`${identifier}.wav`));
   }
 
   playSound(identifier: string) {
-    try {
-      //this.assets.get(identifier)?.play();
-    } catch(error) {
-      dbg("yea it was this")
-    }
+    this.assets.get(identifier)?.play();
   }
 
   public setup() {

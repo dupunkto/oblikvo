@@ -110,7 +110,7 @@ class World {
 
   public respawn(entity: Entity) {
     const hitter = this.hitters.get(entity.id);
-    if(hitter) {
+    if (hitter) {
       this.entities.get(hitter).kills += 1;
       entity.bumpStats();
     }
@@ -136,7 +136,7 @@ class World {
 
         // Set hitter
         this.hitters.set(entity.id, player.id);
-        setTimeout(() => (this.hitters.delete(entity.id)), 3000);
+        setTimeout(() => this.hitters.delete(entity.id), 3000);
 
         return entity;
       })
