@@ -53,6 +53,7 @@ class Entity implements CommonEntity {
     this.position = position;
     this.velocity = new p5.Vector(0, 0, 0);
     this.acceleration = new p5.Vector(0, 0, 0);
+    this.health = this.maxHealth;
   }
 
   public respawn(position: p5.Vector) {
@@ -62,7 +63,6 @@ class Entity implements CommonEntity {
 
   public bumpStats() {
     this.maxHealth += INCREASE * HEALTH;
-    this.health = this.maxHealth;
   }
 
   public hit(direction: p5.Vector, distance: number) {
