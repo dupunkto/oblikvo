@@ -1,7 +1,12 @@
 import p5 from "p5";
 import "../common/string";
-window.p5 = p5;
-require("p5/lib/addons/p5.sound");
+
+try {
+  window.p5 = p5;
+  require("p5/lib/addons/p5.sound");
+} finally {
+  dbg("It no workey workey");
+}
 
 import { io, Socket } from "socket.io-client";
 import {
