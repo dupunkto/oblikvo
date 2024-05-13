@@ -2,9 +2,9 @@ import p5 from "p5";
 import "../common/string";
 
 try {
-  window.p5 = p5;
-  require("p5/lib/addons/p5.sound");
-} finally {
+  //window.p5 = p5;
+  //require("p5/lib/addons/p5.sound");
+} catch(error) {
   dbg("It no workey workey");
 }
 
@@ -173,10 +173,10 @@ class Oblikvo {
     this.loadImage("Bricks3");
 
     try {
-      this.loadSound("hitAnotherPlayer");
-      this.loadSound("gotHit");
-      this.loadSound("shootLaser");
-    } finally {
+      //this.loadSound("hitAnotherPlayer");
+      //this.loadSound("gotHit");
+      //this.loadSound("shootLaser");
+    } catch(error) {
       dbg("Couldn't load sounds. Fuck Google Chrome >:(");
     }
   }
@@ -192,9 +192,9 @@ class Oblikvo {
 
   playSound(identifier: string) {
     try {
-      this.assets.get(identifier)?.play();
-    } finally {
-      dbg("I AM GOING INSANE.");
+      //this.assets.get(identifier)?.play();
+    } catch(error) {
+      dbg("yea it was this")
     }
   }
 
