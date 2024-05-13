@@ -166,9 +166,12 @@ class Oblikvo {
     this.loadImage("Cobbles3");
     this.loadImage("Bricks2");
     this.loadImage("Bricks3");
-    this.loadSound("hitAnotherPlayer");
-    this.loadSound("gotHit");
-    this.loadSound("shootLaser");
+
+    try {
+      this.loadSound("hitAnotherPlayer");
+      this.loadSound("gotHit");
+      this.loadSound("shootLaser");
+    }
   }
 
   loadImage(identifier: string) {
@@ -181,7 +184,7 @@ class Oblikvo {
   }
 
   playSound(identifier: string) {
-    this.assets.get(identifier).play();
+    this.assets.get(identifier)?.play();
   }
 
   public setup() {
