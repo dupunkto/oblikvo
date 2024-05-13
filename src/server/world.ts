@@ -111,7 +111,7 @@ class World {
   public respawn(entity: Entity) {
     const hitter = this.hitters.get(entity.id);
     if(hitter) {
-      this.entities.get(hitter.id).kills += 1;
+      this.entities.get(hitter).kills += 1;
       entity.bumpStats();
     }
 
