@@ -19,7 +19,7 @@ const S = 83;
 const D = 68;
 const SPACE = 32;
 
-import { PIXELATION, LOGGING } from "../common/constants";
+import { FPS, PIXELATION, LOGGING } from "../common/constants";
 
 class Oblikvo {
   joined: boolean = false;
@@ -192,7 +192,7 @@ class Oblikvo {
       this.p5.WEBGL,
     );
 
-    this.p5.frameRate(60);
+    this.p5.frameRate(FPS);
     this.p5.angleMode(this.p5.RADIANS);
     this.p5.rectMode(this.p5.CENTER);
     this.p5.noStroke();

@@ -15,7 +15,7 @@ import { UpdatePayload } from "../common/payload";
 import { FinishPayload } from "../common/payload";
 import { toVector } from "../common/vector";
 
-import { DURATION, FPS } from "../common/constants";
+import { DURATION, FPS, TPS } from "../common/constants";
 
 enum Status {
   Pending,
@@ -88,7 +88,7 @@ class Room {
   }
 
   public get timeLeft(): number {
-    return DURATION - Math.floor(this.world.ticks / FPS);
+    return DURATION - Math.floor(this.world.ticks / TPS);
   }
 
   public update(): UpdatePayload {
@@ -112,6 +112,10 @@ class Room {
         a.killed > b.killed ? a : b,
       ),
     };
+  }
+
+  public get push(): boolean {
+    return this.world.ticks % (TPS / FPS) == 0;
   }
 }
 

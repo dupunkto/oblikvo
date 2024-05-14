@@ -6,7 +6,7 @@ import Vector from "../common/vector";
 import Entity from "./entity";
 import Room from "./room";
 
-import { FPS, LOGGING } from "../common/constants";
+import { TPS, LOGGING } from "../common/constants";
 
 type Socket = any;
 type Code = string;
@@ -168,8 +168,10 @@ function gameLoop(inviteCode: Code) {
     return;
   }
 
-  io.to(inviteCode).emit("update", room.update());
-  setTimeout(() => gameLoop(inviteCode), 1000 / FPS);
+  const payload = room.update();
+  if (room.push) io.to(inviteCode).emit("update", payload);
+
+  setTimeout(() => gameLoop(inviteCode), 1000 / TPS);
 }
 
 function dbg<T>(object: T): T {
