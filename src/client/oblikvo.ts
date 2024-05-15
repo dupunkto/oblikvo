@@ -178,8 +178,11 @@ class Oblikvo {
     this.assets.set(identifier, new Audio(`${identifier}.wav`));
   }
 
-  playSound(identifier: string) {
-    this.assets.get(identifier)?.cloneNode(true).play();
+  playSound(identifier: string): Promise<void> {
+    return new Promise((resolve) => {
+      this.assets.get(identifier)?.cloneNode().play();
+      resolve();
+    });
   }
 
   public setup() {
