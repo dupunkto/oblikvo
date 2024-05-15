@@ -210,8 +210,8 @@ class Oblikvo {
   }
 
   usePointerLock() {
-    this.canvas?.elt.addEventListener("click", () => this.lockPointer());
-    this.canvas?.elt.addEventListener("pointerlockchange", () =>
+    document.addEventListener("click", () => this.lockPointer());
+    document.addEventListener("pointerlockchange", () =>
       this.unlockPointer(),
     );
   }
