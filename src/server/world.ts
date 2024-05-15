@@ -91,6 +91,7 @@ class World {
   public respawn(entity: Entity) {
     const hitter = this.hitters.get(entity.id);
     if (hitter) {
+      // @ts-ignore hitter must exist
       this.entities.get(hitter).kills += 1;
       entity.bumpStats();
     }

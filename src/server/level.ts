@@ -12,7 +12,7 @@ interface Format {
 
 class Level {
   blocks: Map<Coords, Block>;
-  spawnable: number[3][];
+  spawnable: number[][];
 
   constructor() {
     this.blocks = new Map();

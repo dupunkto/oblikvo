@@ -1,7 +1,10 @@
 import p5 from "p5";
 import "../common/string";
 
+window.p5 = p5;
+
 import { io, Socket } from "socket.io-client";
+
 import {
   JoinPayload,
   StartPayload,
@@ -136,11 +139,11 @@ class Oblikvo {
     if (from == this.server.id)
       setTimeout(() => {
         this.playSound("hitAnotherPlayer");
-        this.camera.shake();
+        this.camera?.shake();
       }, 50);
   }
 
-  handleKill(payload) {
+  handleKill(payload: { from: string; to: string }) {
     this.handleHit(payload);
   }
 
