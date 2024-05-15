@@ -1,5 +1,4 @@
-import module = require("p5");
-export as namespace p5;
+export {};
 
 declare global {
   interface Window {
@@ -8,6 +7,5 @@ declare global {
     startGame: function;
     changeNick: function;
     playAgain: function;
-    p5: typeof module;
   }
 }

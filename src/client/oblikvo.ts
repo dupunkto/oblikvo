@@ -1,9 +1,8 @@
 import p5 from "p5";
 import "../common/string";
 
-window.p5 = p5;
-
 import { io, Socket } from "socket.io-client";
+import { Howl } from "howler";
 
 import {
   JoinPayload,
@@ -178,14 +177,11 @@ class Oblikvo {
   }
 
   loadSound(identifier: string) {
-    this.assets.set(identifier, new Audio(`${identifier}.wav`));
+    this.assets.set(identifier, new Howl({ src: [`${identifier}.wav`] }));
   }
 
-  playSound(identifier: string): Promise<void> {
-    return new Promise((resolve) => {
-      this.assets.get(identifier)?.cloneNode().play();
-      resolve();
-    });
+  playSound(identifier: string) {
+    this.assets.get(identifier)?.play();
   }
 
   public setup() {
@@ -211,9 +207,7 @@ class Oblikvo {
 
   usePointerLock() {
     document.addEventListener("click", () => this.lockPointer());
-    document.addEventListener("pointerlockchange", () =>
-      this.unlockPointer(),
-    );
+    document.addEventListener("pointerlockchange", () => this.unlockPointer());
   }
 
   lockPointer() {

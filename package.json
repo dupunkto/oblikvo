@@ -16,7 +16,8 @@
     "p5": "^1.7.0",
     "p5-node": "dupunkto/p5-node",
     "socket.io": "^4.7.4",
-    "socket.io-client": "^4.7.4"
+    "socket.io-client": "^4.7.4",
+    "howler": "^2.2.4"
   },
   "devDependencies": {
     "esbuild": "0.19.2",
@@ -24,7 +25,8 @@
     "@types/p5": "latest",
     "@types/bun": "latest",
     "@types/web": "latest",
-    "@types/express": "latest"
+    "@types/express": "latest",
+    "@types/howler": "latest"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
