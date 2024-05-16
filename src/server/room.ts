@@ -115,7 +115,11 @@ class Room {
   }
 
   public get push(): boolean {
-    return this.world.ticks % (TPS / FPS) == 0;
+    const min = Math.min(TPS, FPS);
+    const max = Math.max(TPS, FPS);
+    const factor = Math.round(max / min);
+
+    return this.world.ticks % factor == 0;
   }
 }
 
