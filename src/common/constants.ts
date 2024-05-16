@@ -14,7 +14,7 @@ export const LOGGING = false;
 // tick. Allows us to change the TPS freely without
 // altering the speed of the game.
 function relative(value: number) {
-  return value/TPS;
+  return value / TPS;
 }
 
 // This means the canvas will be rendered at 1/8 the size

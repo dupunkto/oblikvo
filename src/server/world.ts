@@ -121,7 +121,7 @@ class World {
         const distance = distanceBetween(player.position, entity.position);
         const onSpawn = distance !== 0;
 
-        if(onSpawn) {
+        if (onSpawn) {
           entity.hit(direction, distance);
           if (entity.health <= 0) player.kills += 1;
 
