@@ -254,7 +254,7 @@ class Oblikvo {
     if (!this.camera) throw "`draw` called but `camera` not set.";
     if (!this.world) throw "`draw` called but `world` not set.";
 
-    this.p5.background(0, 0, 51);
+    this.p5.background(21, 23, 26);
     this.p5.pointLight(255, 255, 255, this.player.position);
     this.p5.ambientLight(180, 180, 180);
 
