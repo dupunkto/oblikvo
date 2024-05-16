@@ -60,7 +60,7 @@ class Level {
     const coords = this.spawnable[Math.floor(Math.random() * length)];
     return new p5.Vector(
       coords[0] * SIZE + SIZE / 2,
-      (coords[1] + 1) * SIZE + 1,
+      (coords[1] + 1) * SIZE + 0.5 * SIZE,
       coords[2] * SIZE + SIZE / 2,
     );
   }
