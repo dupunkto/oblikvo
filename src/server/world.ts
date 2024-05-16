@@ -9,6 +9,7 @@ import Level from "./level";
 import Entity from "./entity";
 import Player from "./player";
 
+import { SPEED } from "../common/constants";
 import { SIZE, MIN_Y } from "../common/level";
 import { willHit, distanceBetween } from "./raycast";
 
@@ -168,9 +169,9 @@ class World {
 
     if (this.level.get(ix, iy - 1, iz)) {
       if (this.level.get(ix, iy - 1, iz)?.kind == 3)
-        player.acceleration.y += 15;
+        player.acceleration.y += 8 * SPEED;
       if (this.level.get(ix, iy - 1, iz)?.kind == 4)
-        player.acceleration.y += 20;
+        player.acceleration.y += 12 * SPEED;
 
       let side = player.position.y - player.dimensions.y / 2;
       if (side <= iy * SIZE) {
