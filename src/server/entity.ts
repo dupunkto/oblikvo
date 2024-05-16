@@ -66,7 +66,7 @@ class Entity implements CommonEntity {
   }
 
   public hit(direction: p5.Vector, distance: number) {
-    distance = Math.max(distance, 0.1);
+    distance = Math.max(distance, 1);
     this.applyKnockback(direction, distance);
     this.health -= POWER / distance;
   }
