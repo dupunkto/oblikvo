@@ -112,13 +112,23 @@ class World {
       .filter((entity) => willHit(player.position, direction, entity))
       .filter((entity) => entity.id != player.id)
       .map((entity: Entity) => {
-        const distance = distanceBetween(player.position, entity.position);
-        entity.hit(direction, distance);
-        if (entity.health <= 0) player.kills += 1;
+        // If you've just spawned in and some other player
+        // spawned at the same point, the distance is zero, and
+        // players can basically spawn-camp and one-shot the others.
+        //
+        // We shouldn't allow that.
 
-        // Set hitter
-        this.hitters.set(entity.id, player.id);
-        setTimeout(() => this.hitters.delete(entity.id), 3000);
+        const distance = distanceBetween(player.position, entity.position);
+        const onSpawn = distance !== 0;
+
+        if(onSpawn) {
+          entity.hit(direction, distance);
+          if (entity.health <= 0) player.kills += 1;
+
+          // Set hitter
+          this.hitters.set(entity.id, player.id);
+          setTimeout(() => this.hitters.delete(entity.id), 3000);
+        }
 
         return entity;
       })
