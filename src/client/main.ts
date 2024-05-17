@@ -128,6 +128,10 @@ function changeNick(input: HTMLInputElement) {
 }
 
 async function join(inviteCode: string) {
+  // We don't want AbC to return a different game
+  // than aBc :)
+  inviteCode = inviteCode.toLowerCase();
+
   if (await client.joinable(inviteCode)) {
     window.location.hash = inviteCode;
 
