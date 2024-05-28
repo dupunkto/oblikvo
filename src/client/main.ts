@@ -95,15 +95,10 @@ function joinGame() {
   if (inviteCode) join(inviteCode);
 }
 
-function startGame() {
+async function startGame() {
   if (client.joined) {
-    const message =
-      "You're starting the game for everyone. Please make sure all players that wanted to join the game have. If so, continue :)";
-
-    if (confirm(message)) {
-      UI.showScreen("loading");
-      client.start();
-    }
+    UI.showScreen("loading");
+    client.start();
   } else {
     alert("You have to join a game before you can start it.");
   }

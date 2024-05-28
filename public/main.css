@@ -98,6 +98,13 @@ small {
   margin-bottom: 2em;
 }
 
+small:last-child {
+  font-size: .5em;
+  max-width: 600px;
+  margin: 0 auto;
+  margin-top: 1.5em;
+}
+
 input {
   font: inherit;
   padding: 0.5em 0.5em;
