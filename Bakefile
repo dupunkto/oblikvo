@@ -16,16 +16,16 @@ format() {
 }
 
 build() {
-  if [ -e "$DIST" ]; then
+  if [ -e $DIST ]; then
     echo >&2 "Error: Already built. Run \`clean\` first"
     echo >&2
     exit 1
   fi
 
-  mkdir "$DIST"
-  cp "$PUBLIC"/* "$DIST"/
+  mkdir $DIST
+  cp $PUBLIC/* $DIST/
 
-  $BUILD "$SRC" --outdir="$DIST"
+  $BUILD $SRC --outdir=$DIST
 }
 
 serve() {
@@ -38,13 +38,13 @@ dev() {
   # because otherwise the server has to be restarted
   # for static assets to be rebuilt.
   
-  DIST="$PUBLIC" serve &
-  $BUILD "$SRC" --watch --outdir="$PUBLIC"
+  DIST=$PUBLIC serve &
+  $BUILD $SRC --watch --outdir=$PUBLIC
 }
 
 clean() {
-  p:clean_if_exists "$DIST"
-  p:clean_if_exists "$PUBLIC"/main.js
+  p:clean_if_exists $DIST
+  p:clean_if_exists $PUBLIC/main.js
 }
 
 p:clean_if_exists() {
